@@ -1,0 +1,6 @@
+{
+  "name": "DentDocs",
+  "description": "Document management system for a small dental clinic in the Philippines with role-based access control, guided OCR extraction, FDI charting, and compliance tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
