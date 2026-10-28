@@ -109,7 +109,7 @@ export const DocumentVisualPreview: React.FC<DocumentVisualPreviewProps> = ({
               <div className="absolute top-3 left-4 text-xs font-bold font-mono opacity-60">R</div>
               <div className="absolute top-3 right-4 text-xs font-bold font-mono opacity-60">L</div>
               <div className="absolute bottom-2 right-4 text-[9px] font-mono opacity-50">
-                DICOM 3.0 · Dalisay Imaging
+                DICOM 3.0 · San Nicolas Imaging
               </div>
             </div>
 
@@ -141,7 +141,7 @@ export const DocumentVisualPreview: React.FC<DocumentVisualPreviewProps> = ({
             {/* Rx Clinic Header */}
             <div className="text-center border-b-2 border-slate-800 pb-4 mb-5">
               <h2 className="text-lg font-bold tracking-wide uppercase font-sans text-teal-900">
-                Dalisay Dental Studio
+                San Nicolas Dental Clinic
               </h2>
               <p className="text-[11px] font-sans text-slate-600">
                 Comprehensive Oral Surgery & Esthetic Dentistry · Metro Manila
@@ -241,7 +241,7 @@ export const DocumentVisualPreview: React.FC<DocumentVisualPreviewProps> = ({
             <div className="space-y-3 mb-6 text-slate-700">
               <p>
                 Ako si <strong className="text-slate-900">{document.patientName}</strong>, ay
-                kusang-loob na nagbibigay ng pahintulot sa Dalisay Dental Studio para sa pamamaraang:{' '}
+                kusang-loob na nagbibigay ng pahintulot sa San Nicolas Dental Clinic para sa pamamaraang:{' '}
                 <strong className="text-teal-800">{document.title}</strong>{' '}
                 {document.toothNumbers.length > 0 && (
                   <span>(Teeth: {document.toothNumbers.join(', ')})</span>
@@ -310,7 +310,7 @@ export const DocumentVisualPreview: React.FC<DocumentVisualPreviewProps> = ({
             {/* BIR Official Receipt Style */}
             <div className="text-center border-b border-dashed border-slate-400 pb-4 mb-4">
               <h2 className="text-base font-bold text-slate-900 tracking-wider">
-                DALISAY DENTAL STUDIO
+                SAN NICOLAS DENTAL CLINIC
               </h2>
               <p className="text-[10px] text-slate-600">
                 TAX IDENTIFICATION NO: 000-000-000-000 VAT REGISTERED

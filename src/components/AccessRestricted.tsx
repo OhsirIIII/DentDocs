@@ -53,7 +53,7 @@ export const AccessRestricted: React.FC<AccessRestrictedProps> = ({
           </div>
           <div className="flex justify-between text-slate-600">
             <span>Clinic Compliance:</span>
-            <span className="text-slate-700">Dalisay Dental Privacy Policy 2026</span>
+            <span className="text-slate-700">San Nicolas Dental Clinic Privacy Policy 2026</span>
           </div>
         </div>
 

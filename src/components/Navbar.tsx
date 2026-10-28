@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import logoImg from '../assets/logo.png';
 import { useClinic } from '../context/ClinicContext';
 import { UserRole } from '../types/dental';
 import { STAFF_USERS } from '../data/mockUsersAndAudit';
@@ -42,21 +43,13 @@ export const Navbar: React.FC = () => {
               onClick={() => navigateTo('dashboard')}
               className="flex items-center gap-2.5 text-left group focus:outline-none"
             >
-              <div className="w-9 h-9 rounded-lg bg-teal-700 text-white flex items-center justify-center font-bold text-lg shadow-sm group-hover:bg-teal-800 transition-colors">
-                <svg
-                  className="w-5 h-5 fill-current"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M12 2C7.58 2 4 5.58 4 10c0 3.31 1.7 6.22 4.25 7.88L8 22l4-2 4 2-.25-4.12C18.3 16.22 20 13.31 20 10c0-4.42-3.58-8-8-8zm-1 14.5-2.5 1.25.18-2.92C9.5 15.15 10.23 15.5 11 15.75v.75zm6-1.67-.18 2.92-2.5-1.25v-.75c.77-.25 1.5-.6 2.32-.92H17zM12 4c3.31 0 6 2.69 6 6 0 2.21-1.2 4.14-3 5.18V13.5c0-.83-.67-1.5-1.5-1.5h-3c-.83 0-1.5.67-1.5 1.5v1.68C7.2 14.14 6 12.21 6 10c0-3.31 2.69-6 6-6z" />
-                </svg>
-              </div>
+              <img src={logoImg} alt="San Nicolas Dental Clinic Logo" className="w-9 h-9 object-contain rounded-lg" />
               <div>
-                <span className="text-xl font-bold tracking-tight text-slate-900 group-hover:text-teal-900 transition-colors">
-                  DentDocs
+                <span className="text-base sm:text-lg font-bold tracking-tight text-slate-900 group-hover:text-teal-900 transition-colors block leading-tight">
+                  San Nicolas Dental Clinic
                 </span>
-                <span className="hidden sm:inline-block ml-2 text-xs font-medium text-slate-500">
-                  Dalisay Dental Studio · Manila
+                <span className="hidden sm:inline-block text-[11px] font-medium text-slate-500 leading-none">
+                  Document Management System
                 </span>
               </div>
             </button>
@@ -186,7 +179,7 @@ export const Navbar: React.FC = () => {
                   <div className="px-3 py-2 border-b border-slate-100 mb-1">
                     <p className="text-xs font-semibold text-slate-900">Demo Role Switcher</p>
                     <p className="text-[11px] text-slate-500">
-                      Test DentDocs role-based security & workflows
+                      Test San Nicolas Dental Clinic role-based security & workflows
                     </p>
                   </div>
 

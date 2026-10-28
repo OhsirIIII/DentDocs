@@ -7,7 +7,7 @@ export const STAFF_USERS: Record<string, StaffUser> = {
     role: 'admin',
     title: 'Clinic Director / Administrator',
     license: 'PRC 0074512',
-    email: 'm.santos@dalisaydental.ph',
+    email: 'm.santos@sannicolasdental.ph',
     avatarInitials: 'MS',
   },
   dentist: {
@@ -16,7 +16,7 @@ export const STAFF_USERS: Record<string, StaffUser> = {
     role: 'dentist',
     title: 'Lead Dental Surgeon / Prosthodontist',
     license: 'PRC 0089123',
-    email: 'p.reyes@dalisaydental.ph',
+    email: 'p.reyes@sannicolasdental.ph',
     avatarInitials: 'PR',
   },
   assistant: {
@@ -25,7 +25,7 @@ export const STAFF_USERS: Record<string, StaffUser> = {
     role: 'assistant',
     title: 'Senior Registered Dental Assistant (RDA)',
     license: 'RDA 001924',
-    email: 'c.mendoza@dalisaydental.ph',
+    email: 'c.mendoza@sannicolasdental.ph',
     avatarInitials: 'CM',
   },
   front_desk: {
@@ -33,7 +33,7 @@ export const STAFF_USERS: Record<string, StaffUser> = {
     name: 'Mark Vincent Bautista',
     role: 'front_desk',
     title: 'Front Desk & Patient Coordinator',
-    email: 'm.bautista@dalisaydental.ph',
+    email: 'm.bautista@sannicolasdental.ph',
     avatarInitials: 'MB',
   },
 };

@@ -43,7 +43,7 @@ export const DashboardView: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs">
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-teal-700 mb-1">
-            <span>Dalisay Dental Studio · Manila</span>
+            <span>San Nicolas Dental Clinic</span>
             <span aria-hidden="true">·</span>
             <span>Document Hub</span>
           </div>

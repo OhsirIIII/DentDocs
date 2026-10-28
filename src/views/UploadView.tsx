@@ -154,7 +154,7 @@ export const UploadView: React.FC = () => {
       procedureCategory = 'Oral Surgery';
       toothNumbers = [18, 28, 38, 48];
       tags = ['Digital Radiograph', 'Panoramic OPG', 'Bone Assessment'];
-      extractedText = `DIGITAL PANORAMIC SYSTEM - DALISAY DENTAL STUDIO\nPatient: ${patient.fullName} [${patient.recordNo}]\nkVp: 68 | mA: 8 | Exposure Time: 14.2s\nReport: Alveolar bone crest levels within normal limits. Impacted third molars present.\nRadiologist: Dr. Maria Elena Santos (PRC 0074512)`;
+      extractedText = `DIGITAL PANORAMIC SYSTEM - SAN NICOLAS DENTAL CLINIC\nPatient: ${patient.fullName} [${patient.recordNo}]\nkVp: 68 | mA: 8 | Exposure Time: 14.2s\nReport: Alveolar bone crest levels within normal limits. Impacted third molars present.\nRadiologist: Dr. Maria Elena Santos (PRC 0074512)`;
     } else if (nameLower.includes('consent')) {
       type = 'Consent Form';
       procedureCategory = patient.isMinor ? 'Orthodontics' : 'Oral Surgery';
@@ -174,13 +174,13 @@ export const UploadView: React.FC = () => {
       procedureCategory = 'Restorative';
       toothNumbers = [47];
       tags = ['Prescription Rx', 'Analgesic', 'Antibiotic'];
-      extractedText = `DALISAY DENTAL STUDIO - PRESCRIPTION Rx\nDoctor: Dr. Jose Paolo Reyes, DDM | PRC: 0089123 | PTR: 2026-904123\nPatient: ${patient.fullName} | Date: ${new Date().toISOString().split('T')[0]}\n\nRx: Amoxicillin 500mg capsules #21\nSig: 1 capsule every 8 hours for 7 days.`;
+      extractedText = `SAN NICOLAS DENTAL CLINIC - PRESCRIPTION Rx\nDoctor: Dr. Jose Paolo Reyes, DDM | PRC: 0089123 | PTR: 2026-904123\nPatient: ${patient.fullName} | Date: ${new Date().toISOString().split('T')[0]}\n\nRx: Amoxicillin 500mg capsules #21\nSig: 1 capsule every 8 hours for 7 days.`;
     } else if (nameLower.includes('bill') || nameLower.includes('receipt') || nameLower.includes('or_')) {
       type = 'Billing/Receipt';
       procedureCategory = 'Billing & Administrative';
       toothNumbers = [];
       tags = ['Official Receipt', 'BIR Registered', 'Cash Settlement'];
-      extractedText = `DALISAY DENTAL STUDIO - OFFICIAL RECEIPT\nOR No: 2026-${Math.floor(8000 + Math.random() * 900)}\nReceived from: ${patient.fullName} [${patient.recordNo}]\nAmount: ₱3,500.00 (VAT Inclusive)\nCashier: Mark Vincent Bautista`;
+      extractedText = `SAN NICOLAS DENTAL CLINIC - OFFICIAL RECEIPT\nOR No: 2026-${Math.floor(8000 + Math.random() * 900)}\nReceived from: ${patient.fullName} [${patient.recordNo}]\nAmount: ₱3,500.00 (VAT Inclusive)\nCashier: Mark Vincent Bautista`;
     } else if (nameLower.includes('lab') || nameLower.includes('zirconia')) {
       type = 'Laboratory Report';
       procedureCategory = 'Prosthodontics';
@@ -323,7 +323,7 @@ export const UploadView: React.FC = () => {
           Upload & Inspect Clinical Document
         </h1>
         <p className="text-sm text-slate-500 mt-0.5">
-          Drop any scan or radiograph. DentDocs extracts text, auto-classifies the document, checks
+          Drop any scan or radiograph. San Nicolas Dental Clinic extracts text, auto-classifies the document, checks
           completeness, and requires staff confirmation before saving.
         </p>
 

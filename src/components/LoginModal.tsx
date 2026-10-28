@@ -73,7 +73,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
         <div className="mb-6">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-teal-700 mb-1">
-            <span>DentDocs Role Switcher</span>
+            <span>San Nicolas Role Switcher</span>
             <span aria-hidden="true">·</span>
             <span>Demo Mode</span>
           </div>
@@ -81,7 +81,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
             Select Staff Persona for Demo Testing
           </h2>
           <p className="text-xs text-slate-500 mt-1">
-            Experience DentDocs from the perspective of each clinic role to test access boundaries,
+            Experience San Nicolas Dental Clinic from the perspective of each clinic role to test access boundaries,
             permissions, and workflows.
           </p>
         </div>
@@ -153,7 +153,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-          <span>Dalisay Dental Studio · Manila, Philippines</span>
+          <span>San Nicolas Dental Clinic</span>
           <span>Fictional Clinic Demo</span>
         </div>
       </div>

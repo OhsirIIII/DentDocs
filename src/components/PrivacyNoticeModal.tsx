@@ -49,7 +49,7 @@ export const PrivacyNoticeModal: React.FC<PrivacyNoticeModalProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-teal-700 mb-1">
-              <span>Dalisay Dental Studio</span>
+              <span>San Nicolas Dental Clinic</span>
               <span aria-hidden="true">·</span>
               <span>Data Privacy Notice</span>
             </div>
@@ -57,7 +57,7 @@ export const PrivacyNoticeModal: React.FC<PrivacyNoticeModalProps> = ({
               Patient Record Confidentiality Notice
             </h1>
             <p className="text-xs text-slate-500 mt-1">
-              Required before accessing DentDocs — Republic Act 10173 (Data Privacy Act of 2012)
+              Required before accessing San Nicolas Dental Clinic — Republic Act 10173 (Data Privacy Act of 2012)
             </p>
           </div>
         </div>

@@ -25,7 +25,7 @@ const RAW_MOCK_DOCUMENTS: Omit<DentalDocument, 'version' | 'versionStatus' | 've
     },
     completenessStatus: 'complete',
     missingFields: [],
-    extractedText: `DALISAY DENTAL STUDIO
+    extractedText: `SAN NICOLAS DENTAL CLINIC
 Metro Manila, Philippines | PRC Accreditation: 0000000 | TIN: 000-000-000-000
 PATIENT CLINICAL RECORD & HARD TISSUE CHARTING
 Patient: Juan Miguel Dela Cruz (38 M) | Record No: PT-2026-0001
@@ -115,7 +115,7 @@ Signed: Dr. Maria Elena Santos, Radiologist (PRC 0074512)`,
     },
     completenessStatus: 'complete',
     missingFields: [],
-    extractedText: `DALISAY DENTAL STUDIO - COMPREHENSIVE TREATMENT ESTIMATE
+    extractedText: `SAN NICOLAS DENTAL CLINIC - COMPREHENSIVE TREATMENT ESTIMATE
 Record: PT-2026-0001 | Patient: Juan Miguel Dela Cruz | Date: 18 Oct 2026
 
 Phase 1: Urgent Care & Restorative
@@ -164,7 +164,7 @@ Attending Dentist: Dr. Jose Paolo Reyes (PRC 0089123)`,
       'Date of Guardian Witness Signing',
     ],
     extractedText: `INFORMED CONSENT FOR ORTHODONTIC APPLIANCE THERAPY
-Dalisay Dental Studio | Patient Record No: PT-2026-0006
+San Nicolas Dental Clinic | Patient Record No: PT-2026-0006
 Patient Name: Chloe Danielle Lim | Age: 14 | DOB: 19-Jul-2012
 
 PROCEDURE: Comprehensive fixed orthodontic bracket placement (Upper & Lower Arch)
@@ -208,7 +208,7 @@ Staff Witness: Carla Mendoza, RDA`,
     },
     completenessStatus: 'complete',
     missingFields: [],
-    extractedText: `DALISAY DENTAL STUDIO - OFFICIAL RECEIPT
+    extractedText: `SAN NICOLAS DENTAL CLINIC - OFFICIAL RECEIPT
 BIR Authority to Print No. 2024-00129-PH | TIN: 000-000-000-000 VAT Reg.
 OR No: 2026-8812 | Date: 18-Oct-2026
 Received from: Juan Miguel Dela Cruz (PT-2026-0001)
@@ -255,7 +255,7 @@ Cashier: Mark Vincent Bautista`,
     completenessStatus: 'complete',
     missingFields: [],
     extractedText: `APPOINTMENT CONFIRMATION SLIP
-Dalisay Dental Studio, Unit 3A Medical Plaza, Metro Manila
+San Nicolas Dental Clinic, Unit 3A Medical Plaza, Metro Manila
 Patient: Juan Miguel Dela Cruz | Record: PT-2026-0001 | Phone: +63 917 555 0114
 Next Visit: Wednesday, 04 November 2026 at 10:30 AM
 Reserved Operatory: Chair 2 (Dr. Jose Paolo Reyes)
@@ -295,7 +295,7 @@ Notes: "Paki-advise pasyente mag-almusal bago pumunta."`,
       'Dentist PTR Number for current fiscal year',
       'Prescriber S2 Narcotics License (if tramadol/narcotic compound is indicated)',
     ],
-    extractedText: `DALISAY DENTAL CLINIC - PRESCRIPTION Rx
+    extractedText: `SAN NICOLAS DENTAL CLINIC - PRESCRIPTION Rx
 Doctor: Dr. Jose Paolo Reyes, DDM
 PRC No: [BLANK / UNREADABLE] | PTR No: [NOT STAMPED] | S2 No: [NONE]
 Patient: Juan Miguel Dela Cruz | Age: 38 | Date: 18/10/2026
@@ -348,7 +348,7 @@ Dentist Signature: [Digital Scribble present, but License credentials missing]`,
     },
     completenessStatus: 'complete',
     missingFields: [],
-    extractedText: `DALISAY DENTAL STUDIO - ESTHETIC RESTORATIVE WORKUP
+    extractedText: `SAN NICOLAS DENTAL CLINIC - ESTHETIC RESTORATIVE WORKUP
 Patient: Maria Carmela Santos | Record: PT-2026-0002 | Date: 22-Oct-2026
 Attending Dentist: Dr. Jose Paolo Reyes (PRC 0089123)
 
@@ -432,7 +432,7 @@ Findings:
     completenessStatus: 'complete',
     missingFields: [],
     extractedText: `MANILA PRECISION DENTAL CERAMICS LAB
-Work Order No: LAB-2026-4412 | Client: Dalisay Dental Studio
+Work Order No: LAB-2026-4412 | Client: San Nicolas Dental Clinic
 Patient: Maria Carmela Santos [PT-2026-0002]
 Dentist: Dr. Jose Paolo Reyes
 
@@ -474,7 +474,7 @@ Technician: Edgardo Villanueva, Certified Dental Technologist`,
     missingFields: [],
     extractedText: `INFORMED CONSENT FOR COSMETIC DENTAL RESTORATION
 (Pahintulot para sa Pagsasaayos at Pagpapaganda ng Ngipin)
-Dalisay Dental Studio | Patient Record: PT-2026-0002
+San Nicolas Dental Clinic | Patient Record: PT-2026-0002
 Patient: Maria Carmela Santos | Gov ID: PhilID 4410-9982-1234
 
 1. Naipaliwanag ang mga hakbang sa enamel micro-reduction at bonding.
@@ -515,7 +515,7 @@ Dentist: Dr. Jose Paolo Reyes (PRC 0089123)`,
       'Line-Item Cost Breakdown (Missing laboratory & chairside fee quotes)',
       'Patient Financial Agreement Signature',
     ],
-    extractedText: `DALISAY DENTAL CLINIC - PROSTHODONTIC TREATMENT PROPOSAL
+    extractedText: `SAN NICOLAS DENTAL CLINIC - PROSTHODONTIC TREATMENT PROPOSAL
 Patient: Ramon Castillo | Record: PT-2026-0010
 Date: [MISSING / UNDATED]
 
@@ -602,7 +602,7 @@ Signed: Dr. Roberto Alcantara, FPCC, Cardiologist (PRC 0061245)`,
     },
     completenessStatus: 'complete',
     missingFields: [],
-    extractedText: `DALISAY DENTAL STUDIO - OFFICIAL RECEIPT
+    extractedText: `SAN NICOLAS DENTAL CLINIC - OFFICIAL RECEIPT
 TIN: 000-000-000-000 VAT Reg. | OR No: 2026-8790 | Date: 14/10/2026
 Customer: Rafael Emilio Tan (PT-2026-0003)
 
@@ -687,7 +687,7 @@ Examining Clinician: Dr. Jose Paolo Reyes (PRC 0089123)`,
     },
     completenessStatus: 'complete',
     missingFields: [],
-    extractedText: `DALISAY DENTAL STUDIO - RX
+    extractedText: `SAN NICOLAS DENTAL CLINIC - RX
 Doctor: Dr. Jose Paolo Reyes, DDM | PRC: 0089123 | PTR: 2026-904123 | S2: N/A
 Patient: Rafael Emilio Tan | Record: PT-2026-0003 | Date: 14/10/2026
 
@@ -738,7 +738,7 @@ Signature: Dr. Jose Paolo Reyes`,
     completenessStatus: 'complete',
     missingFields: [],
     extractedText: `IN-OFFICE POWER BLEACHING CONSENT FORM
-Dalisay Dental Studio | Patient: Bea Sophia Aquino (PT-2026-0004)
+San Nicolas Dental Clinic | Patient: Bea Sophia Aquino (PT-2026-0004)
 Date: 20-Oct-2026
 
 Procedures & Risks:
@@ -782,7 +782,7 @@ Dentist: Dr. Jose Paolo Reyes (PRC 0089123)`,
       'Clinical Diagnostic Impression / Radiographic Findings Summary',
     ],
     extractedText: `EMERGENCY RADIOGRAPHY SLIP - DIGITAL RAW EXPOSURE
-Facility: Dalisay Dental Studio | Exposure Log: EXP-2026-10-99
+Facility: San Nicolas Dental Clinic | Exposure Log: EXP-2026-10-99
 Patient: Mateo Jose Reyes [PT-2026-0007] | Date: 12-Oct-2026
 Target Teeth: [NOT SPECIFIED ON REQUISITION FORM - LOWER ANTERIOR REGION]
 kVp: 65 | mA: 7 | Exposure: 0.12 sec
@@ -824,7 +824,7 @@ Radiologist Signature: [MISSING]`,
     completenessStatus: 'complete',
     missingFields: [],
     extractedText: `DENTAL TRAUMA LOG SHEET
-Dalisay Dental Studio | Patient: Mateo Jose Reyes | Record: PT-2026-0007
+San Nicolas Dental Clinic | Patient: Mateo Jose Reyes | Record: PT-2026-0007
 Date of Trauma: 12-Oct-2026 | Date of Exam: 12-Oct-2026
 Chief Complaint: "Napatid sa laro, tumama ang baba sa court. Masakit ang ngipin sa harap."
 
@@ -863,7 +863,7 @@ EXAMINATION:
     },
     completenessStatus: 'complete',
     missingFields: [],
-    extractedText: `APPOINTMENT CARD - DALISAY DENTAL STUDIO
+    extractedText: `APPOINTMENT CARD - SAN NICOLAS DENTAL CLINIC
 Patient: Mateo Jose Reyes (PT-2026-0007)
 Date Scheduled: 26 October 2026 at 2:00 PM
 Procedure: Flexible wire-composite splint debonding and repeat pulp vitality testing on 31, 41.`,
@@ -899,7 +899,7 @@ Procedure: Flexible wire-composite splint debonding and repeat pulp vitality tes
     missingFields: [],
     extractedText: `CERAMIC MASTERS DENTAL LABORATORY PHILIPPINES
 Quality Certification No: QC-2026-8910
-Clinician: Dr. Jose Paolo Reyes | Clinic: Dalisay Dental Studio
+Clinician: Dr. Jose Paolo Reyes | Clinic: San Nicolas Dental Clinic
 Patient: Gabriel Dizon [PT-2026-0005]
 
 Case Details:
@@ -939,7 +939,7 @@ Certified by: Noel Bautista, RDT`,
     },
     completenessStatus: 'complete',
     missingFields: [],
-    extractedText: `DALISAY DENTAL CLINIC - TREATMENT ROADMAP
+    extractedText: `SAN NICOLAS DENTAL CLINIC - TREATMENT ROADMAP
 Patient: Gabriel Dizon | Record: PT-2026-0005 | Date: 09/10/2026
 Procedures Scheduled:
 1. Delivery and torquing of implant crown 46 (30 Ncm) + PTFE and composite access closure.
@@ -1021,7 +1021,7 @@ Clinical Steps Performed:
       'BIR Registered TIN Stamp / Cashier Validation',
       'Proof of Final Payment Settlement',
     ],
-    extractedText: `DALISAY DENTAL CLINIC - STATEMENT OF ACCOUNT
+    extractedText: `SAN NICOLAS DENTAL CLINIC - STATEMENT OF ACCOUNT
 [PROVISIONAL / NOT AN OFFICIAL RECEIPT]
 OR Number: [MISSING - NOT ISSUED] | BIR TIN: [UNSTAMPED]
 Customer: Gabriel Dizon (PT-2026-0005) | Date: 09-Oct-2026
@@ -1064,7 +1064,7 @@ Front Desk Note: "Cheque handed by patient to be cleared on Monday. Do not issue
     },
     completenessStatus: 'complete',
     missingFields: [],
-    extractedText: `DALISAY DENTAL STUDIO - ORTHODONTIC CEPHALOMETRIC LOG
+    extractedText: `SAN NICOLAS DENTAL CLINIC - ORTHODONTIC CEPHALOMETRIC LOG
 Patient: Chloe Danielle Lim | Age: 14 | Record: PT-2026-0006 | Date: 24/10/2026
 Accompanying Parent: Mrs. Teresa Lim (Mother)
 
@@ -1146,7 +1146,7 @@ Doctor: Dr. Maria Elena Santos, Radiologist (PRC 0074512)`,
     },
     completenessStatus: 'complete',
     missingFields: [],
-    extractedText: `DALISAY DENTAL CLINIC - RX
+    extractedText: `SAN NICOLAS DENTAL CLINIC - RX
 Doctor: Dr. Jose Paolo Reyes | PRC: 0089123 | PTR: 2026-904123
 Patient: Alyssa Marie Flores | Record: PT-2026-0008 | Date: 15/10/2026
 CRITICAL MEDICAL ALERT: G6PD Deficiency (Patient cannot take sulfonamides, aspirin, or primaquine)
@@ -1196,7 +1196,7 @@ Signature: Dr. Jose Paolo Reyes`,
     },
     completenessStatus: 'complete',
     missingFields: [],
-    extractedText: `APPOINTMENT SLIP - DALISAY DENTAL STUDIO
+    extractedText: `APPOINTMENT SLIP - SAN NICOLAS DENTAL CLINIC
 Patient: Joshua Bautista | Record: PT-2026-0009 | Date: 11-10-2026
 Scheduled Date: Thursday, 05 November 2026 at 3:00 PM
 Procedure: Tooth 47 Full Zirconia Crown Tooth Preparation & Digital Intraoral Scan
@@ -1231,7 +1231,7 @@ SPECIAL NOTICE: Non-latex nitrile gloves and non-latex rubber dam only.`,
     },
     completenessStatus: 'complete',
     missingFields: [],
-    extractedText: `DALISAY DENTAL STUDIO - OFFICIAL RECEIPT
+    extractedText: `SAN NICOLAS DENTAL CLINIC - OFFICIAL RECEIPT
 TIN: 000-000-000-000 VAT Reg. | OR No: 2026-8845 | Date: 23-Oct-2026
 Customer: Sofia Isabel Navarro (PT-2026-0012)
 HMO Provider: PacificCare HMO Philippines (Member ID: PC-881299-01)
@@ -1277,7 +1277,7 @@ Cashier: Mark Vincent Bautista`,
     completenessStatus: 'complete',
     missingFields: [],
     extractedText: `INFORMED CONSENT FOR SURGICAL ODONTECTOMY
-Dalisay Dental Studio, Metro Manila | Patient: Joaquin Lorenzo Perez [PT-2026-0011]
+San Nicolas Dental Clinic, Metro Manila | Patient: Joaquin Lorenzo Perez [PT-2026-0011]
 Date: 17/10/2026 | Age: 22
 
 PROCEDURE: Surgical removal of impacted lower third molars (Teeth 38, 48)
@@ -1307,7 +1307,7 @@ export const MOCK_DOCUMENTS: DentalDocument[] = RAW_MOCK_DOCUMENTS.map((doc) => 
           fileType: 'PDF',
           fileSize: '1.2 MB',
           title: 'Comprehensive Initial Dental Examination Chart (Preliminary Draft)',
-          extractedText: `DALISAY DENTAL STUDIO\nPRELIMINARY INTAKE RECORD\nPatient: Juan Miguel Dela Cruz (PT-2026-0001)\nDate of Examination: 18/10/2026\nTooth 47 occlusal caries. PSR scores and third molar impactions not yet fully annotated.`,
+          extractedText: `SAN NICOLAS DENTAL CLINIC\nPRELIMINARY INTAKE RECORD\nPatient: Juan Miguel Dela Cruz (PT-2026-0001)\nDate of Examination: 18/10/2026\nTooth 47 occlusal caries. PSR scores and third molar impactions not yet fully annotated.`,
           toothNumbers: [47],
           procedureCategory: 'Restorative',
           tags: ['Initial Exam', 'Draft Intake'],
@@ -1335,7 +1335,7 @@ export const MOCK_DOCUMENTS: DentalDocument[] = RAW_MOCK_DOCUMENTS.map((doc) => 
           fileType: 'PDF',
           fileSize: '1.9 MB',
           title: 'Esthetic Anterior Smile Assessment & Shade Mapping (Initial Scan)',
-          extractedText: `DALISAY DENTAL STUDIO - ESTHETIC RESTORATIVE WORKUP\nPatient: Maria Carmela Santos (PT-2026-0002)\nBaseline Vita shade: A3 body. Chipping on incisal edges 11, 21.`,
+          extractedText: `SAN NICOLAS DENTAL CLINIC - ESTHETIC RESTORATIVE WORKUP\nPatient: Maria Carmela Santos (PT-2026-0002)\nBaseline Vita shade: A3 body. Chipping on incisal edges 11, 21.`,
           toothNumbers: [11, 21],
           procedureCategory: 'Restorative',
           tags: ['Esthetic Consultation', 'Shade A3'],
