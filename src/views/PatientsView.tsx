@@ -316,70 +316,100 @@ export const PatientsView: React.FC = () => {
               )}
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs divide-y divide-slate-100">
-              {linkedDocs
-                .filter((d) =>
-                  selectedToothFilter ? d.toothNumbers.includes(selectedToothFilter) : true
-                )
-                .map((doc) => (
-                  <div
-                    key={doc.id}
-                    onClick={() => handleOpenDoc(doc.id)}
-                    className="p-4 hover:bg-slate-50 transition-colors cursor-pointer group flex items-center justify-between gap-4"
-                  >
-                    <div className="flex items-start gap-3.5 min-w-0">
-                      <div className="w-9 h-9 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center shrink-0">
-                        <FileText className="w-4 h-4" />
-                      </div>
-                      <div className="min-w-0">
-                        <h3 className="text-sm font-semibold text-slate-900 group-hover:text-teal-800 transition-colors truncate">
-                          {doc.title}
-                        </h3>
-                        <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5 flex-wrap">
-                          <span>{doc.type}</span>
-                          <span aria-hidden="true">·</span>
-                          <span>{doc.procedureCategory}</span>
-                          <span aria-hidden="true">·</span>
-                          <span className="font-mono tabular-nums">{doc.displayDate}</span>
-                          {doc.toothNumbers.length > 0 && (
-                            <>
-                              <span aria-hidden="true">·</span>
-                              <span className="font-mono text-teal-800 font-medium">
-                                Teeth: {doc.toothNumbers.join(', ')}
-                              </span>
-                            </>
-                          )}
+            {(() => {
+              const displayedDocs = linkedDocs.filter((d) =>
+                selectedToothFilter ? d.toothNumbers.includes(selectedToothFilter) : true
+              );
+
+              if (displayedDocs.length === 0) {
+                return (
+                  <div className="bg-white border border-slate-200 rounded-xl p-10 text-center text-sm text-slate-500 shadow-xs">
+                    <FileText className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+                    <p className="font-bold text-slate-800 text-base">
+                      {selectedToothFilter
+                        ? `No documents linked to FDI Tooth ${selectedToothFilter}`
+                        : 'No documents filed for this patient record yet'}
+                    </p>
+                    <p className="text-xs text-slate-500 mt-1 mb-4 max-w-sm mx-auto">
+                      {selectedToothFilter
+                        ? `There are no radiograph scans, clinical notes, or treatments specifically tagged for tooth #${selectedToothFilter}.`
+                        : currentUser.role === 'front_desk'
+                        ? 'No billing receipts or appointment slips are currently available for this patient.'
+                        : 'Upload the first clinical chart, consent form, or radiograph for this patient.'}
+                    </p>
+                    {selectedToothFilter ? (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedToothFilter(null)}
+                        className="px-4 py-2 text-xs font-semibold text-teal-800 bg-teal-50 hover:bg-teal-100 border border-teal-200 rounded-xl transition-colors cursor-pointer"
+                      >
+                        Clear Tooth Filter
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleUploadForPatient(activePatient.id)}
+                        className="px-4 py-2 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1.5"
+                      >
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>Upload Document for {activePatient.fullName}</span>
+                      </button>
+                    )}
+                  </div>
+                );
+              }
+
+              return (
+                <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs divide-y divide-slate-100">
+                  {displayedDocs.map((doc) => (
+                    <div
+                      key={doc.id}
+                      onClick={() => handleOpenDoc(doc.id)}
+                      className="p-4 hover:bg-slate-50 transition-colors cursor-pointer group flex items-center justify-between gap-4"
+                    >
+                      <div className="flex items-start gap-3.5 min-w-0">
+                        <div className="w-9 h-9 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center shrink-0">
+                          <FileText className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="text-sm font-semibold text-slate-900 group-hover:text-teal-800 transition-colors truncate">
+                            {doc.title}
+                          </h3>
+                          <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5 flex-wrap">
+                            <span>{doc.type}</span>
+                            <span aria-hidden="true">·</span>
+                            <span>{doc.procedureCategory}</span>
+                            <span aria-hidden="true">·</span>
+                            <span className="font-mono tabular-nums">{doc.displayDate}</span>
+                            {doc.toothNumbers.length > 0 && (
+                              <>
+                                <span aria-hidden="true">·</span>
+                                <span className="font-mono text-teal-800 font-medium">
+                                  Teeth: {doc.toothNumbers.join(', ')}
+                                </span>
+                              </>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="flex items-center gap-3 shrink-0">
-                      {doc.completenessStatus === 'incomplete' ? (
-                        <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-800 font-semibold border border-amber-200">
-                          Incomplete ({doc.missingFields.length})
-                        </span>
-                      ) : (
-                        <span className="text-[11px] text-emerald-700 font-medium flex items-center gap-1">
-                          <CheckCircle className="w-3 h-3" /> Complete
-                        </span>
-                      )}
-                      <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-teal-700 group-hover:translate-x-0.5 transition-all" />
+                      <div className="flex items-center gap-3 shrink-0">
+                        {doc.completenessStatus === 'incomplete' ? (
+                          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-800 font-semibold border border-amber-200">
+                            Incomplete ({doc.missingFields.length})
+                          </span>
+                        ) : (
+                          <span className="text-[11px] text-emerald-700 font-medium flex items-center gap-1">
+                            <CheckCircle className="w-3 h-3" /> Complete
+                          </span>
+                        )}
+                        <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-teal-700 group-hover:translate-x-0.5 transition-all" />
+                      </div>
                     </div>
-                  </div>
-                ))}
-
-              {linkedDocs.length === 0 && (
-                <div className="p-8 text-center text-sm text-slate-500">
-                  <FileText className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                  <p className="font-medium text-slate-700">No documents accessible</p>
-                  <p className="text-xs text-slate-500 mt-1">
-                    {currentUser.role === 'front_desk'
-                      ? 'No billing or appointment slips on file for this patient.'
-                      : 'Upload the first clinical document for this patient above.'}
-                  </p>
+                  ))}
                 </div>
-              )}
-            </div>
+              );
+            })()}
           </div>
         </div>
       ) : (
@@ -407,98 +437,115 @@ export const PatientsView: React.FC = () => {
             </div>
           </div>
 
-          {/* Directory Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredPatients.map((patient) => {
-              const docCount = visibleDocuments.filter((d) => d.patientId === patient.id).length;
-              const hasIncomplete = visibleDocuments.some(
-                (d) => d.patientId === patient.id && d.completenessStatus === 'incomplete'
-              );
-              const activeAlerts = alerts.filter((a) => a.patientId === patient.id);
+          {/* Directory Cards Grid or Empty State */}
+          {filteredPatients.length === 0 ? (
+            <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center text-sm text-slate-500 max-w-lg mx-auto shadow-xs">
+              <User className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+              <p className="font-bold text-slate-800 text-base">No patient records found</p>
+              <p className="text-xs text-slate-500 mt-1 mb-4">
+                No registered patient matches "{searchQuery}". Check the spelling or search by patient record number (e.g. PT-2026-0001).
+              </p>
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="px-4 py-2 text-xs font-semibold text-teal-800 bg-teal-50 hover:bg-teal-100 border border-teal-200 rounded-xl transition-colors cursor-pointer"
+              >
+                Clear Search Query
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredPatients.map((patient) => {
+                const docCount = visibleDocuments.filter((d) => d.patientId === patient.id).length;
+                const hasIncomplete = visibleDocuments.some(
+                  (d) => d.patientId === patient.id && d.completenessStatus === 'incomplete'
+                );
+                const activeAlerts = alerts.filter((a) => a.patientId === patient.id);
 
-              return (
-                <div
-                  key={patient.id}
-                  onClick={() => setSelectedPatientId(patient.id)}
-                  className="bg-white border border-slate-200 hover:border-teal-300 rounded-xl p-5 transition-all cursor-pointer group shadow-xs hover:shadow-sm"
-                >
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 font-bold flex items-center justify-center shrink-0 text-sm">
-                        {patient.fullName
-                          .split(' ')
-                          .map((n) => n[0])
-                          .slice(0, 2)
-                          .join('')}
+                return (
+                  <div
+                    key={patient.id}
+                    onClick={() => setSelectedPatientId(patient.id)}
+                    className="bg-white border border-slate-200 hover:border-teal-300 rounded-xl p-5 transition-all cursor-pointer group shadow-xs hover:shadow-sm"
+                  >
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 font-bold flex items-center justify-center shrink-0 text-sm">
+                          {patient.fullName
+                            .split(' ')
+                            .map((n) => n[0])
+                            .slice(0, 2)
+                            .join('')}
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-slate-900 group-hover:text-teal-800 transition-colors">
+                            {patient.fullName}
+                          </h3>
+                          <p className="text-xs font-mono text-slate-500">{patient.recordNo}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-slate-900 group-hover:text-teal-800 transition-colors">
-                          {patient.fullName}
-                        </h3>
-                        <p className="text-xs font-mono text-slate-500">{patient.recordNo}</p>
+
+                      <div className="flex flex-col items-end gap-1 shrink-0">
+                        {activeAlerts.length > 0 && (
+                          <span
+                            title={activeAlerts[0].title}
+                            className="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-50 text-rose-800 font-bold border border-rose-200 shrink-0 flex items-center gap-1"
+                          >
+                            <AlertTriangle className="w-3 h-3 text-rose-600" />
+                            <span>Alert ({activeAlerts.length})</span>
+                          </span>
+                        )}
+                        {hasIncomplete && activeAlerts.length === 0 && (
+                          <span
+                            title="Contains document with missing required items"
+                            className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-800 font-semibold border border-amber-200 shrink-0"
+                          >
+                            Action Needed
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    <div className="flex flex-col items-end gap-1 shrink-0">
-                      {activeAlerts.length > 0 && (
-                        <span
-                          title={activeAlerts[0].title}
-                          className="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-50 text-rose-800 font-bold border border-rose-200 shrink-0 flex items-center gap-1"
-                        >
-                          <AlertTriangle className="w-3 h-3 text-rose-600" />
-                          <span>Alert ({activeAlerts.length})</span>
-                        </span>
-                      )}
-                      {hasIncomplete && activeAlerts.length === 0 && (
-                        <span
-                          title="Contains document with missing required items"
-                          className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-800 font-semibold border border-amber-200 shrink-0"
-                        >
-                          Action Needed
-                        </span>
-                      )}
+                    {/* Demographic & Contact */}
+                    <div className="space-y-1 text-xs text-slate-600 mb-4">
+                      <p className="flex items-center gap-1.5 truncate">
+                        <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span className="font-mono">{patient.phone}</span>
+                      </p>
+                      <p className="flex items-center gap-1.5 truncate">
+                        <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span className="truncate">{patient.address}</span>
+                      </p>
+                    </div>
+
+                    {/* Medical Alert tags if any */}
+                    {patient.medicalAlerts.length > 0 && (
+                      <div className="mb-4 flex flex-wrap gap-1">
+                        {patient.medicalAlerts.map((m, idx) => (
+                          <span
+                            key={idx}
+                            className="text-[10px] px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 font-medium truncate max-w-full"
+                          >
+                            {m}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Footer Stats */}
+                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                      <span>
+                        <strong className="text-slate-800 font-semibold">{docCount}</strong> linked docs
+                      </span>
+                      <span className="text-teal-700 font-medium group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
+                        Open Record <ChevronRight className="w-3.5 h-3.5" />
+                      </span>
                     </div>
                   </div>
-
-                  {/* Demographic & Contact */}
-                  <div className="space-y-1 text-xs text-slate-600 mb-4">
-                    <p className="flex items-center gap-1.5 truncate">
-                      <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span className="font-mono">{patient.phone}</span>
-                    </p>
-                    <p className="flex items-center gap-1.5 truncate">
-                      <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span className="truncate">{patient.address}</span>
-                    </p>
-                  </div>
-
-                  {/* Medical Alert tags if any */}
-                  {patient.medicalAlerts.length > 0 && (
-                    <div className="mb-4 flex flex-wrap gap-1">
-                      {patient.medicalAlerts.map((m, idx) => (
-                        <span
-                          key={idx}
-                          className="text-[10px] px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 font-medium truncate max-w-full"
-                        >
-                          {m}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Footer Stats */}
-                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                    <span>
-                      <strong className="text-slate-800 font-semibold">{docCount}</strong> linked docs
-                    </span>
-                    <span className="text-teal-700 font-medium group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
-                      Open Record <ChevronRight className="w-3.5 h-3.5" />
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
     </div>

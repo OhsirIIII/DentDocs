@@ -10,6 +10,7 @@ import {
   ArrowRight,
   CheckCircle,
   FileSearch,
+  ShieldCheck,
 } from 'lucide-react';
 
 export const DashboardView: React.FC = () => {
@@ -76,7 +77,7 @@ export const DashboardView: React.FC = () => {
       </div>
 
       {/* Clinical & Missing Document Alerts Section */}
-      {alerts.length > 0 && (
+      {alerts.length > 0 ? (
         <div className="bg-white border border-rose-200/90 rounded-2xl p-5 shadow-xs space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-rose-100 pb-3">
             <div className="flex items-center gap-2.5">
@@ -181,6 +182,33 @@ export const DashboardView: React.FC = () => {
               </div>
             ))}
           </div>
+        </div>
+      ) : (
+        <div className="bg-white border border-emerald-200 rounded-2xl p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-200">
+              <ShieldCheck className="w-5 h-5 text-emerald-600" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-sm font-bold text-slate-900">
+                  No Active Clinical or Compliance Alerts
+                </h2>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-200">
+                  All Clear
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                All scheduled procedures have signed consent forms, valid medical clearances, and recent radiographs.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => navigateTo('patients')}
+            className="px-3.5 py-2 text-xs font-semibold text-teal-800 bg-teal-50 hover:bg-teal-100 border border-teal-200 rounded-xl transition-colors shrink-0 cursor-pointer"
+          >
+            Review Patient Vault
+          </button>
         </div>
       )}
 
@@ -300,7 +328,14 @@ export const DashboardView: React.FC = () => {
               <div className="bg-white border border-slate-200 rounded-xl p-6 text-center text-sm text-slate-500">
                 <CheckCircle className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
                 <p className="font-semibold text-slate-800">All documents complete!</p>
-                <p className="text-xs text-slate-500 mt-1">No missing signatures or fields detected.</p>
+                <p className="text-xs text-slate-500 mt-1 mb-3">No missing signatures or fields detected.</p>
+                <button
+                  type="button"
+                  onClick={() => navigateTo('search', { filterStatus: 'complete' })}
+                  className="px-3.5 py-1.5 text-xs font-semibold text-teal-800 bg-teal-50 hover:bg-teal-100 border border-teal-200 rounded-lg transition-colors cursor-pointer"
+                >
+                  Browse Completed Records
+                </button>
               </div>
             ) : (
               incompleteDocs.map((doc) => (
@@ -372,64 +407,81 @@ export const DashboardView: React.FC = () => {
           </div>
 
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs divide-y divide-slate-100">
-            {recentDocs.map((doc) => (
-              <div
-                key={doc.id}
-                onClick={() => handleOpenDoc(doc.id, doc.patientId)}
-                className="p-4 hover:bg-slate-50/80 transition-colors cursor-pointer group flex items-center justify-between gap-4"
-              >
-                <div className="flex items-start gap-3.5 min-w-0">
-                  <div
-                    className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
-                      doc.type === 'X-ray'
-                        ? 'bg-neutral-900 text-teal-400'
-                        : doc.type === 'Billing/Receipt'
-                        ? 'bg-emerald-50 text-emerald-700'
-                        : doc.type === 'Prescription'
-                        ? 'bg-indigo-50 text-indigo-700'
-                        : doc.type === 'Consent Form'
-                        ? 'bg-amber-50 text-amber-700'
-                        : 'bg-teal-50 text-teal-700'
-                    }`}
-                  >
-                    <FileText className="w-4 h-4" />
-                  </div>
+            {recentDocs.length === 0 ? (
+              <div className="p-8 text-center text-sm text-slate-500">
+                <FileText className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                <p className="font-semibold text-slate-800">No documents found in vault</p>
+                <p className="text-xs text-slate-500 mt-1 mb-3">
+                  Upload a dental record or receipt to begin building your clinical archive.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => navigateTo('upload')}
+                  className="px-3.5 py-1.5 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-lg transition-colors cursor-pointer"
+                >
+                  Upload First Document
+                </button>
+              </div>
+            ) : (
+              recentDocs.map((doc) => (
+                <div
+                  key={doc.id}
+                  onClick={() => handleOpenDoc(doc.id, doc.patientId)}
+                  className="p-4 hover:bg-slate-50/80 transition-colors cursor-pointer group flex items-center justify-between gap-4"
+                >
+                  <div className="flex items-start gap-3.5 min-w-0">
+                    <div
+                      className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                        doc.type === 'X-ray'
+                          ? 'bg-neutral-900 text-teal-400'
+                          : doc.type === 'Billing/Receipt'
+                          ? 'bg-emerald-50 text-emerald-700'
+                          : doc.type === 'Prescription'
+                          ? 'bg-indigo-50 text-indigo-700'
+                          : doc.type === 'Consent Form'
+                          ? 'bg-amber-50 text-amber-700'
+                          : 'bg-teal-50 text-teal-700'
+                      }`}
+                    >
+                      <FileText className="w-4 h-4" />
+                    </div>
 
-                  <div className="min-w-0">
-                    <h3 className="text-sm font-semibold text-slate-900 group-hover:text-teal-800 transition-colors truncate">
-                      {doc.title}
-                    </h3>
-                    {/* Zero-Pill Unboxed Metadata with · separator */}
-                    <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5 flex-wrap">
-                      <span className="font-medium text-slate-700">{doc.patientName}</span>
-                      <span aria-hidden="true">·</span>
-                      <span className="font-mono text-slate-600">{doc.patientRecordNo}</span>
-                      <span aria-hidden="true">·</span>
-                      <span>{doc.type}</span>
-                      <span aria-hidden="true">·</span>
-                      <span className="font-mono tabular-nums">{doc.displayDate}</span>
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-semibold text-slate-900 group-hover:text-teal-800 transition-colors truncate">
+                        {doc.title}
+                      </h3>
+                      {/* Zero-Pill Unboxed Metadata with · separator */}
+                      <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5 flex-wrap">
+                        <span className="font-medium text-slate-700">{doc.patientName}</span>
+                        <span aria-hidden="true">·</span>
+                        <span className="font-mono text-slate-600">{doc.patientRecordNo}</span>
+                        <span aria-hidden="true">·</span>
+                        <span>{doc.type}</span>
+                        <span aria-hidden="true">·</span>
+                        <span className="font-mono tabular-nums">{doc.displayDate}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="text-right shrink-0">
-                  <div className="flex items-center justify-end gap-1.5">
-                    {doc.completenessStatus === 'complete' ? (
-                      <span className="text-[11px] text-emerald-700 font-medium flex items-center gap-1">
-                        <CheckCircle className="w-3 h-3" /> Complete
-                      </span>
-                    ) : (
-                      <span className="text-[11px] text-amber-700 font-medium flex items-center gap-1">
-                        <AlertTriangle className="w-3 h-3" /> Incomplete
-                      </span>
-                    )}
+                  <div className="text-right shrink-0">
+                    <div className="flex items-center justify-end gap-1.5">
+                      {doc.completenessStatus === 'complete' ? (
+                        <span className="text-[11px] text-emerald-700 font-medium flex items-center gap-1">
+                          <CheckCircle className="w-3 h-3" /> Complete
+                        </span>
+                      ) : (
+                        <span className="text-[11px] text-amber-700 font-medium flex items-center gap-1">
+                          <AlertTriangle className="w-3 h-3" /> Incomplete
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[10px] font-mono text-slate-400 mt-1 block">
+                      OCR: {doc.confidenceScore}% conf
+                    </span>
                   </div>
-                  <span className="text-[10px] font-mono text-slate-400 mt-1 block">
-                    OCR: {doc.confidenceScore}% conf
-                  </span>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
 
           {/* Quick upload trigger card */}

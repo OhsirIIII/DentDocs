@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useClinic } from '../context/ClinicContext';
 import {
   DocumentType,
   ProcedureCategory,
   CompletenessStatus,
   DocumentVersion,
+  DentalDocument,
 } from '../types/dental';
 import { DocumentVisualPreview } from '../components/DocumentVisualPreview';
 import { AccessRestricted } from '../components/AccessRestricted';
+import { ConfirmDialog } from '../components/ConfirmDialog';
+import { DocumentViewerSkeleton } from '../components/Skeletons';
+import { fetchDocumentById } from '../data/clinicApi';
 import {
   evaluateDocumentChecklist,
   DOCUMENT_REQUIREMENTS,
@@ -59,7 +63,93 @@ export const DocumentViewerView: React.FC = () => {
     auditLogs,
   } = useClinic();
 
-  const doc = documents.find((d) => d.id === selectedDocumentId) || visibleDocuments[0];
+  const [loadingDoc, setLoadingDoc] = useState(true);
+  const [activeDoc, setActiveDoc] = useState<DentalDocument | null>(null);
+
+  // Sync and route through async data layer
+  useEffect(() => {
+    let isCurrent = true;
+    setLoadingDoc(true);
+    const targetId = selectedDocumentId || visibleDocuments[0]?.id;
+    if (!targetId) {
+      setActiveDoc(null);
+      setLoadingDoc(false);
+      return;
+    }
+
+    fetchDocumentById(targetId, documents, 240).then((found) => {
+      if (isCurrent) {
+        setActiveDoc(found);
+        if (found) {
+          setEditedTitle(found.title);
+          setEditedType(found.type);
+          setEditedProcedure(found.procedureCategory);
+          setEditedTeeth(found.toothNumbers.join(', '));
+          setEditedTags(found.tags);
+          setSaveSuccessMsg(false);
+
+          setRevisedTitle(found.title);
+          setRevisedFileType(found.fileType);
+          setRevisedTeeth(found.toothNumbers.join(', '));
+          setRevisedProcedure(found.procedureCategory);
+          setRevisedTags(found.tags);
+          setRevisedText(found.extractedText);
+          setRevisedChangeSummary('');
+          setRevisedSummaryError('');
+        }
+        setLoadingDoc(false);
+      }
+    });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [selectedDocumentId, documents, visibleDocuments]);
+
+  // Fallback doc for reference before activeDoc resolves
+  const doc = activeDoc;
+
+  // Local state for editing fields
+  const [editedTitle, setEditedTitle] = useState('');
+  const [editedType, setEditedType] = useState<DocumentType>('Patient Record');
+  const [editedProcedure, setEditedProcedure] = useState<ProcedureCategory>('Restorative');
+  const [editedTeeth, setEditedTeeth] = useState<string>('');
+  const [editedTags, setEditedTags] = useState<string[]>([]);
+  const [newTagInput, setNewTagInput] = useState('');
+  const [activeTab, setActiveTab] = useState<'metadata' | 'text' | 'versions' | 'audit'>('metadata');
+  const [saveSuccessMsg, setSaveSuccessMsg] = useState(false);
+  const [isResolveModalOpen, setIsResolveModalOpen] = useState(false);
+  const [resolveNote, setResolveNote] = useState('');
+  const [resolveNoteError, setResolveNoteError] = useState('');
+
+  // Confirmation dialogs
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [isRestoreConfirmOpen, setIsRestoreConfirmOpen] = useState(false);
+
+  // Versioning state
+  const [isUploadRevisionOpen, setIsUploadRevisionOpen] = useState(false);
+  const [revisedTitle, setRevisedTitle] = useState('');
+  const [revisedFileType, setRevisedFileType] = useState<'PDF' | 'JPG' | 'PNG'>('PDF');
+  const [revisedChangeSummary, setRevisedChangeSummary] = useState('');
+  const [revisedSummaryError, setRevisedSummaryError] = useState('');
+  const [revisedTeeth, setRevisedTeeth] = useState('');
+  const [revisedProcedure, setRevisedProcedure] = useState<ProcedureCategory>('Restorative');
+  const [revisedTags, setRevisedTags] = useState<string[]>([]);
+  const [revisedText, setRevisedText] = useState('');
+
+  // Compare versions modal state
+  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
+  const [compareTargetVersion, setCompareTargetVersion] = useState<DocumentVersion | null>(null);
+
+  // Restore version modal state
+  const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
+  const [restoreTargetVersion, setRestoreTargetVersion] = useState<DocumentVersion | null>(null);
+  const [restoreNote, setRestoreNote] = useState('');
+  const [restoreNoteError, setRestoreNoteError] = useState('');
+
+  if (loadingDoc) {
+    return <DocumentViewerSkeleton />;
+  }
 
   // If Front Desk tries to view a clinical document
   if (doc && currentUser.role === 'front_desk' && doc.type !== 'Billing/Receipt' && doc.type !== 'Appointment Record') {
@@ -88,60 +178,6 @@ export const DocumentViewerView: React.FC = () => {
       </div>
     );
   }
-
-  // Local state for editing fields
-  const [editedTitle, setEditedTitle] = useState(doc.title);
-  const [editedType, setEditedType] = useState<DocumentType>(doc.type);
-  const [editedProcedure, setEditedProcedure] = useState<ProcedureCategory>(doc.procedureCategory);
-  const [editedTeeth, setEditedTeeth] = useState<string>(doc.toothNumbers.join(', '));
-  const [editedTags, setEditedTags] = useState<string[]>(doc.tags);
-  const [newTagInput, setNewTagInput] = useState('');
-  const [activeTab, setActiveTab] = useState<'metadata' | 'text' | 'versions' | 'audit'>('metadata');
-  const [saveSuccessMsg, setSaveSuccessMsg] = useState(false);
-  const [isResolveModalOpen, setIsResolveModalOpen] = useState(false);
-  const [resolveNote, setResolveNote] = useState('');
-  const [resolveNoteError, setResolveNoteError] = useState('');
-
-  // Versioning state
-  const [isUploadRevisionOpen, setIsUploadRevisionOpen] = useState(false);
-  const [revisedTitle, setRevisedTitle] = useState(doc.title);
-  const [revisedFileType, setRevisedFileType] = useState<'PDF' | 'JPG' | 'PNG'>(doc.fileType);
-  const [revisedChangeSummary, setRevisedChangeSummary] = useState('');
-  const [revisedSummaryError, setRevisedSummaryError] = useState('');
-  const [revisedTeeth, setRevisedTeeth] = useState(doc.toothNumbers.join(', '));
-  const [revisedProcedure, setRevisedProcedure] = useState<ProcedureCategory>(doc.procedureCategory);
-  const [revisedTags, setRevisedTags] = useState<string[]>(doc.tags);
-  const [revisedText, setRevisedText] = useState(doc.extractedText);
-
-  // Compare versions modal state
-  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
-  const [compareTargetVersion, setCompareTargetVersion] = useState<DocumentVersion | null>(null);
-
-  // Restore version modal state
-  const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
-  const [restoreTargetVersion, setRestoreTargetVersion] = useState<DocumentVersion | null>(null);
-  const [restoreNote, setRestoreNote] = useState('');
-  const [restoreNoteError, setRestoreNoteError] = useState('');
-
-  // Sync when selected doc changes
-  React.useEffect(() => {
-    setEditedTitle(doc.title);
-    setEditedType(doc.type);
-    setEditedProcedure(doc.procedureCategory);
-    setEditedTeeth(doc.toothNumbers.join(', '));
-    setEditedTags(doc.tags);
-    setSaveSuccessMsg(false);
-
-    // Sync revision initial state
-    setRevisedTitle(doc.title);
-    setRevisedFileType(doc.fileType);
-    setRevisedTeeth(doc.toothNumbers.join(', '));
-    setRevisedProcedure(doc.procedureCategory);
-    setRevisedTags(doc.tags);
-    setRevisedText(doc.extractedText);
-    setRevisedChangeSummary('');
-    setRevisedSummaryError('');
-  }, [doc.id]);
 
   // Document navigation index
   const currentIndex = visibleDocuments.findIndex((d) => d.id === doc.id);
@@ -183,14 +219,7 @@ export const DocumentViewerView: React.FC = () => {
   };
 
   const handleDelete = () => {
-    if (confirm(`Are you sure you want to permanently delete "${doc.title}"?`)) {
-      const result = deleteDocument(doc.id);
-      if (result.success) {
-        navigateTo('dashboard');
-      } else {
-        alert(result.reason || 'Failed to delete');
-      }
-    }
+    setIsDeleteConfirmOpen(true);
   };
 
   const docAuditLogs = auditLogs.filter((a) => a.targetId === doc.id);
@@ -1383,11 +1412,7 @@ export const DocumentViewerView: React.FC = () => {
                   setRestoreNoteError('A mandatory clinical or administrative reason is required to roll back a record.');
                   return;
                 }
-
-                restoreVersion(doc.id, restoreTargetVersion.versionNumber, restoreNote.trim());
-                setIsRestoreModalOpen(false);
-                setRestoreTargetVersion(null);
-                setActiveTab('versions');
+                setIsRestoreConfirmOpen(true);
               }}
               className="space-y-4"
             >
@@ -1436,12 +1461,54 @@ export const DocumentViewerView: React.FC = () => {
                   className="px-5 py-2.5 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-xl transition-colors shadow-xs flex items-center gap-1.5"
                 >
                   <RotateCcw className="w-4 h-4" />
-                  <span>Restore & Publish v{doc.version + 1}</span>
+                  <span>Review & Confirm Rollback</span>
                 </button>
               </div>
             </form>
           </div>
         </div>
+      )}
+
+      {/* IN-APP CONFIRMATION DIALOG: Admin-Only Soft Delete (Archive) */}
+      <ConfirmDialog
+        isOpen={isDeleteConfirmOpen}
+        title={`Archive Document "${doc.title}"?`}
+        description="This document will be archived and hidden from active patient vault records, searches, and completion queues."
+        consequenceNote="Admin-Only Soft Delete: The document is retained in the clinic's permanent database and audit history. An Administrator can restore it at any time from the Compliance & Audit Console."
+        confirmLabel="Archive Document"
+        cancelLabel="Keep Document"
+        variant="danger"
+        onCancel={() => setIsDeleteConfirmOpen(false)}
+        onConfirm={() => {
+          setIsDeleteConfirmOpen(false);
+          const result = deleteDocument(doc.id);
+          if (result.success) {
+            navigateTo('dashboard');
+          } else {
+            alert(result.reason || 'Failed to archive document');
+          }
+        }}
+      />
+
+      {/* IN-APP CONFIRMATION DIALOG: Version Restore / Rollback */}
+      {restoreTargetVersion && (
+        <ConfirmDialog
+          isOpen={isRestoreConfirmOpen}
+          title={`Confirm Version Rollback to v${restoreTargetVersion.versionNumber}?`}
+          description={`This action will roll back the document content to historical draft v${restoreTargetVersion.versionNumber} and publish it as active version v${doc.version + 1}. The current version v${doc.version} will be marked as Superseded.`}
+          consequenceNote={`Audit Enforced: The change and your clinical reason ("${restoreNote.trim()}") will be permanently recorded in the clinic audit log. This action can be undone by restoring another version later.`}
+          confirmLabel={`Restore & Publish v${doc.version + 1}`}
+          cancelLabel="Back to Review"
+          variant="warning"
+          onCancel={() => setIsRestoreConfirmOpen(false)}
+          onConfirm={() => {
+            restoreVersion(doc.id, restoreTargetVersion.versionNumber, restoreNote.trim());
+            setIsRestoreConfirmOpen(false);
+            setIsRestoreModalOpen(false);
+            setRestoreTargetVersion(null);
+            setActiveTab('versions');
+          }}
+        />
       )}
     </div>
   );

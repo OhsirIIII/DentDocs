@@ -124,6 +124,10 @@ export interface DentalDocument {
   versionHistory: DocumentVersion[];
   radiographDetails?: RadiographDetails;
   prescriptionDetails?: PrescriptionDetails;
+  // Soft-delete (archive) fields
+  archived?: boolean;
+  archivedBy?: string;
+  archivedAt?: string;
 }
 
 export interface DocumentVersion {
@@ -195,7 +199,10 @@ export interface AuditEntry {
     | 'SEND_TO_REVIEW'
     | 'FLAG_INCOMPLETE'
     | 'VIEW_DOCUMENT'
-    | 'USER_LOGIN';
+    | 'USER_LOGIN'
+    | 'ARCHIVE'
+    | 'RESTORE_ARCHIVE'
+    | 'PRIVACY_ACK';
   targetType: 'DOCUMENT' | 'PATIENT' | 'SYSTEM';
   targetId: string;
   targetTitle: string;

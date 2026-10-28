@@ -43,6 +43,9 @@ interface ClinicContextType {
   addDocument: (doc: DentalDocument) => void;
   updateDocument: (id: string, updates: Partial<DentalDocument>) => void;
   deleteDocument: (id: string) => { success: boolean; reason?: string };
+  archiveDocument: (id: string) => { success: boolean; reason?: string };
+  restoreArchivedDocument: (id: string) => { success: boolean; reason?: string };
+  archivedDocuments: DentalDocument[];
   resolveIncompleteDocument: (docId: string, resolutionNote: string) => void;
   uploadNewVersion: (
     docId: string,
@@ -164,11 +167,16 @@ export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   // Admin: full access + user management + audit log
   const canAccessClinicalDocs = currentUserRole !== 'front_desk';
   const canUploadDocs = true; // all staff can upload files
-  const canDeleteDocs = currentUserRole === 'admin' || currentUserRole === 'dentist';
+  // Only Admins may archive (soft-delete) documents. Dentist role does NOT have delete.
+  const canDeleteDocs = currentUserRole === 'admin';
   const canManageUsersAndAudit = currentUserRole === 'admin';
 
-  // Filter documents visible to the current role
+  // Archived (soft-deleted) documents — Admin-only view
+  const archivedDocuments = documents.filter((doc) => doc.archived === true);
+
+  // Filter documents visible to the current role (archived docs are hidden from all normal lists)
   const visibleDocuments = documents.filter((doc) => {
+    if (doc.archived) return false; // soft-deleted; hide from all normal views
     if (currentUserRole === 'front_desk') {
       return doc.type === 'Billing/Receipt' || doc.type === 'Appointment Record';
     }
@@ -263,22 +271,75 @@ export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!canDeleteDocs) {
       return {
         success: false,
-        reason: 'Permission Denied: Dental Assistants and Front Desk staff cannot delete documents.',
+        reason: 'Permission Denied: Only Admins can archive documents.',
+      };
+    }
+    // Legacy hard-delete kept for context API compatibility; forwards to soft-delete
+    return archiveDocument(id);
+  };
+
+  /**
+   * archiveDocument — Admin-only soft delete.
+   * Sets doc.archived = true and adds an audit entry.
+   * Document is hidden from all normal lists but remains in state and is
+   * restorable by Admin via restoreArchivedDocument.
+   */
+  const archiveDocument = (id: string): { success: boolean; reason?: string } => {
+    if (currentUserRole !== 'admin') {
+      return {
+        success: false,
+        reason: 'Permission Denied: Only Admins can archive documents.',
       };
     }
     const targetDoc = documents.find((d) => d.id === id);
-    if (targetDoc) {
-      setDocuments((prev) => prev.filter((d) => d.id !== id));
-      addAuditLog(
-        'EDIT_METADATA',
-        'DOCUMENT',
-        id,
-        targetDoc.title,
-        `Document permanently removed by ${currentUser.name} (${currentUser.title}).`
-      );
-      return { success: true };
+    if (!targetDoc) return { success: false, reason: 'Document not found' };
+    if (targetDoc.archived) return { success: false, reason: 'Document is already archived.' };
+
+    const timestamp = new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+    setDocuments((prev) =>
+      prev.map((doc) =>
+        doc.id === id
+          ? { ...doc, archived: true, archivedBy: `${currentUser.name} (${currentUser.title})`, archivedAt: timestamp }
+          : doc
+      )
+    );
+    addAuditLog(
+      'ARCHIVE',
+      'DOCUMENT',
+      id,
+      targetDoc.title,
+      `Document "${targetDoc.title}" archived (soft-deleted) by ${currentUser.name} (${currentUser.title}). Document is hidden from normal lists and can be restored by Admin.`
+    );
+    return { success: true };
+  };
+
+  /**
+   * restoreArchivedDocument — Admin-only; reverses an archive action.
+   * Clears doc.archived flag and records an audit entry.
+   */
+  const restoreArchivedDocument = (id: string): { success: boolean; reason?: string } => {
+    if (currentUserRole !== 'admin') {
+      return { success: false, reason: 'Permission Denied: Only Admins can restore archived documents.' };
     }
-    return { success: false, reason: 'Document not found' };
+    const targetDoc = documents.find((d) => d.id === id);
+    if (!targetDoc) return { success: false, reason: 'Document not found' };
+    if (!targetDoc.archived) return { success: false, reason: 'Document is not archived.' };
+
+    setDocuments((prev) =>
+      prev.map((doc) =>
+        doc.id === id
+          ? { ...doc, archived: false, archivedBy: undefined, archivedAt: undefined }
+          : doc
+      )
+    );
+    addAuditLog(
+      'RESTORE_ARCHIVE',
+      'DOCUMENT',
+      id,
+      targetDoc.title,
+      `Archived document "${targetDoc.title}" restored to active records by ${currentUser.name} (${currentUser.title}).`
+    );
+    return { success: true };
   };
 
   const resolveIncompleteDocument = (docId: string, resolutionNote: string) => {
@@ -505,6 +566,9 @@ export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         addDocument,
         updateDocument,
         deleteDocument,
+        archiveDocument,
+        restoreArchivedDocument,
+        archivedDocuments,
         resolveIncompleteDocument,
         uploadNewVersion,
         restoreVersion,

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useClinic } from '../context/ClinicContext';
-import { DocumentType, CompletenessStatus } from '../types/dental';
+import { DocumentType, CompletenessStatus, DentalDocument } from '../types/dental';
+import { searchDocumentsAsync } from '../data/clinicApi';
+import { DocumentListSkeleton } from '../components/Skeletons';
 import {
   Search,
   Filter,
@@ -34,6 +36,9 @@ export const SearchView: React.FC = () => {
   const [selectedDateFilter, setSelectedDateFilter] = useState<string>('ALL');
   const [selectedTooth, setSelectedTooth] = useState<string>('ALL');
 
+  const [results, setResults] = useState<DentalDocument[]>(visibleDocuments);
+  const [isSearching, setIsSearching] = useState(false);
+
   // Sync if context passes initial filters
   useEffect(() => {
     if (searchFilterInitial.query) setQuery(searchFilterInitial.query);
@@ -41,69 +46,40 @@ export const SearchView: React.FC = () => {
     if (searchFilterInitial.status) setSelectedStatus(searchFilterInitial.status);
   }, [searchFilterInitial]);
 
-  // Natural Language Keyword heuristics
-  const queryLower = query.toLowerCase().trim();
+  // Route search through async data layer
+  useEffect(() => {
+    let active = true;
+    setIsSearching(true);
+    searchDocumentsAsync(
+      visibleDocuments,
+      query,
+      {
+        type: selectedType,
+        status: selectedStatus,
+        patientId: selectedPatientId,
+        tooth: selectedTooth,
+        date: selectedDateFilter,
+      },
+      200
+    ).then((res) => {
+      if (active) {
+        setResults(res);
+        setIsSearching(false);
+      }
+    });
 
-  // Filter documents
-  const filteredResults = visibleDocuments.filter((doc) => {
-    // 1. Type filter
-    if (selectedType !== 'ALL' && doc.type !== selectedType) {
-      return false;
-    }
-
-    // 2. Status filter
-    if (selectedStatus !== 'ALL') {
-      if (selectedStatus === 'incomplete' && doc.completenessStatus !== 'incomplete') return false;
-      if (selectedStatus === 'complete' && doc.completenessStatus !== 'complete') return false;
-      if (selectedStatus === 'needs_review' && doc.completenessStatus !== 'needs_review' && doc.confidenceScore >= 85) return false;
-    }
-
-    // 3. Patient filter
-    if (selectedPatientId !== 'ALL' && doc.patientId !== selectedPatientId) {
-      return false;
-    }
-
-    // 4. Tooth number filter
-    if (selectedTooth !== 'ALL') {
-      const toothNum = parseInt(selectedTooth);
-      if (!doc.toothNumbers.includes(toothNum)) return false;
-    }
-
-    // 5. Date filter
-    if (selectedDateFilter === 'OCT_2026') {
-      if (!doc.date.startsWith('2026-10')) return false;
-    }
-
-    // 6. Natural Language Query match
-    if (!queryLower) return true;
-
-    // Smart natural language synonyms:
-    if (queryLower === 'incomplete' || queryLower === 'missing') {
-      return doc.completenessStatus === 'incomplete';
-    }
-    if (queryLower === 'xray' || queryLower === 'radiograph' || queryLower === 'opg') {
-      return doc.type === 'X-ray';
-    }
-    if (queryLower === 'reseta' || queryLower === 'prescription' || queryLower === 'gamot') {
-      return doc.type === 'Prescription';
-    }
-    if (queryLower === 'billing' || queryLower === 'receipt' || queryLower === 'resibo') {
-      return doc.type === 'Billing/Receipt';
-    }
-    if (queryLower === 'consent' || queryLower === 'pahintulot') {
-      return doc.type === 'Consent Form';
-    }
-
-    // Check match against title, patient name, record number, extracted text, and tags
-    const inTitle = doc.title.toLowerCase().includes(queryLower);
-    const inPatient = doc.patientName.toLowerCase().includes(queryLower);
-    const inRecordNo = doc.patientRecordNo.toLowerCase().includes(queryLower);
-    const inText = doc.extractedText.toLowerCase().includes(queryLower);
-    const inTags = doc.tags.some((t) => t.toLowerCase().includes(queryLower));
-    const inTooth = doc.toothNumbers.some((t) => t.toString() === queryLower.replace('tooth', '').trim());
-
-    return inTitle || inPatient || inRecordNo || inText || inTags || inTooth;
-  });
+    return () => {
+      active = false;
+    };
+  }, [
+    visibleDocuments,
+    query,
+    selectedType,
+    selectedStatus,
+    selectedPatientId,
+    selectedTooth,
+    selectedDateFilter,
+  ]);
 
   const handleOpenDoc = (docId: string, patientId: string) => {
     setSelectedDocumentId(docId);
@@ -305,98 +281,111 @@ export const SearchView: React.FC = () => {
       <div className="space-y-4">
         <div className="flex items-center justify-between text-xs text-slate-500">
           <p>
-            Found <strong className="text-slate-900 font-bold font-mono">{filteredResults.length}</strong>{' '}
-            matching document{filteredResults.length === 1 ? '' : 's'}
+            {isSearching ? (
+              <span className="flex items-center gap-2 text-teal-700 font-medium">
+                <span className="w-2 h-2 rounded-full bg-teal-600 animate-ping" />
+                Querying clinic vault...
+              </span>
+            ) : (
+              <>
+                Found <strong className="text-slate-900 font-bold font-mono">{results.length}</strong>{' '}
+                matching document{results.length === 1 ? '' : 's'}
+              </>
+            )}
           </p>
         </div>
 
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs divide-y divide-slate-100">
-          {filteredResults.map((doc) => (
-            <div
-              key={doc.id}
-              onClick={() => handleOpenDoc(doc.id, doc.patientId)}
-              className="p-4 sm:p-5 hover:bg-slate-50/80 transition-colors cursor-pointer group flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-            >
-              <div className="flex items-start gap-4 min-w-0">
-                <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                    doc.type === 'X-ray'
-                      ? 'bg-neutral-900 text-teal-400'
-                      : doc.type === 'Billing/Receipt'
-                      ? 'bg-emerald-50 text-emerald-700'
-                      : doc.type === 'Consent Form'
-                      ? 'bg-amber-50 text-amber-700'
-                      : 'bg-teal-50 text-teal-700'
-                  }`}
-                >
-                  <FileText className="w-5 h-5" />
-                </div>
-
-                <div className="min-w-0 space-y-1">
-                  <div className="flex items-center gap-2 text-xs text-slate-500 flex-wrap">
-                    <span className="font-mono font-medium text-slate-700">
-                      {doc.patientRecordNo}
-                    </span>
-                    <span aria-hidden="true">·</span>
-                    <span className="font-semibold text-slate-800">{doc.patientName}</span>
-                    <span aria-hidden="true">·</span>
-                    <span>{doc.type}</span>
-                    <span aria-hidden="true">·</span>
-                    <span className="font-mono tabular-nums">{doc.displayDate}</span>
+          {isSearching ? (
+            <DocumentListSkeleton count={4} />
+          ) : results.length > 0 ? (
+            results.map((doc) => (
+              <div
+                key={doc.id}
+                onClick={() => handleOpenDoc(doc.id, doc.patientId)}
+                className="p-4 sm:p-5 hover:bg-slate-50/80 transition-colors cursor-pointer group flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+              >
+                <div className="flex items-start gap-4 min-w-0">
+                  <div
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                      doc.type === 'X-ray'
+                        ? 'bg-neutral-900 text-teal-400'
+                        : doc.type === 'Billing/Receipt'
+                        ? 'bg-emerald-50 text-emerald-700'
+                        : doc.type === 'Consent Form'
+                        ? 'bg-amber-50 text-amber-700'
+                        : 'bg-teal-50 text-teal-700'
+                    }`}
+                  >
+                    <FileText className="w-5 h-5" />
                   </div>
 
-                  <h3 className="text-sm font-bold text-slate-900 group-hover:text-teal-800 transition-colors">
-                    {doc.title}
-                  </h3>
-
-                  {/* Snippet preview */}
-                  <p className="text-xs text-slate-500 line-clamp-1">
-                    {doc.extractedText.slice(0, 160)}...
-                  </p>
-
-                  {/* Unboxed tags */}
-                  {doc.tags.length > 0 && (
-                    <div className="flex items-center gap-1.5 text-[11px] text-slate-500 pt-0.5 flex-wrap">
-                      {doc.tags.slice(0, 4).map((t, idx) => (
-                        <span key={idx} className="after:content-['·'] after:ml-1.5 last:after:content-none">
-                          {t}
-                        </span>
-                      ))}
+                  <div className="min-w-0 space-y-1">
+                    <div className="flex items-center gap-2 text-xs text-slate-500 flex-wrap">
+                      <span className="font-mono font-medium text-slate-700">
+                        {doc.patientRecordNo}
+                      </span>
+                      <span aria-hidden="true">·</span>
+                      <span className="font-semibold text-slate-800">{doc.patientName}</span>
+                      <span aria-hidden="true">·</span>
+                      <span>{doc.type}</span>
+                      <span aria-hidden="true">·</span>
+                      <span className="font-mono tabular-nums">{doc.displayDate}</span>
                     </div>
-                  )}
+
+                    <h3 className="text-sm font-bold text-slate-900 group-hover:text-teal-800 transition-colors">
+                      {doc.title}
+                    </h3>
+
+                    {/* Snippet preview */}
+                    <p className="text-xs text-slate-500 line-clamp-1">
+                      {doc.extractedText.slice(0, 160)}...
+                    </p>
+
+                    {/* Unboxed tags */}
+                    {doc.tags.length > 0 && (
+                      <div className="flex items-center gap-1.5 text-[11px] text-slate-500 pt-0.5 flex-wrap">
+                        {doc.tags.slice(0, 4).map((t, idx) => (
+                          <span key={idx} className="after:content-['·'] after:ml-1.5 last:after:content-none">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-0 border-slate-100">
+                  <div className="text-right">
+                    {doc.completenessStatus === 'incomplete' ? (
+                      <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-800 font-semibold border border-amber-200">
+                        Incomplete ({doc.missingFields.length})
+                      </span>
+                    ) : (
+                      <span className="text-[11px] text-emerald-700 font-medium flex items-center gap-1">
+                        <CheckCircle className="w-3 h-3" /> Complete
+                      </span>
+                    )}
+                    <span className="text-[10px] font-mono text-slate-400 block mt-1">
+                      OCR: {doc.confidenceScore}% conf
+                    </span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-teal-700 group-hover:translate-x-0.5 transition-all" />
                 </div>
               </div>
-
-              <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-0 border-slate-100">
-                <div className="text-right">
-                  {doc.completenessStatus === 'incomplete' ? (
-                    <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-800 font-semibold border border-amber-200">
-                      Incomplete ({doc.missingFields.length})
-                    </span>
-                  ) : (
-                    <span className="text-[11px] text-emerald-700 font-medium flex items-center gap-1">
-                      <CheckCircle className="w-3 h-3" /> Complete
-                    </span>
-                  )}
-                  <span className="text-[10px] font-mono text-slate-400 block mt-1">
-                    OCR: {doc.confidenceScore}% conf
-                  </span>
-                </div>
-                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-teal-700 group-hover:translate-x-0.5 transition-all" />
-              </div>
-            </div>
-          ))}
-
-          {filteredResults.length === 0 && (
+            ))
+          ) : (
             <div className="p-12 text-center text-sm text-slate-500">
               <Search className="w-8 h-8 text-slate-300 mx-auto mb-2" />
               <p className="font-semibold text-slate-800">No matching records found</p>
               <p className="text-xs text-slate-500 mt-1 mb-4">
-                Try searching for general terms like "xray", "consent", "receipt", or clearing active filters.
+                {query
+                  ? `No documents matched "${query}". Try searching for general terms like "xray", "consent", "reseta", or clearing active filters.`
+                  : 'No documents match the active filter criteria.'}
               </p>
               <button
                 onClick={resetFilters}
-                className="px-4 py-2 text-xs font-semibold text-teal-800 bg-teal-50 hover:bg-teal-100 rounded-xl transition-colors"
+                className="px-4 py-2 text-xs font-semibold text-teal-800 bg-teal-50 hover:bg-teal-100 border border-teal-200 rounded-xl transition-colors cursor-pointer"
               >
                 Reset All Filters
               </button>

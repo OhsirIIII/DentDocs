@@ -14,14 +14,64 @@ import { DocumentViewerView } from './views/DocumentViewerView';
 import { SearchView } from './views/SearchView';
 import { AuditLogView } from './views/AuditLogView';
 import { IncompleteDocumentsView } from './views/IncompleteDocumentsView';
-import { Users2, Shield, HeartPulse } from 'lucide-react';
+import { PrivacyNoticeModal } from './components/PrivacyNoticeModal';
+import { InactivityWarningBanner } from './components/InactivityWarningBanner';
+import { useInactivityTimer } from './hooks/useInactivityTimer';
 
 function ClinicMainContent() {
-  const { currentScreen, currentUser } = useClinic();
+  const { currentScreen, currentUser, switchRole, navigateTo, addAuditLog } = useClinic();
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(() => {
+    return sessionStorage.getItem('dentdocs_privacy_acknowledged_v1') !== 'true';
+  });
+
+  const handleInactivityLogout = () => {
+    switchRole('front_desk');
+    navigateTo('dashboard');
+    addAuditLog(
+      'USER_LOGIN',
+      'SYSTEM',
+      'front_desk',
+      'Session Timeout',
+      'User automatically downgraded to Front Desk role due to 10 minutes of inactivity.'
+    );
+  };
+
+  const { isWarning, secondsRemaining, resetTimer } = useInactivityTimer({
+    onLogout: handleInactivityLogout,
+    enabled: !showPrivacyModal,
+  });
+
+  const handlePrivacyAccept = () => {
+    sessionStorage.setItem('dentdocs_privacy_acknowledged_v1', 'true');
+    addAuditLog(
+      'PRIVACY_ACK',
+      'SYSTEM',
+      currentUser.id,
+      `Privacy Acknowledgement: ${currentUser.name}`,
+      `Staff member (${currentUser.title}) acknowledged RA 10173 Patient Record Confidentiality Notice for session.`
+    );
+    setShowPrivacyModal(false);
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-teal-100 selection:text-teal-900">
+      {/* Inactivity Warning Toast Banner */}
+      {isWarning && (
+        <InactivityWarningBanner
+          secondsRemaining={secondsRemaining}
+          onStaySignedIn={resetTimer}
+        />
+      )}
+
+      {/* RA 10173 Session Privacy Notice */}
+      <PrivacyNoticeModal
+        isOpen={showPrivacyModal}
+        staffName={currentUser.name}
+        staffTitle={currentUser.title}
+        onAccept={handlePrivacyAccept}
+      />
+
       {/* Top Navbar */}
       <Navbar />
 

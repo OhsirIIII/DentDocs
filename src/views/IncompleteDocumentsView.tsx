@@ -351,11 +351,49 @@ export const IncompleteDocumentsView: React.FC = () => {
                   ? 'No Incomplete Documents in Queue!'
                   : 'No Resolved Documents Recorded Yet'}
               </p>
-              <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+              <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto mb-4">
                 {activeTab === 'pending'
-                  ? 'All accessible documents have satisfied their clinical checklist requirements.'
-                  : 'Documents you mark as resolved will appear here with staff audit notes.'}
+                  ? 'All accessible documents have satisfied their clinical checklist requirements in accordance with Philippine dental compliance.'
+                  : 'Documents you mark as resolved will appear here with staff audit notes and timestamps.'}
               </p>
+
+              {filterType !== 'ALL' || filterPatient !== 'ALL' ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFilterType('ALL');
+                    setFilterPatient('ALL');
+                  }}
+                  className="px-4 py-2 text-xs font-semibold text-teal-800 bg-teal-50 hover:bg-teal-100 border border-teal-200 rounded-xl transition-colors cursor-pointer"
+                >
+                  Clear Queue Filters
+                </button>
+              ) : activeTab === 'pending' ? (
+                <div className="flex items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => navigateTo('upload')}
+                    className="px-4 py-2 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-xl transition-colors cursor-pointer"
+                  >
+                    Upload New Document
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigateTo('dashboard')}
+                    className="px-4 py-2 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors cursor-pointer"
+                  >
+                    View Dashboard
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('pending')}
+                  className="px-4 py-2 text-xs font-semibold text-teal-800 bg-teal-50 hover:bg-teal-100 border border-teal-200 rounded-xl transition-colors cursor-pointer"
+                >
+                  Switch to Action Needed Queue
+                </button>
+              )}
             </div>
           )}
         </div>
