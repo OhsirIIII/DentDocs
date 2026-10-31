@@ -1,34 +1,136 @@
 @import "tailwindcss";
 
+/*
+ * San Nicolas Dental Clinic design tokens.
+ * Brand colours are taken from the clinic logo: a deep slate navy and a warm gold.
+ * Navy carries primary actions, links and selection; gold is a sparing brand accent
+ * (active navigation, text selection) and is never used for body text.
+ */
+@theme {
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --color-brand-50: oklch(0.97 0.012 252);
+  --color-brand-100: oklch(0.935 0.022 252);
+  --color-brand-200: oklch(0.87 0.04 252);
+  --color-brand-300: oklch(0.78 0.06 252);
+  --color-brand-400: oklch(0.66 0.075 252);
+  --color-brand-500: oklch(0.55 0.08 252);
+  --color-brand-600: oklch(0.47 0.078 252);
+  --color-brand-700: oklch(0.39 0.07 252);
+  --color-brand-800: oklch(0.33 0.06 252);
+  --color-brand-900: oklch(0.28 0.05 252);
+  --color-brand-950: oklch(0.21 0.04 252);
+
+  --color-gold-50: oklch(0.98 0.02 85);
+  --color-gold-100: oklch(0.95 0.045 85);
+  --color-gold-200: oklch(0.9 0.08 83);
+  --color-gold-300: oklch(0.84 0.11 82);
+  --color-gold-400: oklch(0.78 0.125 80);
+  --color-gold-500: oklch(0.72 0.13 78);
+  --color-gold-600: oklch(0.62 0.12 72);
+  --color-gold-700: oklch(0.52 0.1 68);
+
+  /*
+   * The interface was originally built on Tailwind's teal palette. Rather than
+   * rewrite several hundred class names, teal is re-pointed at the brand navy so
+   * every existing `teal-*` utility renders in clinic colours.
+   */
+  --color-teal-50: var(--color-brand-50);
+  --color-teal-100: var(--color-brand-100);
+  --color-teal-200: var(--color-brand-200);
+  --color-teal-300: var(--color-brand-300);
+  --color-teal-400: var(--color-brand-400);
+  --color-teal-500: var(--color-brand-500);
+  --color-teal-600: var(--color-brand-600);
+  --color-teal-700: var(--color-brand-700);
+  --color-teal-800: var(--color-brand-800);
+  --color-teal-900: var(--color-brand-900);
+  --color-teal-950: var(--color-brand-950);
+}
+
 @layer base {
-  :root {
-    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  html {
+    scrollbar-color: var(--color-slate-300) transparent;
   }
 
   body {
     font-family: var(--font-sans);
-    background-color: #f8fafc;
-    color: #0f172a;
+    background-color: var(--color-slate-50);
+    color: var(--color-slate-900);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'cv11';
+  }
+
+  ::selection {
+    background-color: var(--color-gold-200);
+    color: var(--color-brand-950);
+  }
+
+  /* Tailwind v4 resets buttons to the default cursor; restore the pointer for real controls. */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  select:not(:disabled),
+  label[for] {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  /* One consistent, visible keyboard focus ring across the app. */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+    border-radius: 0.375rem;
+  }
+
+  input,
+  select,
+  textarea {
+    accent-color: var(--color-brand-700);
+    caret-color: var(--color-brand-700);
+  }
+
+  ::placeholder {
+    color: var(--color-slate-400);
+  }
+
+  a {
+    text-underline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
-/* Custom scrollbars for document viewer & table containers */
+/* Slim scrollbars for document viewer & table containers (WebKit/Blink). */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
+  background: var(--color-slate-300);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--color-slate-400);
+  background-clip: padding-box;
 }

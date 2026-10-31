@@ -86,11 +86,6 @@ export const IncompleteDocumentsView: React.FC = () => {
     <div className="space-y-6 pb-12">
       {/* Header */}
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs">
-        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-teal-700 mb-1">
-          <span>Quality Assurance & Compliance</span>
-          <span aria-hidden="true">·</span>
-          <span>Completeness Checker</span>
-        </div>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900">
@@ -168,7 +163,7 @@ export const IncompleteDocumentsView: React.FC = () => {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as any)}
-                className="bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-slate-800 focus:bg-white focus:outline-none"
+                className="bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
               >
                 <option value="ALL">All Types</option>
                 <option value="Consent Form">Consent Form</option>
@@ -187,7 +182,7 @@ export const IncompleteDocumentsView: React.FC = () => {
               <select
                 value={filterPatient}
                 onChange={(e) => setFilterPatient(e.target.value)}
-                className="bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-slate-800 focus:bg-white focus:outline-none max-w-[160px] truncate"
+                className="bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 max-w-[160px] truncate"
               >
                 <option value="ALL">All Patients</option>
                 {patients.map((p) => (
@@ -411,11 +406,6 @@ export const IncompleteDocumentsView: React.FC = () => {
             </button>
 
             <div className="mb-4">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-teal-700 mb-1">
-                <span>Staff Sign-Off</span>
-                <span aria-hidden="true">·</span>
-                <span>Verification Override</span>
-              </div>
               <h2 className="text-lg font-bold text-slate-900">
                 Resolve Completeness Flag
               </h2>

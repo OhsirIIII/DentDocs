@@ -360,13 +360,14 @@ export const PatientsView: React.FC = () => {
               }
 
               return (
-                <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs divide-y divide-slate-100">
+                <ul className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs divide-y divide-slate-100">
                   {displayedDocs.map((doc) => (
-                    <div
-                      key={doc.id}
-                      onClick={() => handleOpenDoc(doc.id)}
-                      className="p-4 hover:bg-slate-50 transition-colors cursor-pointer group flex items-center justify-between gap-4"
-                    >
+                    <li key={doc.id}>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenDoc(doc.id)}
+                        className="w-full text-left p-4 hover:bg-slate-50 transition-colors group flex items-center justify-between gap-4 focus-visible:outline-offset-[-2px]"
+                      >
                       <div className="flex items-start gap-3.5 min-w-0">
                         <div className="w-9 h-9 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center shrink-0">
                           <FileText className="w-4 h-4" />
@@ -403,11 +404,12 @@ export const PatientsView: React.FC = () => {
                             <CheckCircle className="w-3 h-3" /> Complete
                           </span>
                         )}
-                        <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-teal-700 group-hover:translate-x-0.5 transition-all" />
-                      </div>
-                    </div>
+                        <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-teal-700 group-hover:translate-x-0.5 transition-all" aria-hidden="true" />
+                        </div>
+                      </button>
+                    </li>
                   ))}
-                </div>
+                </ul>
               );
             })()}
           </div>
@@ -431,7 +433,7 @@ export const PatientsView: React.FC = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search PT-2026-0001 or name..."
+                aria-label="Search patients by record number, name, or mobile" placeholder="Search PT-2026-0001 or name..."
                 className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
@@ -463,10 +465,11 @@ export const PatientsView: React.FC = () => {
                 const activeAlerts = alerts.filter((a) => a.patientId === patient.id);
 
                 return (
-                  <div
+                  <button
+                    type="button"
                     key={patient.id}
                     onClick={() => setSelectedPatientId(patient.id)}
-                    className="bg-white border border-slate-200 hover:border-teal-300 rounded-xl p-5 transition-all cursor-pointer group shadow-xs hover:shadow-sm"
+                    className="text-left bg-white border border-slate-200 hover:border-teal-300 rounded-xl p-5 transition-all group shadow-xs hover:shadow-sm flex flex-col justify-between"
                   >
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div className="flex items-center gap-3">
@@ -538,10 +541,10 @@ export const PatientsView: React.FC = () => {
                         <strong className="text-slate-800 font-semibold">{docCount}</strong> linked docs
                       </span>
                       <span className="text-teal-700 font-medium group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
-                        Open Record <ChevronRight className="w-3.5 h-3.5" />
+                        Open Record <ChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
                       </span>
                     </div>
-                  </div>
+                  </button>
                 );
               })}
             </div>

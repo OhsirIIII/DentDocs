@@ -51,11 +51,6 @@ export const AuditLogView: React.FC = () => {
     <div className="space-y-6 pb-12">
       {/* Header */}
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs">
-        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-teal-700 mb-1">
-          <span>Administrative Console</span>
-          <span aria-hidden="true">·</span>
-          <span>Security & Compliance</span>
-        </div>
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">
           Clinic Audit Trail & Staff Directory
         </h1>

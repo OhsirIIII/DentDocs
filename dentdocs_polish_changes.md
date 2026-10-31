@@ -1,6 +1,6 @@
-# DentDocs — Section 4 Front-End Polish Changelog
+# San Nicolas Dental Clinic (DentDocs) — Front-End & UI/UX Polish Changelog
 
-This document provides a comprehensive record of all front-end modifications, newly created components, services, hooks, and architectural enhancements implemented for **Section 4 (Remaining Polish)** of the DentDocs dental record system prototype.
+This document provides a comprehensive record of all front-end modifications, newly created components, services, hooks, brand design tokens, and UI/UX craft refinements implemented for the **San Nicolas Dental Clinic** dental record management system.
 
 ---
 
@@ -14,6 +14,8 @@ This document provides a comprehensive record of all front-end modifications, ne
 | **4. Admin-Only Soft Delete** | Removed `canDeleteDocs` from Dentist role; soft-deletes documents (archived, hidden from normal lists, restorable by Admin, logged in tamper-evident audit). | **Completed** | `dental.ts`, `ClinicContext.tsx`, `DocumentViewerView.tsx`, `AuditLogView.tsx` |
 | **5. Session Privacy Notice** | First-login privacy notice per browser session regarding RA 10173 (Data Privacy Act of 2012), confidentiality, and audit tracking with mandatory acknowledgement checkbox. | **Completed** | `PrivacyNoticeModal.tsx`, `App.tsx`, `dental.ts`, `ClinicContext.tsx` |
 | **6. Inactivity Session Timeout** | 10-minute idle timer with 1-minute warning countdown toast ("Stay signed in" button), auto-downgrading to Front Desk role on expiry with audit logging. | **Completed** | `useInactivityTimer.ts`, `InactivityWarningBanner.tsx`, `App.tsx` |
+| **7. San Nicolas Clinic Branding & Logo** | Integrated official San Nicolas Dental Clinic tooth emblem (`logo-mark.png`, `favicon.png`) and rebranded all headers, footers, modals, and clinical preview templates. | **Completed** | `Navbar.tsx`, `App.tsx`, `index.html`, `DocumentVisualPreview.tsx`, `mockDocuments.ts` |
+| **8. UI/UX & Craft-Floor Polish Pass** | Brand navy + warm gold OKLCH design tokens, Plus Jakarta Sans font loading, de-nested alert/KPI layouts, removal of redundant eyebrow kickers, and full keyboard/ARIA accessibility. | **Completed** | `index.css`, `Navbar.tsx`, `DashboardView.tsx`, `PatientsView.tsx`, `SearchView.tsx`, `LoginModal.tsx` |
 
 ---
 
@@ -74,7 +76,7 @@ Implemented reusable pulse skeleton components using Tailwind CSS:
 
 ### 5. In-App Confirmation Modal (`src/components/ConfirmDialog.tsx`) — *New File*
 Replaced native browser `window.confirm()` prompts with an accessible in-app modal:
-- **Design Variants**: Supports `'danger'` (crimson button for soft-delete), `'warning'` (amber button for version rollback), and `'default'` (teal button for restoration).
+- **Design Variants**: Supports `'danger'` (crimson button for soft-delete), `'warning'` (amber button for version rollback), and `'default'` (brand navy button for restoration).
 - **Consequence Note Callout**: Displays explicit reversibility terms and audit trail consequences so staff understand the exact outcome before confirming.
 - **Backdrop & Focus**: Semi-transparent backdrop with close button, cancel button, and confirm action.
 
@@ -124,16 +126,21 @@ Enforces compliance with the Philippine **Data Privacy Act of 2012 (RA 10173)**:
   - Renders `DocumentListSkeleton` during query execution.
 - **Empty State**:
   - When `results.length === 0`, renders a clean empty state with a search icon, informative message, and a functional "Reset All Filters" button.
+- **Accessibility & Interactive Semantics**:
+  - Associated all 5 faceted filter `<label>` elements with their corresponding `<select>` elements via `htmlFor` and `id`.
+  - Converted search result items from `<div onClick>` into keyboard-navigable `<button type="button">` rows.
 
 ---
 
 ### 10. Patient Vault Polish (`src/views/PatientsView.tsx`)
 - **Directory Search Empty State**:
-  - When searching for a patient and no match is found, shows an empty state with a "Reset Search" button.
+  - When searching for a patient and no match is found, shows an empty state with a "Clear Search Query" button.
 - **Document List Empty State**:
-  - When a selected patient has 0 documents, displays an empty state with an "Upload Clinical Record" button that pre-selects the patient in `UploadView`.
+  - When a selected patient has 0 documents, displays an empty state with an "Upload Document" button that pre-selects the patient in `UploadView`.
 - **FDI Tooth Filter Empty State**:
-  - When filtering by a specific tooth (e.g. Tooth 16) and no records exist, displays tooth-specific copy with a "View All Patient Documents" button.
+  - When filtering by a specific tooth (e.g. Tooth 16) and no records exist, displays tooth-specific copy with a "Clear Tooth Filter" button.
+- **Keyboard-Operable Cards & Rows**:
+  - Upgraded patient directory cards and linked document rows from `<div onClick>` to semantic `<button type="button">` elements.
 
 ---
 
@@ -145,13 +152,16 @@ Enforces compliance with the Philippine **Data Privacy Act of 2012 (RA 10173)**:
 
 ---
 
-### 12. Dashboard View Polish (`src/views/DashboardView.tsx`)
-- **Clinical Alerts Banner Empty State**:
-  - When `alerts.length === 0`, renders an all-clear green card with a "Review Patient Vault" action button.
-- **Recent Uploads Empty State**:
-  - When no recent uploads exist, displays an empty state with an "Upload First Document" button.
-- **Incomplete Documents Card**:
-  - When 0 documents require review, displays an "All Clear" badge and a "Browse Completed Records" button.
+### 12. Dashboard View Redesign & Polish (`src/views/DashboardView.tsx`)
+- **Unboxed Page Header**:
+  - Elevated the welcome header with balanced typography and primary/secondary actions ("Search records" and "Upload document").
+- **De-Nested Clinical Alerts List**:
+  - Replaced nested alert cards inside an outer card with a clean, scannable `<ul>/<li>` list container where each row pairs severity iconography, patient record number, scheduled date, and direct action buttons ("View chart" + primary resolution action).
+  - Preserved the all-clear emerald state when `alerts.length === 0`.
+- **Unified Key Figures Strip**:
+  - Replaced 4 separate bordered metric cards with a single unified 4-cell key-figures strip (`grid-cols-2 lg:grid-cols-4 gap-px bg-slate-200`) using semantic `<button>` triggers and tabular numerals.
+- **Streamlined Work Queues**:
+  - Converted "Flagged incomplete" and "Recently uploaded" items into semantic `<button>` rows inside `<ul>/<li>` lists with concise single-line missing-field summaries and zero-pill metadata rows.
 
 ---
 
@@ -161,7 +171,7 @@ Enforces compliance with the Philippine **Data Privacy Act of 2012 (RA 10173)**:
 - **Expanded Event Filter Dropdown**:
   - Added filter options for `UPLOAD_VERSION`, `RESTORE_VERSION`, `ARCHIVE`, `RESTORE_ARCHIVE`, and `PRIVACY_ACK`.
 - **Action Badge Styling**:
-  - Color-coded badges for new event types (`ARCHIVE` in rose, `RESTORE_ARCHIVE` in teal, `PRIVACY_ACK` in purple, and version events in indigo).
+  - Color-coded badges for new event types (`ARCHIVE` in rose, `RESTORE_ARCHIVE` in brand navy, `PRIVACY_ACK` in purple, and version events in indigo).
 - **Archived Records Vault (Admin Recovery)**:
   - Dedicated administrative table listing soft-deleted documents with Title, Patient, Type, Archived By, and Archived At.
   - "Restore Record" button on each row opening `ConfirmDialog` to reinstate the document.
@@ -169,20 +179,25 @@ Enforces compliance with the Philippine **Data Privacy Act of 2012 (RA 10173)**:
 
 ---
 
-### 14. Application Root Wiring (`src/App.tsx`)
-- **Privacy Notice Wiring**:
-  - Checks `sessionStorage.getItem('dentdocs_privacy_acknowledged_v1')`.
-  - Displays `PrivacyNoticeModal` if not yet acknowledged in the session.
-  - On acknowledgement, writes to `sessionStorage` and records a `PRIVACY_ACK` entry in the clinic audit log.
-- **Inactivity Timer & Auto-Logout**:
-  - Integrates `useInactivityTimer` and renders `InactivityWarningBanner`.
-  - On 10 minutes of inactivity: downgrades role to `front_desk`, navigates to `dashboard`, and records a `USER_LOGIN` timeout entry in the audit trail.
+### 14. Design System, Brand Tokens & App Shell (`src/index.css`, `src/components/Navbar.tsx`, `src/App.tsx`, `index.html`)
+- **San Nicolas Brand Palette (`src/index.css`)**:
+  - Extracted the clinic logo's deep slate navy (`--color-brand-50` through `--color-brand-950`) and warm gold (`--color-gold-50` through `--color-gold-700`) in OKLCH color space.
+  - Re-aliased `--color-teal-*` tokens to `--color-brand-*` so all interactive controls, badges, and borders harmonize with the San Nicolas Dental Clinic emblem.
+- **Typography & Browser Surface Craft (`index.html`, `src/index.css`)**:
+  - Loaded Google Fonts `Plus Jakarta Sans` (`400;500;600;700;800`) referenced by `--font-sans`.
+  - Styled `::selection` in warm gold (`--color-gold-200` / `--color-brand-950`), unified `:focus-visible` outlines (`2px solid var(--color-brand-500)`), restored pointer cursors on interactive controls, and added `prefers-reduced-motion` support.
+- **Cropped Tooth Emblem & Navbar (`src/assets/logo-mark.png`, `src/components/Navbar.tsx`)**:
+  - Generated a high-resolution cropped tooth icon (`logo-mark.png` and `public/favicon.png`) so the 36×36 navbar emblem renders crisp without microscopic baked-in text, paired with a clean HTML wordmark (**San Nicolas** / **DENTAL CLINIC**).
+  - Replaced dynamic `Patients (12)` text with a live `patients.length` pill badge and role-scoped `incompleteCount` badge.
+  - Added gold active-tab underline indicators (`after:bg-gold-500`), Escape/outside-click dismissal on the role menu, and consolidated the "Compare roles" persona modal trigger into the profile menu (removing the floating bottom-right pill that overlapped content on mobile and desktop).
+- **Eyebrow Kicker Removal**:
+  - Removed redundant uppercase eyebrow kickers across `LoginModal.tsx`, `PrivacyNoticeModal.tsx`, `DashboardView.tsx`, `AuditLogView.tsx`, `IncompleteDocumentsView.tsx`, `SearchView.tsx`, `UploadView.tsx`, and `DocumentViewerView.tsx` while preserving dynamic version and patient context inside headings/subtitles.
 
 ---
 
 ## Verification & Build Results
 
-All changes have been validated through static analysis and compilation:
+All changes have been validated through static analysis, production bundling, and live headless browser inspection at desktop (`1440×900`) and mobile (`390×844`) viewports:
 
 1. **TypeScript Type Check**:
    ```bash
@@ -194,6 +209,8 @@ All changes have been validated through static analysis and compilation:
    ```bash
    npm run build
    # Exit code: 0
-   # Built client environment in 177ms
-   # Generated dist/assets/index-*.js and dist/assets/index-*.css cleanly
+   # dist/index.html                     1.47 kB
+   # dist/assets/logo-mark-BKQi_PlE.png 38.31 kB
+   # dist/assets/index-B-6UTFlY.css     82.08 kB
+   # dist/assets/index-ClDRmQvd.js     497.09 kB
    ```

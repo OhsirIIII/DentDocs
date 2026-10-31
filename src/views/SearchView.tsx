@@ -99,11 +99,6 @@ export const SearchView: React.FC = () => {
     <div className="space-y-6 pb-12">
       {/* Header */}
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs">
-        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-teal-700 mb-1">
-          <span>Search & Discovery</span>
-          <span aria-hidden="true">·</span>
-          <span>Philippine Dental Archive</span>
-        </div>
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">
           Intelligent Dental Search
         </h1>
@@ -119,7 +114,7 @@ export const SearchView: React.FC = () => {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Try: 'incomplete consent', 'tooth 46 x-ray', 'Dela Cruz', 'amoxicillin reseta'..."
+            aria-label="Search clinical documents" placeholder="Try: 'incomplete consent', 'tooth 46 x-ray', 'Dela Cruz', 'amoxicillin reseta'..."
             className="w-full pl-12 pr-28 py-3.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-inner"
           />
           {query && (
@@ -193,11 +188,11 @@ export const SearchView: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
           {/* Filter 1: Document Type */}
           <div>
-            <label className="text-slate-500 block mb-1">Document Type:</label>
-            <select
+            <label htmlFor="search-filter-type" className="text-slate-500 block mb-1">Document Type</label>
+            <select id="search-filter-type"
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value as any)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-teal-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
             >
               <option value="ALL">All Types</option>
               <option value="Patient Record">Patient Record</option>
@@ -213,11 +208,11 @@ export const SearchView: React.FC = () => {
 
           {/* Filter 2: Completeness Status */}
           <div>
-            <label className="text-slate-500 block mb-1">Status:</label>
-            <select
+            <label htmlFor="search-filter-status" className="text-slate-500 block mb-1">Status</label>
+            <select id="search-filter-status"
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-teal-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
             >
               <option value="ALL">All Statuses</option>
               <option value="complete">Complete</option>
@@ -228,11 +223,11 @@ export const SearchView: React.FC = () => {
 
           {/* Filter 3: Patient */}
           <div>
-            <label className="text-slate-500 block mb-1">Patient:</label>
-            <select
+            <label htmlFor="search-filter-patient" className="text-slate-500 block mb-1">Patient</label>
+            <select id="search-filter-patient"
               value={selectedPatientId}
               onChange={(e) => setSelectedPatientId(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-teal-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
             >
               <option value="ALL">All Patients (12)</option>
               {patients.map((p) => (
@@ -245,11 +240,11 @@ export const SearchView: React.FC = () => {
 
           {/* Filter 4: Date Range */}
           <div>
-            <label className="text-slate-500 block mb-1">Date Range:</label>
-            <select
+            <label htmlFor="search-filter-date" className="text-slate-500 block mb-1">Date Range</label>
+            <select id="search-filter-date"
               value={selectedDateFilter}
               onChange={(e) => setSelectedDateFilter(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-teal-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
             >
               <option value="ALL">All Recorded Dates</option>
               <option value="OCT_2026">October 2026 (Current Month)</option>
@@ -258,11 +253,11 @@ export const SearchView: React.FC = () => {
 
           {/* Filter 5: FDI Tooth */}
           <div>
-            <label className="text-slate-500 block mb-1">FDI Tooth Number:</label>
-            <select
+            <label htmlFor="search-filter-tooth" className="text-slate-500 block mb-1">FDI Tooth Number</label>
+            <select id="search-filter-tooth"
               value={selectedTooth}
               onChange={(e) => setSelectedTooth(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-teal-500 font-mono"
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono"
             >
               <option value="ALL">Any Tooth</option>
               <option value="11">Tooth 11 (Maxillary Central)</option>
@@ -300,10 +295,11 @@ export const SearchView: React.FC = () => {
             <DocumentListSkeleton count={4} />
           ) : results.length > 0 ? (
             results.map((doc) => (
-              <div
+              <button
+                type="button"
                 key={doc.id}
                 onClick={() => handleOpenDoc(doc.id, doc.patientId)}
-                className="p-4 sm:p-5 hover:bg-slate-50/80 transition-colors cursor-pointer group flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                className="w-full text-left p-4 sm:p-5 hover:bg-slate-50/80 transition-colors group flex flex-col sm:flex-row sm:items-center justify-between gap-4 focus-visible:outline-offset-[-2px]"
               >
                 <div className="flex items-start gap-4 min-w-0">
                   <div
@@ -370,9 +366,9 @@ export const SearchView: React.FC = () => {
                       OCR: {doc.confidenceScore}% conf
                     </span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-teal-700 group-hover:translate-x-0.5 transition-all" />
+                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-teal-700 group-hover:translate-x-0.5 transition-all" aria-hidden="true" />
                 </div>
-              </div>
+              </button>
             ))
           ) : (
             <div className="p-12 text-center text-sm text-slate-500">

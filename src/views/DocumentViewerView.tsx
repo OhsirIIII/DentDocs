@@ -681,7 +681,7 @@ export const DocumentViewerView: React.FC = () => {
                 value={doc.extractedText}
                 readOnly
                 rows={14}
-                className="w-full text-xs font-mono bg-slate-50 border border-slate-200 rounded-xl p-4 text-slate-800 focus:outline-none"
+                className="w-full text-xs font-mono bg-slate-50 border border-slate-200 rounded-xl p-4 text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
               <p className="text-[11px] text-slate-500 italic">
                 Extracted using simulated Philippine dental template heuristics
@@ -915,11 +915,6 @@ export const DocumentViewerView: React.FC = () => {
             </button>
 
             <div className="mb-4">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-teal-700 mb-1">
-                <span>Staff Sign-Off</span>
-                <span aria-hidden="true">·</span>
-                <span>Verification Override</span>
-              </div>
               <h2 className="text-lg font-bold text-slate-900">
                 Resolve Completeness Flag
               </h2>
@@ -1002,14 +997,8 @@ export const DocumentViewerView: React.FC = () => {
             </button>
 
             <div className="mb-4">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-teal-700 mb-1">
-                <GitBranch className="w-3.5 h-3.5" />
-                <span>Document Revisions</span>
-                <span aria-hidden="true">·</span>
-                <span className="font-mono">Publishing v{doc.version + 1}</span>
-              </div>
               <h2 className="text-lg font-bold text-slate-900">
-                Upload New Document Revision
+                Upload New Document Revision <span className="text-slate-400 font-semibold tabular-nums">v{doc.version + 1}</span>
               </h2>
               <p className="text-xs text-slate-500 mt-1">
                 Upload or record an updated file. Active version <span className="font-semibold text-slate-700 font-mono">v{doc.version}</span> will be marked as <span className="font-semibold text-amber-800 font-mono">Superseded</span> and preserved for legal auditing.
@@ -1193,17 +1182,11 @@ export const DocumentViewerView: React.FC = () => {
             </button>
 
             <div className="mb-4">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-teal-700 mb-1">
-                <Split className="w-4 h-4" />
-                <span>Version Comparison & Diff</span>
-                <span aria-hidden="true">·</span>
-                <span>{doc.patientName}</span>
-              </div>
               <h2 className="text-lg font-bold text-slate-900">
                 Comparing v{compareTargetVersion.versionNumber} (Superseded) vs v{doc.version} (Active)
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                Inspect field-by-field differences between historical draft and currently active record.
+                <span className="font-medium text-slate-700">{doc.patientName}</span> · Inspect field-by-field differences between historical draft and currently active record.
               </p>
             </div>
 
@@ -1391,12 +1374,6 @@ export const DocumentViewerView: React.FC = () => {
             </button>
 
             <div className="mb-4">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-teal-700 mb-1">
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Version Rollback</span>
-                <span aria-hidden="true">·</span>
-                <span>Audit Enforced</span>
-              </div>
               <h2 className="text-lg font-bold text-slate-900">
                 Restore Historical Draft v{restoreTargetVersion.versionNumber}
               </h2>

@@ -62,22 +62,19 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in duration-150">
+    <div role="dialog" aria-modal="true" aria-labelledby="persona-modal-title" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in duration-150">
       <div className="bg-white rounded-2xl border border-slate-200 max-w-2xl w-full p-6 shadow-xl relative max-h-[90vh] overflow-y-auto">
         <button
+          type="button"
           onClick={onClose}
+          aria-label="Close persona modal"
           className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 p-1 rounded-lg"
         >
           <X className="w-5 h-5" />
         </button>
 
         <div className="mb-6">
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-teal-700 mb-1">
-            <span>San Nicolas Role Switcher</span>
-            <span aria-hidden="true">·</span>
-            <span>Demo Mode</span>
-          </div>
-          <h2 className="text-xl font-bold text-slate-900">
+          <h2 id="persona-modal-title" className="text-xl font-bold text-slate-900">
             Select Staff Persona for Demo Testing
           </h2>
           <p className="text-xs text-slate-500 mt-1">
@@ -96,8 +93,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
             return (
               <div
                 key={r}
-                onClick={() => handleSelectRole(r)}
-                className={`p-4 rounded-xl border-2 transition-all cursor-pointer relative group flex flex-col justify-between ${
+                className={`p-4 rounded-xl border-2 transition-all relative group flex flex-col justify-between ${
                   isCurrent
                     ? 'border-teal-600 bg-teal-50/30 shadow-xs'
                     : 'border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50/50'
@@ -138,6 +134,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
                 <button
                   type="button"
+                  onClick={() => handleSelectRole(r)}
                   className={`w-full py-2 text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-1.5 ${
                     isCurrent
                       ? 'bg-teal-700 text-white'

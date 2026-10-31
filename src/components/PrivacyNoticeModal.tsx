@@ -48,11 +48,6 @@ export const PrivacyNoticeModal: React.FC<PrivacyNoticeModalProps> = ({
             <Shield className="w-6 h-6" />
           </div>
           <div>
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-teal-700 mb-1">
-              <span>San Nicolas Dental Clinic</span>
-              <span aria-hidden="true">·</span>
-              <span>Data Privacy Notice</span>
-            </div>
             <h1 id="privacy-notice-title" className="text-xl font-bold text-slate-900">
               Patient Record Confidentiality Notice
             </h1>
