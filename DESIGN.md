@@ -18,3 +18,8 @@ white work surfaces and slate page background. No visual rebranding was introduc
 
 The Phase 3 login and staff screens were visually inspected at desktop and 390px
 mobile widths, with functional browser checks for their principal states.
+
+Phase 4 uses a queue beside a source/decision inspector, stacking on mobile. Review
+and validity live in a disclosure in the document viewer. Policy drafts and explicit
+approval/retirement confirmations use labeled native forms. Keep extraction,
+completeness and validity labels distinct. Policy duration fields start blank.

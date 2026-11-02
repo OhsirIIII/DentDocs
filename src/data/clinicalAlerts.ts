@@ -2,7 +2,7 @@ import { Patient, DentalDocument, ClinicalAlert } from '../types/dental';
 
 export const generateClinicAlerts = (
   patients: Patient[],
-  documents: DentalDocument[]
+  documents: DentalDocument[],
 ): ClinicalAlert[] => {
   const alerts: ClinicalAlert[] = [];
 
@@ -11,16 +11,26 @@ export const generateClinicAlerts = (
     if (patient.nextAppointment) {
       // Find patient's consent forms
       const consentForms = documents.filter(
-        (d) => d.patientId === patient.id && d.type === 'Consent Form'
+        (d) => d.patientId === patient.id && d.type === 'Consent Form',
       );
 
       const hasCompleteConsent = consentForms.some(
-        (c) => c.completenessStatus === 'complete'
+        (c) =>
+          c.completenessStatus === 'complete' &&
+          ['valid', 'expiring'].includes(c.validity?.status || '') &&
+          documents.some(
+            (a) =>
+              a.id === c.validity?.appointmentId &&
+              a.patientId === patient.id &&
+              a.type === 'Appointment Record',
+          ),
       );
 
       // Check minor patient Chloe Lim
       if (patient.isMinor) {
-        const minorConsent = consentForms.find((c) => c.completenessStatus === 'incomplete');
+        const minorConsent = consentForms.find(
+          (c) => c.completenessStatus === 'incomplete',
+        );
         if (minorConsent || !hasCompleteConsent) {
           alerts.push({
             id: `alert-consent-${patient.id}`,
@@ -30,10 +40,9 @@ export const generateClinicAlerts = (
             type: 'MISSING_CONSENT',
             severity: 'critical',
             title: `Missing Legal Guardian Consent for Minor (${patient.fullName})`,
-            description: `Scheduled orthodontic appliance appointment on ${patient.nextAppointment}. Patient is 14 y/o and requires physical or authenticated digital signature from legal guardian ${patient.guardianName || 'parent'}.`,
-            scheduledProcedure: 'Fixed Orthodontic Appliance Placement',
+            description: `Consent scope and guardian details have not been verified for the scheduled appointment on ${patient.nextAppointment}. Staff must review the original.`,
             scheduledDate: patient.nextAppointment,
-            linkedDocId: minorConsent?.id || 'doc-004',
+            linkedDocId: minorConsent?.id,
             actionLabel: 'Verify Guardian Signature',
           });
         }
@@ -43,10 +52,15 @@ export const generateClinicAlerts = (
       if (!patient.isMinor && !hasCompleteConsent) {
         // Find appointment record to check procedure
         const apptDoc = documents.find(
-          (d) => d.patientId === patient.id && d.type === 'Appointment Record'
+          (d) => d.patientId === patient.id && d.type === 'Appointment Record',
         );
 
-        if (apptDoc && (apptDoc.procedureCategory === 'Oral Surgery' || apptDoc.title.includes('Surgery') || apptDoc.title.includes('Implant'))) {
+        if (
+          apptDoc &&
+          (apptDoc.procedureCategory === 'Oral Surgery' ||
+            apptDoc.title.includes('Surgery') ||
+            apptDoc.title.includes('Implant'))
+        ) {
           alerts.push({
             id: `alert-consent-${patient.id}`,
             patientId: patient.id,
@@ -55,45 +69,21 @@ export const generateClinicAlerts = (
             type: 'MISSING_CONSENT',
             severity: 'critical',
             title: `Procedure Scheduled with No Signed Surgical Consent (${patient.fullName})`,
-            description: `Scheduled for surgical procedure on ${patient.nextAppointment}. Informed consent must be signed prior to local anesthesia administration.`,
+            description: `The scheduled procedure on ${patient.nextAppointment} does not have a complete consent record with verified validity and appointment scope. Staff must review.`,
             scheduledProcedure: apptDoc.title,
             scheduledDate: patient.nextAppointment,
             linkedDocId: apptDoc.id,
-            actionLabel: 'Generate Consent Form',
+            actionLabel: 'Review Appointment Consent',
           });
         }
       }
     }
   });
 
-  // Rule 2: Expiring or Expired Medical Clearances
-  // Patient Ramon Castillo (Cardiovascular Stent)
-  const ramonPatient = patients.find((p) => p.id === 'pat-0010');
-  const ramonClearance = documents.find(
-    (d) => d.patientId === 'pat-0010' && d.title.includes('Medical Clearance')
-  );
-
-  if (ramonPatient && ramonClearance) {
-    alerts.push({
-      id: 'alert-clearance-pat-0010',
-      patientId: ramonPatient.id,
-      patientRecordNo: ramonPatient.recordNo,
-      patientName: ramonPatient.fullName,
-      type: 'EXPIRED_CLEARANCE',
-      severity: 'warning',
-      title: `Cardiology Medical Clearance Expiring Soon (${ramonPatient.fullName})`,
-      description: `Cardiology clearance dated ${ramonClearance.displayDate} is valid for 30 days. Approaching renewal window prior to prosthodontic surgery on ${ramonPatient.nextAppointment}.`,
-      scheduledProcedure: 'Cast Partial Denture Delivery',
-      scheduledDate: ramonPatient.nextAppointment,
-      linkedDocId: ramonClearance.id,
-      actionLabel: 'Request Updated Clearance',
-    });
-  }
-
   // Rule 3: Unsigned or Incomplete Treatment Plan with Upcoming Appointment
   // Ramon Castillo Treatment Plan doc-012
   const incompletePlans = documents.filter(
-    (d) => d.type === 'Treatment Plan' && d.completenessStatus === 'incomplete'
+    (d) => d.type === 'Treatment Plan' && d.completenessStatus === 'incomplete',
   );
 
   incompletePlans.forEach((plan) => {
@@ -107,7 +97,7 @@ export const generateClinicAlerts = (
         type: 'UNSIGNED_TREATMENT_PLAN',
         severity: 'warning',
         title: `Incomplete Treatment Plan Quote (${patient.fullName})`,
-        description: `Treatment plan "${plan.title}" is missing procedure fee quotations and patient financial acknowledgement.`,
+        description: `Treatment plan "${plan.title}" requires staff completeness verification: ${plan.missingFields.join(', ') || 'review the original'}.`,
         scheduledProcedure: plan.procedureCategory,
         scheduledDate: patient.nextAppointment,
         linkedDocId: plan.id,
@@ -118,7 +108,7 @@ export const generateClinicAlerts = (
 
   // Rule 4: Prescriptions Missing License Credentials (e.g. Juan Miguel Dela Cruz doc-007)
   const invalidRxs = documents.filter(
-    (d) => d.type === 'Prescription' && d.completenessStatus === 'incomplete'
+    (d) => d.type === 'Prescription' && d.completenessStatus === 'incomplete',
   );
 
   invalidRxs.forEach((rx) => {
@@ -127,10 +117,10 @@ export const generateClinicAlerts = (
       patientId: rx.patientId,
       patientRecordNo: rx.patientRecordNo,
       patientName: rx.patientName,
-      type: 'EXPIRING_PRESCRIPTION',
+      type: 'MISSING_PRESCRIPTION_CREDENTIALS',
       severity: 'warning',
       title: `Prescription Missing PRC License / PTR Stamp (${rx.patientName})`,
-      description: `Prescription Rx slip "${rx.title}" lacks dentist license numbers and may be rejected by Philippine pharmacies.`,
+      description: `Prescription "${rx.title}" is marked incomplete. Staff must verify the recorded credential fields against the original.`,
       linkedDocId: rx.id,
       actionLabel: 'Add License Stamp',
     });
@@ -138,7 +128,7 @@ export const generateClinicAlerts = (
 
   // Rule 5: Emergency X-ray Lacking Tooth Annotation (Mateo Reyes doc-018)
   const incompleteXrays = documents.filter(
-    (d) => d.type === 'X-ray' && d.completenessStatus === 'incomplete'
+    (d) => d.type === 'X-ray' && d.completenessStatus === 'incomplete',
   );
 
   incompleteXrays.forEach((xray) => {
@@ -147,10 +137,10 @@ export const generateClinicAlerts = (
       patientId: xray.patientId,
       patientRecordNo: xray.patientRecordNo,
       patientName: xray.patientName,
-      type: 'OUTDATED_RADIOGRAPH',
+      type: 'MISSING_TOOTH_ANNOTATION',
       severity: 'info',
       title: `Emergency Radiograph Missing Tooth Indexing (${xray.patientName})`,
-      description: `Sensor image "${xray.title}" requires attending dentist tooth notation annotation (probable teeth 31/41).`,
+      description: `Radiograph "${xray.title}" is marked incomplete. Staff must verify tooth annotations against the original.`,
       linkedDocId: xray.id,
       actionLabel: 'Annotate Tooth Numbers',
     });

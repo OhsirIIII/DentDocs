@@ -10,6 +10,7 @@ export interface Bootstrap {
   documents: DentalDocument[];
   auditLogs: AuditEntry[];
   currentUser: StaffUser;
+  reviewPendingCount: number;
 }
 export interface AuthState {
   user: StaffUser;

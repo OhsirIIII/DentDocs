@@ -194,6 +194,16 @@ export const AuditLogView: React.FC = () => {
               <option value="PASSWORD_CHANGE">Password Changed</option>
               <option value="PASSWORD_RESET">Password Reset</option>
               <option value="ACCESS_DENIED">Access Denied</option>
+              <option value="REVIEW_QUEUED">Review Queued</option>
+              <option value="REVIEW_REOPENED">Review Reopened</option>
+              <option value="REVIEW_ASSIGNED">Reviewer Assigned</option>
+              <option value="REVIEW_APPROVED">Extraction Approved</option>
+              <option value="REVIEW_CHANGES_REQUESTED">Corrections Requested</option>
+              <option value="REVIEW_SUPERSEDED">Review Superseded</option>
+              <option value="VALIDITY_CONFIRMED">Validity Confirmed</option>
+              <option value="VALIDITY_RULE_DRAFT">Policy Draft Created</option>
+              <option value="VALIDITY_RULE_APPROVED">Policy Approved</option>
+              <option value="VALIDITY_RULE_RETIRED">Policy Retired</option>
             </select>
           </div>
         </div>

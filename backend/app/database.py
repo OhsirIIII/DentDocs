@@ -1,7 +1,8 @@
 import os
+from datetime import date
 from sqlalchemy import create_engine, event, ForeignKey, UniqueConstraint, CheckConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
-from sqlalchemy.types import JSON, String, Integer, Boolean, Float
+from sqlalchemy.types import JSON, String, Integer, Boolean, Float, Date
 
 
 class Base(DeclarativeBase):
@@ -99,6 +100,76 @@ class FileUpload(Base):
     consumed: Mapped[bool] = mapped_column(Boolean, default=False)
 
 
+class ReviewItem(Base):
+    __tablename__ = 'review_queue'
+    __table_args__ = (UniqueConstraint('document_id', 'version'),)
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    document_id: Mapped[str] = mapped_column(ForeignKey('documents.id'))
+    version: Mapped[int] = mapped_column(Integer)
+    source_fingerprint: Mapped[str] = mapped_column(String)
+    status: Mapped[str] = mapped_column(String, default='pending')
+    reasons: Mapped[list] = mapped_column(JSON)
+    assignee_id: Mapped[str | None] = mapped_column(ForeignKey('users.id'), nullable=True)
+    decided_by: Mapped[str | None] = mapped_column(ForeignKey('users.id'), nullable=True)
+    decided_at: Mapped[str | None] = mapped_column(String, nullable=True)
+    decision_note: Mapped[str | None] = mapped_column(String, nullable=True)
+    updated_at: Mapped[str] = mapped_column(String)
+    revision: Mapped[int] = mapped_column(Integer, default=1)
+
+
+class ReviewEvent(Base):
+    __tablename__ = 'review_events'
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    review_id: Mapped[str] = mapped_column(ForeignKey('review_queue.id'))
+    data: Mapped[dict] = mapped_column(JSON)
+
+
+class ValidityRule(Base):
+    __tablename__ = 'validity_rules'
+    __table_args__ = (UniqueConstraint('document_type', 'category', 'version'),)
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    document_type: Mapped[str] = mapped_column(String)
+    category: Mapped[str] = mapped_column(String)
+    version: Mapped[int] = mapped_column(Integer)
+    valid_for_days: Mapped[int] = mapped_column(Integer)
+    warning_days: Mapped[int] = mapped_column(Integer)
+    reference: Mapped[str] = mapped_column(String)
+    status: Mapped[str] = mapped_column(String, default='draft')
+    created_by: Mapped[str] = mapped_column(ForeignKey('users.id'))
+    approved_by: Mapped[str | None] = mapped_column(ForeignKey('users.id'), nullable=True)
+    approved_at: Mapped[str | None] = mapped_column(String, nullable=True)
+    approval_note: Mapped[str | None] = mapped_column(String, nullable=True)
+    revision: Mapped[int] = mapped_column(Integer, default=1)
+
+
+class DocumentValidity(Base):
+    __tablename__ = 'document_validity'
+    __table_args__ = (UniqueConstraint('document_id', 'version'),)
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    document_id: Mapped[str] = mapped_column(ForeignKey('documents.id'))
+    version: Mapped[int] = mapped_column(Integer)
+    source_fingerprint: Mapped[str] = mapped_column(String)
+    basis: Mapped[str] = mapped_column(String)
+    category: Mapped[str] = mapped_column(String)
+    issued_on: Mapped[date | None] = mapped_column(Date, nullable=True)
+    expires_on: Mapped[date | None] = mapped_column(Date, nullable=True)
+    warning_days: Mapped[int] = mapped_column(Integer, default=0)
+    rule_id: Mapped[str | None] = mapped_column(ForeignKey('validity_rules.id'), nullable=True)
+    appointment_id: Mapped[str | None] = mapped_column(ForeignKey('documents.id'), nullable=True)
+    appointment_revision: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    confirmed_by: Mapped[str] = mapped_column(ForeignKey('users.id'))
+    confirmed_at: Mapped[str] = mapped_column(String)
+    note: Mapped[str] = mapped_column(String)
+    revision: Mapped[int] = mapped_column(Integer, default=1)
+
+
+class ValidityEvent(Base):
+    __tablename__ = 'validity_events'
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    document_id: Mapped[str] = mapped_column(ForeignKey('documents.id'))
+    data: Mapped[dict] = mapped_column(JSON)
+
+
 def make_database(url=None):
     url = url or os.environ['DATABASE_URL']
     engine = create_engine(url, hide_parameters=True, connect_args={'check_same_thread': False} if url.startswith('sqlite') else {})
@@ -118,14 +189,18 @@ def migrate(engine):
             db.add(SchemaVersion(version=1))
             db.commit()
     with engine.begin() as connection:
-        if engine.dialect.name == 'sqlite':
-            for operation in ('UPDATE', 'DELETE'):
-                connection.exec_driver_sql(f"CREATE TRIGGER IF NOT EXISTS audit_no_{operation.lower()} BEFORE {operation} ON audit_logs BEGIN SELECT RAISE(ABORT, 'Audit events are append-only'); END")
-        elif engine.dialect.name == 'postgresql':
-            connection.exec_driver_sql("CREATE OR REPLACE FUNCTION reject_audit_change() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'Audit events are append-only'; END $$")
-            connection.exec_driver_sql('DROP TRIGGER IF EXISTS audit_no_change ON audit_logs')
-            connection.exec_driver_sql('CREATE TRIGGER audit_no_change BEFORE UPDATE OR DELETE OR TRUNCATE ON audit_logs FOR EACH STATEMENT EXECUTE FUNCTION reject_audit_change()')
+        for table in ('audit_logs', 'review_events', 'validity_events'):
+            if engine.dialect.name == 'sqlite':
+                for operation in ('UPDATE', 'DELETE'):
+                    connection.exec_driver_sql(f"CREATE TRIGGER IF NOT EXISTS {table}_no_{operation.lower()} BEFORE {operation} ON {table} BEGIN SELECT RAISE(ABORT, 'History events are append-only'); END")
+            elif engine.dialect.name == 'postgresql':
+                connection.exec_driver_sql("CREATE OR REPLACE FUNCTION reject_audit_change() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'History events are append-only'; END $$")
+                connection.exec_driver_sql(f'DROP TRIGGER IF EXISTS {table}_no_change ON {table}')
+                connection.exec_driver_sql(f'CREATE TRIGGER {table}_no_change BEFORE UPDATE OR DELETE OR TRUNCATE ON {table} FOR EACH STATEMENT EXECUTE FUNCTION reject_audit_change()')
     with sessionmaker(engine)() as db:
         if db.get(SchemaVersion, 2) is None:
             db.add(SchemaVersion(version=2))
+            db.commit()
+        if db.get(SchemaVersion, 3) is None:
+            db.add(SchemaVersion(version=3))
             db.commit()

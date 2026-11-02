@@ -318,7 +318,11 @@ export const UploadView: React.FC = () => {
     const saved = await addDocument(finalDoc);
     setSelectedDocumentId(saved.id);
     setSelectedPatientId(extractedData.patientId);
-    navigateTo('viewer', { documentId: saved.id });
+    if (sendToReview) {
+      navigateTo('review');
+    } else {
+      navigateTo('viewer', { documentId: saved.id });
+    }
     } catch (error) { setSaveError(error instanceof Error ? error.message : 'Unable to save'); }
     finally { setIsSaving(false); }
   };

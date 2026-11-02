@@ -16,6 +16,7 @@ from sqlalchemy import select, update
 
 from .database import make_database, migrate, Patient, Document, FileRecord, FileUpload, Version, Audit
 from .security import install_security, initialize_admin, authorize, can_read, ADMINISTRATIVE
+from .workflows import install_workflows, sync_review, workflow_summary, SYSTEM
 
 TYPES = {'Patient Record', 'X-ray', 'Treatment Plan', 'Prescription', 'Consent Form', 'Laboratory Report', 'Billing/Receipt', 'Appointment Record'}
 PROCEDURES = {'Restorative', 'Endodontics', 'Oral Surgery', 'Orthodontics', 'Prosthodontics', 'Periodontics', 'Preventive', 'Billing & Administrative'}
@@ -43,8 +44,11 @@ class CreateDocument(BaseModel):
 
 
 def validate(data):
-    if data.get('type') not in TYPES or data.get('procedureCategory') not in PROCEDURES:
+    if not isinstance(data.get('type'), str) or not isinstance(data.get('procedureCategory'), str) or data.get('type') not in TYPES or data.get('procedureCategory') not in PROCEDURES:
         raise HTTPException(422, 'Unknown document type or procedure category')
+    scores = [data.get('confidenceScore'), *data.get('fieldConfidence', {}).values()] if isinstance(data.get('fieldConfidence'), dict) else [None]
+    if any(type(value) not in (int, float) or not 0 <= value <= 100 for value in scores):
+        raise HTTPException(422, 'Confidence values must be numbers from 0 to 100')
     if not isinstance(data.get('title'), str) or not data['title'].strip() or len(data['title']) > 300:
         raise HTTPException(422, 'A title of at most 300 characters is required')
     try:
@@ -98,6 +102,9 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
                 for a in seed['auditLogs']:
                     db.add(Audit(id=a['id'], data=a))
                 db.commit()
+            for row in db.scalars(select(Document)):
+                sync_review(db, row, SYSTEM, audit)
+            db.commit()
 
     app = FastAPI(title='DentDocs authenticated clinic API', lifespan=lifespan)
     app.state.engine = engine
@@ -119,8 +126,12 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
         authorize(user, doc.data)
         return doc
 
-    def public(doc, user):
-        return safe_data({**doc.data, 'revision': doc.revision}, user)
+    def public(doc, user, db):
+        result = {**safe_data({**doc.data, 'revision': doc.revision}, user), **workflow_summary(db, doc)}
+        if result['review'] and result['review']['status'] != 'approved':
+            result.pop('reviewedBy', None)
+            result.pop('reviewedAt', None)
+        return result
 
     def safe_data(value, user):
         data = copy.deepcopy(value)
@@ -181,14 +192,15 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
                 patient['emergencyContact'] = {'name': '', 'relation': '', 'phone': ''}
         logs = [a.data for a in db.scalars(select(Audit))] if user['role'] == 'admin' else []
         logs.sort(key=lambda a: a['timestamp'], reverse=True)
-        return {'patients': patients, 'documents': [public(d, user) for d in db.scalars(select(Document)) if can_read(user, d.data)], 'auditLogs': logs, 'currentUser': user}
+        pending = sum(1 for d in db.scalars(select(Document)) if not d.data.get('archived') and can_read(user, d.data) and (workflow_summary(db, d)['review'] or {}).get('status') in {'pending', 'in_review', 'changes_requested'})
+        return {'reviewPendingCount': pending, 'patients': patients, 'documents': [public(d, user, db) for d in db.scalars(select(Document)) if can_read(user, d.data)], 'auditLogs': logs, 'currentUser': user}
 
     @app.get('/api/documents/{document_id}')
     def read_document(document_id: str, user=Depends(actor), db=Depends(database)):
         doc = get_doc(db, document_id, user)
         audit(db, user, 'VIEW_DOCUMENT', doc.data)
         db.commit()
-        return public(doc, user)
+        return public(doc, user, db)
 
     @app.post('/api/documents/search')
     def search(body: dict, user=Depends(actor), db=Depends(database)):
@@ -199,7 +211,7 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
         for row in db.scalars(select(Document)):
             if not can_read(user, row.data):
                 continue
-            d = public(row, user)
+            d = public(row, user, db)
             if d.get('archived'):
                 continue
             if any(filters.get(k) not in (None, '', 'ALL', d[field]) for k, field in [('type', 'type'), ('patientId', 'patientId')]):
@@ -278,10 +290,14 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
         for field in ('reviewedBy', 'reviewedAt', 'resolvedBy', 'resolvedAt', 'resolutionNote'):
             d.pop(field, None)
         attach_file(db, d, body.fileId)
-        db.add(Document(id=d['id'], patient_id=patient.id, revision=1, data=d))
+        for field in ('review', 'validity'):
+            d.pop(field, None)
+        row = Document(id=d['id'], patient_id=patient.id, revision=1, data=d)
+        db.add(row)
         db.flush()
         db.add(Version(id=str(uuid4()), document_id=d['id'], number=1, file_id=body.fileId, snapshot=d))
         audit(db, user, 'UPLOAD', d)
+        sync_review(db, row, user, audit)
         db.commit()
         return safe_data({**d, 'revision': 1}, user)
 
@@ -303,6 +319,8 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
         current = db.scalar(select(Version).where(Version.document_id == row.id, Version.number == d['version']))
         current.snapshot = d
         audit(db, user, 'EDIT_METADATA', d, ', '.join(body.updates))
+        db.refresh(row)
+        sync_review(db, row, user, audit)
         db.commit()
         return safe_data(result, user)
 
@@ -358,6 +376,8 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
                 d.update(fileId=None, fileType=snapshot['fileType'], fileSize=snapshot['fileSize'])
             validate(d)
             event = 'UPLOAD_VERSION'
+            d.pop('reviewedBy', None)
+            d.pop('reviewedAt', None)
         result = persist(db, row, body.expectedRevision, d)
         if operation == 'versions':
             db.add(Version(id=str(uuid4()), document_id=row.id, number=d['version'], file_id=d.get('fileId'), snapshot=d))
@@ -365,6 +385,8 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
             current = db.scalar(select(Version).where(Version.document_id == row.id, Version.number == d['version']))
             current.snapshot = d
         audit(db, user, event, d, body.note)
+        db.refresh(row)
+        sync_review(db, row, user, audit)
         db.commit()
         return safe_data(result, user)
 
@@ -384,10 +406,17 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
         history = {**current, 'versionNumber': current['version'], 'status': 'superseded', 'changeSummary': body.note}
         d = copy.deepcopy(target.snapshot)
         d.update(id=row.id, patientId=row.patient_id, archived=False, archivedBy=None, archivedAt=None, version=current['version'] + 1, versionStatus='active', versionHistory=[history, *current.get('versionHistory', [])], uploadedAt=now(), uploadedBy=user['name'], fileId=target.file_id)
+        d.pop('reviewedBy', None)
+        d.pop('reviewedAt', None)
+        patient = db.get(Patient, row.patient_id)
+        d.update(patientRecordNo=patient.record_no, patientName=patient.data['fullName'])
         result = persist(db, row, body.expectedRevision, d)
         db.add(Version(id=str(uuid4()), document_id=row.id, number=d['version'], file_id=target.file_id, snapshot=d))
         audit(db, user, 'RESTORE_VERSION', d, body.note)
+        db.refresh(row)
+        sync_review(db, row, user, audit)
         db.commit()
         return safe_data(result, user)
 
+    install_workflows(app, actor, database, audit, lambda db, row, user: public(row, user, db))
     return app

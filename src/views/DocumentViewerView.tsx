@@ -1,5 +1,5 @@
 import { request, uploadOriginal } from '../data/apiClient';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useClinic } from '../context/ClinicContext';
 import {
   DocumentType,
@@ -9,6 +9,7 @@ import {
   DentalDocument,
 } from '../types/dental';
 import { DocumentVisualPreview } from '../components/DocumentVisualPreview';
+const DocumentWorkflowPanel = lazy(() => import('../components/DocumentWorkflowPanel').then(module => ({ default: module.DocumentWorkflowPanel })));
 import { AccessRestricted } from '../components/AccessRestricted';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { DocumentViewerSkeleton } from '../components/Skeletons';
@@ -68,13 +69,17 @@ export const DocumentViewerView: React.FC = () => {
   const [loadError, setLoadError] = useState('');
   const [revisionFile, setRevisionFile] = useState<File | null>(null);
   const [activeDoc, setActiveDoc] = useState<DentalDocument | null>(null);
+  const loadedTarget = React.useRef<string | undefined>(undefined);
 
   // Sync and route through async data layer
   useEffect(() => {
     let isCurrent = true;
-    setLoadingDoc(true);
     setLoadError('');
     const targetId = selectedDocumentId || visibleDocuments[0]?.id;
+    // Keep the current workflow mounted during a refresh so its saved feedback
+    // and expanded state remain visible. Navigation still shows a loading gate.
+    setLoadingDoc(loadedTarget.current !== targetId);
+    loadedTarget.current = targetId;
     if (!targetId) {
       setActiveDoc(null);
       setLoadingDoc(false);
@@ -336,6 +341,7 @@ export const DocumentViewerView: React.FC = () => {
       </div>
 
       {/* Main Dual-Pane View: Document Preview on Left, Extracted Metadata on Right */}
+      <Suspense fallback={<p role="status" className="py-3 text-sm text-slate-600">Loading review and validity…</p>}><DocumentWorkflowPanel document={doc} /></Suspense>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Pane: Document Visual Preview (6 cols) */}
         <div className="lg:col-span-6 space-y-3">

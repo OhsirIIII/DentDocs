@@ -91,6 +91,8 @@ export interface PrescriptionDetails {
 }
 
 export interface DentalDocument {
+  review?: import('./workflows').ReviewSummary | null;
+  validity?: import('./workflows').ValidityState;
   revision?: number;
   fileId?: string | null;
   id: string;
@@ -155,6 +157,10 @@ export interface DocumentVersion {
 
 export type AlertSeverity = 'critical' | 'warning' | 'info';
 export type AlertType =
+  | 'DOCUMENT_EXPIRED'
+  | 'DOCUMENT_EXPIRING'
+  | 'MISSING_PRESCRIPTION_CREDENTIALS'
+  | 'MISSING_TOOTH_ANNOTATION'
   | 'MISSING_CONSENT'
   | 'EXPIRED_CLEARANCE'
   | 'EXPIRING_PRESCRIPTION'
@@ -217,7 +223,17 @@ export interface AuditEntry {
     | 'USER_UPDATE'
     | 'PASSWORD_CHANGE'
     | 'PASSWORD_RESET'
-    | 'ACCESS_DENIED';
+    | 'ACCESS_DENIED'
+    | 'REVIEW_QUEUED'
+    | 'REVIEW_REOPENED'
+    | 'REVIEW_SUPERSEDED'
+    | 'REVIEW_ASSIGNED'
+    | 'REVIEW_APPROVED'
+    | 'REVIEW_CHANGES_REQUESTED'
+    | 'VALIDITY_RULE_DRAFT'
+    | 'VALIDITY_RULE_APPROVED'
+    | 'VALIDITY_RULE_RETIRED'
+    | 'VALIDITY_CONFIRMED';
   targetType: 'DOCUMENT' | 'PATIENT' | 'SYSTEM';
   targetId: string;
   targetTitle: string;

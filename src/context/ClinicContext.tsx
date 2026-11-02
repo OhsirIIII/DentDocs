@@ -9,6 +9,7 @@ import React, {
 import { useLocation, useNavigate } from 'react-router-dom';
 import type {
   AuditEntry,
+  ClinicalAlert,
   DentalDocument,
   DocumentType,
   UserRole,
@@ -29,7 +30,9 @@ type Screen =
   | 'search'
   | 'audit'
   | 'incomplete'
-  | 'users';
+  | 'users'
+  | 'review'
+  | 'validity-rules';
 interface NavigationOptions {
   patientId?: string;
   documentId?: string;
@@ -292,10 +295,31 @@ function useClinicState() {
     archivedDocuments:
       role === 'admin' ? documents.filter((d) => d.archived) : [],
     auditLogs: data?.auditLogs || [],
-    alerts:
-      role === 'front_desk'
+    reviewPendingCount: data?.reviewPendingCount || 0,
+    alerts: [
+      ...(role === 'front_desk'
         ? []
-        : generateClinicAlerts(patients, visibleDocuments),
+        : generateClinicAlerts(patients, visibleDocuments)),
+      ...visibleDocuments
+        .filter((d) =>
+          ['expired', 'expiring'].includes(d.validity?.status || ''),
+        )
+        .map<ClinicalAlert>((d) => ({
+          id: `validity-${d.id}`,
+          patientId: d.patientId,
+          patientRecordNo: d.patientRecordNo,
+          patientName: d.patientName,
+          type:
+            d.validity?.status === 'expired'
+              ? ('DOCUMENT_EXPIRED' as const)
+              : ('DOCUMENT_EXPIRING' as const),
+          severity: 'warning' as const,
+          title: `${d.validity?.status === 'expired' ? 'Expired document' : 'Document expiring'} (${d.patientName})`,
+          description: `${d.title}: verified expiry ${d.validity?.expiresOn}. Staff must review renewal or replacement.`,
+          linkedDocId: d.id,
+          actionLabel: 'Review validity',
+        })),
+    ],
     canAccessClinicalDocs: role !== 'front_desk',
     canUploadDocs: true,
     canDeleteDocs: role === 'admin',

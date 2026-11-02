@@ -10,7 +10,9 @@ type NavScreen =
   | 'incomplete'
   | 'search'
   | 'audit'
-  | 'users';
+  | 'users'
+  | 'review'
+  | 'validity-rules';
 
 export const Navbar: React.FC = () => {
   const {
@@ -22,6 +24,7 @@ export const Navbar: React.FC = () => {
     visibleDocuments,
     patients,
     alerts,
+    reviewPendingCount,
   } = useClinic();
 
   const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
@@ -71,6 +74,12 @@ export const Navbar: React.FC = () => {
       short: 'Incomplete',
     },
     { screen: 'search', label: 'Search', short: 'Search' },
+    {
+      screen: 'review',
+      label: 'Review',
+      short: 'Review',
+      count: reviewPendingCount,
+    },
     ...(canManageUsersAndAudit
       ? [
           { screen: 'audit' as NavScreen, label: 'Audit Log', short: 'Audit' },
@@ -111,7 +120,7 @@ export const Navbar: React.FC = () => {
           {/* Primary navigation */}
           <nav
             aria-label="Primary"
-            className="hidden md:flex items-stretch self-stretch gap-1 lg:gap-2"
+            className="hidden xl:flex items-stretch self-stretch gap-1 lg:gap-2"
           >
             {navItems.map((item) => {
               const active = activeScreen === item.screen;
@@ -200,6 +209,15 @@ export const Navbar: React.FC = () => {
                     </p>
                   </div>
                   <button
+                    className="w-full text-left px-3 py-2 text-sm text-brand-900 hover:bg-brand-50 rounded-lg"
+                    onClick={() => {
+                      setRoleDropdownOpen(false);
+                      navigateTo('validity-rules');
+                    }}
+                  >
+                    Validity policies
+                  </button>
+                  <button
                     className="w-full text-left px-3 py-2 text-sm text-rose-800 hover:bg-rose-50 rounded-lg"
                     onClick={() => {
                       setRoleDropdownOpen(false);
@@ -217,7 +235,7 @@ export const Navbar: React.FC = () => {
         {/* Mobile navigation */}
         <nav
           aria-label="Primary"
-          className="flex md:hidden items-stretch gap-1 -mx-4 px-4 border-t border-slate-100 text-xs overflow-x-auto"
+          className="flex xl:hidden items-stretch gap-1 -mx-4 px-4 border-t border-slate-100 text-xs overflow-x-auto"
         >
           {navItems.map((item) => {
             const active = activeScreen === item.screen;

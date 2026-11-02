@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import {
   BrowserRouter,
   Navigate,
@@ -28,6 +28,8 @@ import { SearchView } from './views/SearchView';
 import { AuditLogView } from './views/AuditLogView';
 import { IncompleteDocumentsView } from './views/IncompleteDocumentsView';
 import { PrivacyNoticeModal } from './components/PrivacyNoticeModal';
+const ReviewQueueView = lazy(() => import('./views/ReviewQueueView').then(module => ({ default: module.ReviewQueueView })));
+const ValidityRulesView = lazy(() => import('./views/ValidityRulesView').then(module => ({ default: module.ValidityRulesView })));
 
 function ClinicMainContent() {
   const { pending } = useClinic();
@@ -40,6 +42,7 @@ function ClinicMainContent() {
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
         <fieldset disabled={pending} aria-busy={pending} className="min-w-0">
+          <Suspense fallback={<p role="status" className="py-6 text-sm text-slate-600">Loading page…</p>}>
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<DashboardView />} />
@@ -51,6 +54,9 @@ function ClinicMainContent() {
               element={<DocumentViewerView />}
             />
             <Route path="/search" element={<SearchView />} />
+            <Route path="/review" element={<ReviewQueueView />} />
+            <Route path="/review/:reviewId" element={<ReviewQueueView />} />
+            <Route path="/validity-rules" element={<ValidityRulesView />} />
             <Route path="/admin/audit" element={<AdminRoute />} />
             <Route path="/admin/users" element={<AdminRoute users />} />
             <Route
@@ -67,6 +73,7 @@ function ClinicMainContent() {
               }
             />
           </Routes>
+          </Suspense>
         </fieldset>
       </main>
 
