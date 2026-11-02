@@ -4,15 +4,16 @@ Read this whole file first. Do NOT change any code until you have produced a pla
 
 ## 1. What this project is
 
-DentDocs is a document management system for a small dental clinic in the Philippines. It organizes, searches, and checks the completeness of patient records and administrative documents (patient records, X-rays, treatment plans, prescriptions, consent forms, lab reports, billing/receipts, appointment records).
+DentDocs is a document management and clinical completeness system for **San Nicolas Dental Clinic**, a community dental practice in the Philippines. It organizes, searches, and checks the completeness of patient records and administrative documents (patient records, X-rays, treatment plans, prescriptions, consent forms, lab reports, billing/receipts, appointment records).
 
 Core ideas:
 - OCR extracts text from scanned documents; documents are auto-classified and tagged (type, date, patient record number, procedure category, tooth numbers).
-- Natural-language / semantic search.
-- Completeness checking (missing signatures, missing required fields). AI output is ADVISORY ONLY: staff verify everything, and the system never makes clinical decisions.
+- Natural-language / semantic search with FDI two-digit tooth notation (11-48).
+- Completeness checking (missing signatures, missing required fields). AI output is ADVISORY ONLY: staff verify everything, and the system never makes clinical decisions ("Staff Must Verify").
 - Role-based access control, audit trail, document version history, alerts for missing or expiring documents.
 - Must run on the clinic's LOCAL NETWORK with no required internet connection.
 - Must respect the Philippine Data Privacy Act (RA 10173): strict access control, encryption, secure backups, audit logging.
+- Authentic practice branding: San Nicolas Dental Clinic logo mark, navy/warm gold tokens, and professional dental iconography.
 
 ## 2. Current state: front-end prototype (built in Google AI Studio)
 
@@ -64,14 +65,18 @@ All fictional: Filipino names, +63 917 000 xxxx phones, placeholder IDs (PRC 000
 - Keyword "semantic" search -> replace with real embeddings search.
 - No encryption, no real backups, no real session handling.
 
-## 4. Remaining polish (NOT yet done in the prototype)
+## 4. Front-End Polish & Craft Pass (Completed)
 
-These were the last prompt before the AI Studio session ran out. Implement them properly in the real system:
-- Empty states for lists, search results, and queues
-- Loading states and skeletons
-- Confirmation dialogs for destructive actions (delete, restore version)
-- A clear privacy notice on first login (Data Privacy Act; mention who can see what; require acknowledgement and log it)
-- Automatic session timeout after 10 minutes of inactivity, ENFORCED ON THE SERVER (expire the token or session), with a warning shown before logout
+All items from the original Section 4 backlog plus San Nicolas Dental Clinic branding have been implemented and documented in `dentdocs_polish_changes.md`:
+- **Empty states**: Actionable empty states with clear recovery steps across patient lists, document lists, search queries, incomplete queue, alert banners, and audit log.
+- **Loading states & skeletons**: Implemented in `src/components/Skeletons.tsx` and integrated with async simulated latency in `src/data/clinicApi.ts`.
+- **In-app confirmation dialogs**: Replaced native `window.confirm()` with `src/components/ConfirmDialog.tsx` showing explicit reversibility callouts and audit impact notes.
+- **Admin-only soft delete & recovery**: Replaced hard delete with soft-delete archiving (`archived: true`), restricted to Admin, and restorable by Admin with full audit logging.
+- **Session privacy notice**: Implemented in `src/components/PrivacyNoticeModal.tsx` requiring acknowledgement of RA 10173 on first login per session.
+- **Inactivity session timeout**: 10-minute timer with a 1-minute countdown warning toast (`useInactivityTimer.ts`, `InactivityWarningBanner.tsx`), auto-downgrading role to Front Desk upon expiration.
+- **San Nicolas Clinic branding**: Integrated practice logo mark, favicon, brand navy/warm gold tokens, and Plus Jakarta Sans typography.
+
+*(Note for production: Inactivity timeouts and role enforcement must also be verified and enforced server-side when the backend is added.)*
 
 ## 5. Target production architecture
 
@@ -108,8 +113,8 @@ These were the last prompt before the AI Studio session ran out. Implement them 
 **Phase 3: Authentication, RBAC, audit log**
 > Implement real login with hashed passwords, server-side role enforcement on every endpoint, a 10-minute inactivity timeout enforced on the server with a client-side warning, a first-login privacy notice with logged acknowledgement, and an append-only audit log on every document access.
 
-**Phase 4: Polish**
-> Add empty states, loading states, and confirmation dialogs for destructive actions across all screens.
+**Phase 4: Polish (Completed in Front-End Prototype)**
+> Add empty states, loading states, confirmation dialogs for destructive actions, privacy notice, and inactivity timeout across all screens (completed; see `dentdocs_polish_changes.md`). Server-side timeout enforcement will be added in Phase 3.
 
 **Phase 5: OCR and classification**
 > Add a local OCR pipeline on upload: extract text, classify document type, extract date, patient record number, and tooth numbers, assign tags and a confidence score, and send low-confidence results to the review queue. Rule-based first.
@@ -119,3 +124,18 @@ These were the last prompt before the AI Studio session ran out. Implement them 
 
 **Phase 7: Backup, tests, security review**
 > Add encrypted backups and a tested restore procedure, automated tests for permissions, audit logging, and completeness rules, then act as a security reviewer (OWASP Top 10, insecure file uploads, broken access control, sensitive data in logs) and fix the findings.
+
+## 8. Project Documentation & Deliverables Checklist
+
+- [ ] Project Proposal
+- [ ] Software Requirements Specification (SRS)
+- [ ] Use Case Diagram and User Stories
+- [ ] System Architecture Diagram
+- [ ] Entity Relationship Diagram (ERD)
+- [ ] UI/UX Wireframes and Design Guidelines
+- [ ] Software Design Document (SDD)
+- [ ] API Documentation
+- [ ] README and Installation Guide
+- [ ] Test Plan and Test Cases
+- [ ] Deployment and Backup Guide
+- [ ] User Manual
