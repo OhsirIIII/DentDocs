@@ -67,6 +67,15 @@ def validate(data):
         raise HTTPException(422, 'Confidence values must be numbers from 0 to 100')
     if not isinstance(data.get('title'), str) or not data['title'].strip() or len(data['title']) > 300:
         raise HTTPException(422, 'A title of at most 300 characters is required')
+    if not isinstance(data.get('extractedText', ''), str) or len(data.get('extractedText', '')) > 200000:
+        raise HTTPException(422, 'Transcription must be text of at most 200000 characters')
+    for field, maximum in [('tags', 120), ('missingFields', 300)]:
+        values = data.get(field, [])
+        if not isinstance(values, list) or len(values) > 100 or any(not isinstance(value, str) or len(value) > maximum for value in values):
+            raise HTTPException(422, 'Invalid or oversized tag/checklist list')
+    for field in ['isNameMismatch', 'isBlurryWarning']:
+        if field in data and type(data[field]) is not bool:
+            raise HTTPException(422, 'Source warning flags must be booleans')
     try:
         datetime.strptime(data['date'], '%Y-%m-%d')
         teeth = data.get('toothNumbers', [])
@@ -122,7 +131,7 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
                 sync_review(db, row, SYSTEM, audit)
             db.commit()
 
-    app = FastAPI(title='DentDocs authenticated clinic API', lifespan=lifespan)
+    app = FastAPI(title='DentDocs authenticated clinic API', lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
     app.state.engine = engine
 
     def database():
@@ -203,6 +212,7 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
         response.headers['X-Content-Type-Options'] = 'nosniff'
         response.headers['X-Frame-Options'] = 'DENY'
         response.headers['Referrer-Policy'] = 'no-referrer'
+        response.headers['Permissions-Policy'] = 'camera=(), microphone=(), geolocation=()'
         return response
 
     @app.get('/api/health')

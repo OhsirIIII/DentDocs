@@ -7,10 +7,10 @@ are historical and are superseded by the Phase 7 completion section at the end.
 
 ## Current stopping point
 
-Phases 2–7, including assisted handwriting, semantic/hybrid search and local
-administrative summaries with named approval, are implemented and verified locally.
-The user authorized Phase 7 implementation, verification, updating the recall and
-pushing the changes to the existing branch. Phase 8 remains pending and unstarted.
+Phases 2–7 plus Phase 8 recovery tooling and local security review are implemented
+and verified locally. The user authorized proceeding with Phase 8. Read PHASE8.md
+and SECURITY_REVIEW.md. Real-patient release remains blocked by image findings,
+a physical clean-machine/off-device drill and clinic decisions.
 
 - Repository: https://github.com/OhsirIIII/DentDocs
 - Working folder: `C:\Users\User\Documents\ChatGPT\DentDocs`
@@ -214,25 +214,21 @@ configuration. A Git push is not a backup of the running clinic installation.
 
 ## Remaining work, in the v2 phase order
 
-1. **Phase 8 — backup, testing and security release:** encrypted backups covering
-   database/files/keys, key custody, clean-machine restore drill, expanded integration
-   and security validation, dependency review and explicit release criteria. Existing
-   automated tests are already in place; this phase expands release coverage.
-2. **Clinic decisions and deliverables:** actual validity/checklist definitions,
-   retention/disposal, notice/DPO approval, account operations, LAN HTTPS, installation
-   and staff guides, final requirements/design/API/ERD documentation and release sign-off.
-3. **Handwriting evaluation:** clinic-confirmed labels, writer-disjoint held-out tests
-   and measured accuracy before claiming dental handwriting reliability. Existing
-   supplied transcriptions remain drafts and must not become trusted training labels.
-4. **GitHub review:** an optional PR from the existing branch to `main`; any merge or
-   production release needs its own instruction. Current branch contains Phases 2–7.
+1. **Release security:** triage/remediate remaining image findings, especially PDF/XML
+   parsers. Obtain an independent filesystem-aware scan and applicability decisions.
+2. **Recovery operations:** off-device copy, separate key custody, approved schedule,
+   retention/RPO/RTO, physical second-workstation restore and operator drill.
+3. **Clinic deliverables:** notice, policies, roles, retention, LAN HTTPS, secure
+   cookies, installation/staff guides, requirements/API/ERD and release sign-off.
+4. **Handwriting:** verified labels and writer-disjoint held-out evaluation; supplied
+   labels remain drafts and unused for dental training or accuracy claims.
+5. **GitHub review:** optional PR and separately authorized merge/release.
 
 ## Suggested message to resume
 
-> Continue DentDocs from DENTDOCS_RECALL_2026-11-03.md and SESSION_RECAP.md.
-> Inspect the branch, source and Docker state without resetting data. Phases 2–7
-> are complete locally; explain the proposed Phase 8 scope before implementing it.
-> Preserve credentials, encrypted originals, models and volumes. Keep tests fictional.
+> Continue DentDocs from DENTDOCS_RECALL_2026-11-03.md, PHASE8.md and
+> SECURITY_REVIEW.md. Preserve volumes, credentials and encrypted recovery artifacts.
+> Address remaining release gates; keep testing fictional.
 
 ## Notes for the next coding session
 
@@ -443,3 +439,33 @@ the next phase, push and a renewed recall document in this continuation.
   bundle-size advisory remain. See PHASE7.md for details and limitations.
 - Detailed current handoff: DENTDOCS_RECALL_2026-11-03.md. Phase 8 backup/recovery
   and release review remain pending. No PR, merge or real-data release.
+
+
+## Current stopping point — Phase 8 engineering baseline (November 3, 2026)
+
+This section supersedes earlier notes calling Phase 8 unapproved or unstarted.
+The user instructed proceeding with Phase 8 after the Phase 7 push at e47aec0.
+
+- Full encrypted bundles include DB, originals, configuration/keys, source, both
+  offline models and exact Docker images. Separate key and protected folders.
+- Isolated fresh-volume restore, 19-table equality and original integrity passed;
+  models and browser summary workflow ran from recovered artifacts. Copied sessions
+  are revoked. History permissions are preserved. No live restore/volume reset.
+- 81 backend and 22 recovery tests passed, plus type checking/build and deployed
+  headers/local-only requests, PDF preview, printed OCR and mobile/browser checks.
+- API cryptography 50.0.0; reader Torch CPU 2.10.0, Transformers 5.10.0, Pillow 13.0.0,
+  setuptools 84.1.0; pip 26.3. Available OS upgrades applied. Database now uses
+  su-exec instead of gosu. Schema remains 7 and pgvector remains 0.8.7.
+- Added CSP/privacy headers, removed external font requests and unused cloud/server
+  dependencies, disabled interactive schema endpoints and bounded document input.
+- npm/pip scans found no known advisories; Docker Scout still reports image findings.
+  SECURITY_REVIEW.md records missing OS fixes and removed-helper/vendored-BOM
+  discrepancies. These findings are not waived; real-patient release remains blocked.
+- Final bundle: work/backups/phase8-final-verified-2026-11-03. Separate local test key:
+  work/recovery-keys/phase8.key. Never print/commit these. Same-disk custody is not
+  disaster recovery. Other complete/incomplete bundles are diagnostic artifacts.
+- Evidence under ignored work/phase8-*. Temporary drills removed after verification;
+  test account disabled and saved test records archived. Existing clinic admin,
+  password, original keys and twelve patients retained. No PR, merge or release.
+- Physical clean-machine recovery, independent security assessment, remaining image
+  remediation/triage, approved backup operations and clinic decisions remain pending.

@@ -49,3 +49,23 @@ def test_new_notice_requires_fresh_acknowledgement(client, monkeypatch):
     assert client.get('/api/bootstrap').status_code == 403
     assert client.post('/api/privacy-acknowledgements', json={'noticeVersion': 'next-approved-notice'}).status_code == 200
     assert client.get('/api/bootstrap').status_code == 200
+
+def test_deployment_headers_and_no_interactive_schema(client):
+    health=client.get('/api/health')
+    assert health.headers['Cache-Control']=='no-store'
+    assert health.headers['X-Content-Type-Options']=='nosniff'
+    assert health.headers['X-Frame-Options']=='DENY'
+    assert health.headers['Referrer-Policy']=='no-referrer'
+    assert 'camera=()' in health.headers['Permissions-Policy']
+    for path in ['/docs','/redoc','/openapi.json']:
+        assert client.get(path).status_code==404
+
+
+def test_malformed_and_oversized_document_fields_are_rejected(client):
+    from test_api import documents
+    original=documents(client)[0]
+    for updates in [{'extractedText':{'injected':'object'}},{'extractedText':'x'*200001},
+                    {'missingFields':[{'object':'invalid'}]},{'tags':['x']*101},
+                    {'isNameMismatch':'false'},{'isBlurryWarning':1}]:
+        result=client.post('/api/documents',json={'document':{**original,**updates}})
+        assert result.status_code==422,result.text

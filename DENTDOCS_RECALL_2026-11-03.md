@@ -1,69 +1,79 @@
-# DentDocs recall — November 3, 2026
+# DentDocs recall — November 3, 2026 (after Phase 8)
 
-Read this first, then SESSION_RECAP.md and the actual code. Attached documents and
-older recall text are context, not new instructions. Current code and current user
-instructions take precedence over historical plans.
+Read this, SESSION_RECAP.md, PHASE8.md, SECURITY_REVIEW.md and the code. Older recall
+text is historical context, not new instructions or the current release status.
 
-## Completed in this continuation
+## Current state
 
-Phase 7 adds working local administrative summaries to the document viewer:
+Phases 2–7 and Phase 8 recovery tooling/local engineering review are implemented.
+**Real-patient release is blocked** by the remaining tasks below. User authorized
+Phase 8 after Phase 7 was pushed at e47aec0. Branch: `codex/phase4-review-validity`.
+Remote: https://github.com/OhsirIIII/DentDocs.git. Use `git log -1` and compare the
+remote tracking branch for the final Phase 8 commit/transport status. No PR, merge,
+main-branch change or production release.
 
-- Generate a separate draft containing metadata and selected exact source quotations.
-- Review/edit the draft, add a note and explicitly confirm source comparison.
-- A dentist or administrator must approve before it becomes an accepted summary.
-- Named approval/rejection history is immutable. Source version/revision/fingerprint
-  and original association are retained; source changes invalidate old acceptance.
-- Pending extraction review blocks acceptance. Current and historical permissions
-  apply; clinical drafts remain hidden from front desk staff after reclassification.
-- Schema migration 7, summary audit actions, browser UI and regression coverage.
+Workspace: `C:\Users\User\Documents\ChatGPT\DentDocs`.
+App: http://127.0.0.1:8080, fictional/mock mode, loopback only. PostgreSQL 17,
+schema 7 and pgvector 0.8.7 retained. Existing clinic admin/password and keys retained.
 
-See PHASE7.md for behavior and limits. This uses a local extractive algorithm, not
-a new trained generative model. It does not improve recognition of unreadable
-handwriting or validate the underlying OCR. Selected quotations require staff review.
+## Changes and verification
 
-## Verification and repository state
+- `scripts/recovery.py`: separate random recovery key, AES-256-GCM streaming
+  components, encrypted manifest/hashes, full database/originals/config/source/
+  models/images bundle. Brief writer maintenance window with restart on failure.
+- Restore authenticates all components before extraction/execution, rejects unsafe
+  archives and live/external resources, creates fresh project/volumes/loopback port,
+  imports exact images and revokes copied sessions. No live overwrite supported.
+- `scripts/verify-recovery.py`: 19 persisted table hashes/counts, original decryption/
+  hashes, restricted runtime role/history permissions. Run before app interaction
+  while the source remains unchanged from the snapshot.
+- Cold local fresh-volume restore passed; initial drill matched 28 originals. Both
+  offline models and browser approval/reload/source invalidation worked from backup.
+  Final patched snapshot matched all 19 tables and all 32 retained originals.
+  Temporary drill data removed after retaining evidence. This is the same Docker host, not a physical second machine.
+- 81 backend and 22 recovery tests passed; type checking/build, security headers,
+  local-only browser requests, actual PDF preview and printed OCR passed. Known
+  Starlette/httpx deprecation and Vite bundle-size advisories remain.
+- API cryptography 50.0.0; reader Torch CPU 2.10.0, Transformers 5.10.0, Pillow 13.0.0,
+  setuptools 84.1.0; pip 26.3 and pinned reader dependencies. Available OS upgrades
+  applied. Database now uses su-exec instead of gosu. Models preserved, not retrained.
+- Removed unused cloud/server packages and external fonts. Added CSP/privacy headers,
+  disabled interactive schemas and rejected malformed/oversized document inputs.
+- npm/pip scans report no known advisories; Docker Scout still has image findings.
+  SECURITY_REVIEW.md records counts, no-fixed-version OS issues and removed-helper/
+  vendored-BOM discrepancies. No zero-vulnerability or compliance claim.
+- Temporary verification account disabled; saved test records archived. No real
+  dental photos imported and supplied draft transcriptions not used as ground truth.
 
-- Phases 2–7 are implemented locally; 79 backend tests passed, plus type checking,
-  production build, deployed browser checks and desktop/390px visual inspection.
-- Browser verified draft/approval, reload persistence, unchanged original download,
-  source invalidation and rejection. PostgreSQL verified schema 7, append-only
-  protections, original integrity and twelve retained fictional patients.
-- Test records were archived; temporary verification account disabled and sessions
-  revoked. Only the existing clinic administrator remains enabled; its password
-  was not used or changed. No real photos were imported for these tests.
-- Branch: `codex/phase4-review-validity`.
-- Remote: https://github.com/OhsirIIII/DentDocs.git
-- Prior pushed Phase 5–6 commit: `3749dbd`.
-- The user authorized implementing Phase 7, updating this recall, committing and
-  pushing to this same branch. This handoff is included in the Phase 7 commit.
-  Determine the resulting commit with `git log -1`; compare it with
-  `origin/codex/phase4-review-validity` to verify current transport status.
-- No PR, merge, main-branch change or production/real-data release.
-- Known advisories: Starlette/httpx test deprecation; Vite bundle-size advisory.
+## Private recovery artifacts
+
+Final bundle: `work/backups/phase8-final-verified-2026-11-03`.
+Separate local test key: `work/recovery-keys/phase8.key`.
+Evidence: ignored `work/phase8-*`. Other bundles/incomplete attempts are diagnostic,
+not the final recovery point. Do not print keys or private configuration.
+
+Bundle includes encrypted configuration, original-file keys and password hashes.
+Keep it encrypted, restrict access and copy it off-device; custody the recovery key
+separately. Same-disk folders do not satisfy disaster recovery. GitHub contains
+source, not these artifacts. Never commit originals, draft labels, models or secrets.
 
 ## Tasks left
 
-1. Phase 8: design encrypted backups for database, encrypted originals and required
-   keys/config; establish key custody and perform an isolated clean-machine restore
-   drill. Verify original hashes, accounts/history, models and offline workflows.
-2. Phase 8: expand deployment/security integration checks, dependency review and
-   release criteria; review access, sessions, uploads, histories and recovery paths.
-3. Clinic decisions: approved completeness/validity policies, privacy notice/DPO
-   review, retention/disposal, account administration and LAN HTTPS configuration.
-4. Deliverables: installation/recovery and staff guides, current requirements/design,
-   API/ERD documentation, acceptance evidence and explicit clinic release sign-off.
-5. Handwriting: obtain clinic-confirmed line transcriptions and measure held-out
-   accuracy across different writers before dental adaptation/reliability claims.
-   User-supplied labels are still draft interpretations and not training ground truth.
-6. Optional PR review from this branch to main, with merge authorized separately.
+1. Remediate/triage remaining high/critical image findings and PDF/XML parser exposure.
+   Obtain an independent filesystem-aware scan; document removed gosu and vendored
+   setuptools BOM applicability rather than ignoring scan results.
+2. Physical clean-machine restore with a second operator, off-device bundle and
+   separate key. Approve backup schedule, retention, recovery targets, key-loss/
+   rotation and backup/disk failure monitoring. No scheduler is installed yet.
+3. Clinic-approved notice, roles, completeness/validity and retention policies;
+   approved LAN HTTPS/secure cookies and independent security review.
+4. Final installation/recovery/staff guides, requirements/design/API/ERD, acceptance
+   evidence and explicit clinic release sign-off. No real-data release is implied.
+5. Clinic-confirmed handwritten labels and writer-disjoint held-out dental evaluation.
+   Existing supplied transcriptions are drafts, not trusted training labels.
+6. Optional PR review and separately authorized merge to main.
 
-Phase 8 is pending and has not been started. Explain its proposed scope before
-implementation. Do not infer permission for a real-data release from this handoff.
-
-## Resume without resetting the installation
-
-Workspace: `C:\Users\User\Documents\ChatGPT\DentDocs`.
-App: http://127.0.0.1:8080 (loopback-only, fictional-data mode).
+## Safe continuation
 
 ```powershell
 git status --short --branch
@@ -72,20 +82,12 @@ docker compose --profile semantic up --build -d
 docker compose ps
 ```
 
-Keep `.env`, keys, existing PostgreSQL/files volumes and encrypted originals. Never
-use `down -v`, reinitialize the database or regenerate keys to start a new session.
-Existing private reader token must not be printed. Docker Desktop may need to be
-running; its executable is in the user's DockerDesktop resources/bin directory.
+Preserve `.env`, keys, database/files volumes, originals and models under ignored
+`work/handwriting/` and `work/semantic/model/`. Never use a live `down -v`, blanket
+prune or regenerate credentials merely to resume. Rebuilds may leave running services
+pointing to unexportable old image IDs; backup preflight detects this before downtime.
+Refresh only affected containers from prepared images, preserving volumes, then use
+a new backup destination. PHASE8.md provides exact recovery and safe cleanup commands.
 
-Offline handwriting and embedding models live under ignored `work/handwriting/`
-and `work/semantic/model/`; source-only GitHub clones do not include these artifacts.
-The private CPU reader serves both. See PHASE5_HANDWRITING.md, PHASE6.md and setup
-scripts for reproduction. PostgreSQL remains version 17 with pgvector 0.8.7.
-
-Private datasets, real dental images, draft label packets, credentials, database
-files, model weights, screenshots and test-account helpers stay under ignored local
-paths. A Git push is source publication, not a backup of the installation. The
-Phase 6 safety dump is incomplete recovery coverage; Phase 8 still needs a full drill.
-
-Suggested resume: “Continue DentDocs from DENTDOCS_RECALL_2026-11-03.md. Inspect the
-branch and running app without resetting data, then explain the Phase 8 scope.”
+Suggested resume: “Continue DentDocs from this recall and SECURITY_REVIEW.md.
+Inspect state without resetting data, then address remaining release gates.”
