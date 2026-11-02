@@ -29,9 +29,18 @@ The working repository is now `C:\Users\User\Documents\ChatGPT\DentDocs`, on bra
   → refresh flow. No browser exceptions occurred in those checks.
 - Native Windows restricted execution could not run the API/tests reliably; approved
   execution completed them. Test state and encryption keys stay under ignored `work/`.
-- Docker is unavailable on this computer. PostgreSQL startup, Docker builds,
-  PostgreSQL restart persistence and concurrent PostgreSQL transactions remain
-  unverified. Phase 2's full deployment acceptance gate remains pending.
+- Docker Desktop and WSL 2 are now running. Both Docker images built successfully,
+  and the web/API/PostgreSQL stack is running at `http://127.0.0.1:8080`.
+- PostgreSQL deployment checks passed: upload and exact original retrieval,
+  simultaneous edits yielding one success and one 409 conflict, replacement file,
+  restoration as version 3, archive/search exclusion, and archive recovery.
+- Restarting all three containers preserved the database records, audit events,
+  version history and both original files, with no duplicate seed records.
+- Browser checks also passed against the compiled Nginx-hosted interface: direct
+  URLs, refresh, browser back, Admin guard and unknown routes, without exceptions.
+- Phase 2's local mock deployment acceptance checks have passed. This does not
+  establish production security: Phase 3 authentication and server-side access
+  control remain required before using real clinic data.
 
 ## Run on a machine with dependency access
 
@@ -105,7 +114,7 @@ review assignment, production user management, secure sessions, comprehensive ac
 logging, append-only audit enforcement and production backup/restore are later phases.
 The existing privacy notice is a prototype acknowledgement, not a compliance certificate.
 
-## Acceptance checklist (pending execution)
+## Acceptance checks
 
 - Check direct URLs, refresh, back/forward, unknown document IDs and Admin route guard.
 - Upload a fictional PDF/image, confirm review, download and compare original bytes.
@@ -115,6 +124,21 @@ The existing privacy notice is a prototype acknowledgement, not a compliance cer
 - Create a revision with a replacement file, then restore the first version as a new one.
 - Disconnect the API and verify save failures remain visible without false success.
 - Run contract tests and repeat persistence/concurrency checks against PostgreSQL.
+
+The above deployment, persistence and concurrency checks passed on November 2,
+2026. The deployment verification creates one fictional document and archives it
+at the end. Its audit history remains intentionally retained.
+
+To reproduce the deployed API checks using the project Python environment:
+
+```powershell
+.venv\Scripts\python.exe scripts\verify-deployment.py prepare
+docker compose restart
+.venv\Scripts\python.exe scripts\verify-deployment.py verify
+```
+
+The script refuses to test an endpoint whose health response does not explicitly
+report mock mode. Do not run multiple prepare/verify sequences concurrently.
 
 ## Recovery during mock testing
 
