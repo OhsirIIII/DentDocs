@@ -1,4 +1,4 @@
-import { uploadOriginal } from '../data/apiClient';
+import { request, uploadOriginal } from '../data/apiClient';
 import React, { useState, useEffect } from 'react';
 import { useClinic } from '../context/ClinicContext';
 import {
@@ -231,6 +231,7 @@ export const DocumentViewerView: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-12">
+      <button className="text-sm font-semibold underline text-brand-900" onClick={async () => { await request(`/documents/${encodeURIComponent(doc.id)}/print`, { method: 'POST' }); window.print(); }}>Print document</button>
       {doc.fileId && <a className="inline-flex text-sm font-semibold underline text-brand-900" href={`/api/documents/${encodeURIComponent(doc.id)}/file`}>Download original file</a>}
       {!doc.fileId && <p className="text-xs text-slate-500">Fictional fixture preview; no original file was supplied.</p>}
       {/* Top Bar: Back button, Title, Versioning info, Revision Upload & Pagination */}
@@ -338,7 +339,7 @@ export const DocumentViewerView: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Pane: Document Visual Preview (6 cols) */}
         <div className="lg:col-span-6 space-y-3">
-          <DocumentVisualPreview document={doc} heightClass="min-h-[640px]" />
+          <div id="document-print"><DocumentVisualPreview document={doc} heightClass="min-h-[640px]" /></div>
 
           {/* Quick status pill under preview */}
           <div className="flex items-center justify-between text-xs text-slate-500 px-2">
@@ -439,6 +440,7 @@ export const DocumentViewerView: React.FC = () => {
                       </div>
 
                       <div className="flex items-center gap-2">
+                        {['admin', 'dentist'].includes(currentUser.role) && <>
                         {doc.completenessStatus !== 'complete' ? (
                           <button
                             type="button"
@@ -467,6 +469,7 @@ export const DocumentViewerView: React.FC = () => {
                             Re-flag as Incomplete
                           </button>
                         )}
+                        </>}
                       </div>
                     </div>
 
@@ -537,6 +540,7 @@ export const DocumentViewerView: React.FC = () => {
                 </label>
                 <select
                   value={editedType}
+                  disabled={currentUser.role === 'assistant' && doc.type === 'Treatment Plan'}
                   onChange={(e) => {
                     const newType = e.target.value as DocumentType;
                     setEditedType(newType);
@@ -562,6 +566,7 @@ export const DocumentViewerView: React.FC = () => {
                 </label>
                 <select
                   value={editedProcedure}
+                  disabled={currentUser.role === 'assistant' && doc.type === 'Treatment Plan'}
                   onChange={(e) => {
                     const newProc = e.target.value as ProcedureCategory;
                     setEditedProcedure(newProc);
@@ -666,6 +671,7 @@ export const DocumentViewerView: React.FC = () => {
 
                   <button
                     type="button"
+                    disabled={currentUser.role === 'assistant' && doc.type === 'Treatment Plan'}
                     onClick={handleSaveAllChanges}
                     className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-xl transition-colors shadow-xs"
                   >

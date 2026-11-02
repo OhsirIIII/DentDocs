@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@media print {
+  body * { visibility: hidden; }
+  #document-print, #document-print * { visibility: visible; }
+  #document-print { position: absolute; inset: 0 auto auto 0; width: 100%; }
+}
+
 /*
  * San Nicolas Dental Clinic design tokens.
  * Brand colours are taken from the clinic logo: a deep slate navy and a warm gold.

@@ -1,4 +1,4 @@
-"""Phase 2 mock-only API. Demo personas are not authentication."""
+"""Authenticated, role-scoped API; clinic data remains fictional during development."""
 import copy
 import hashlib
 import json
@@ -9,12 +9,13 @@ from pathlib import Path
 from uuid import uuid4
 
 from cryptography.fernet import Fernet
-from fastapi import FastAPI, Depends, Header, HTTPException, UploadFile
+from fastapi import FastAPI, Depends, HTTPException, UploadFile
 from fastapi.responses import Response
 from pydantic import BaseModel, Field, ConfigDict
 from sqlalchemy import select, update
 
-from .database import make_database, migrate, Patient, Document, FileRecord, Version, Audit
+from .database import make_database, migrate, Patient, Document, FileRecord, FileUpload, Version, Audit
+from .security import install_security, initialize_admin, authorize, can_read, ADMINISTRATIVE
 
 TYPES = {'Patient Record', 'X-ray', 'Treatment Plan', 'Prescription', 'Consent Form', 'Laboratory Report', 'Billing/Receipt', 'Appointment Record'}
 PROCEDURES = {'Restorative', 'Endodontics', 'Oral Surgery', 'Orthodontics', 'Prosthodontics', 'Periodontics', 'Preventive', 'Billing & Administrative'}
@@ -61,7 +62,7 @@ def validate(data):
 
 def create_app(database_url=None, file_root=None, seed_path=None, encryption_key=None):
     if os.getenv('DENTDOCS_MODE') != 'mock':
-        raise RuntimeError('Phase 2 starts only with DENTDOCS_MODE=mock. Authentication is not implemented.')
+        raise RuntimeError('DENTDOCS_MODE=mock is required pending clinic release approval')
     engine, sessions = make_database(database_url)
     root = Path(file_root or os.environ['FILE_ROOT']).resolve()
     cipher = Fernet(encryption_key or os.environ['FILE_ENCRYPTION_KEY'])
@@ -71,8 +72,15 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
     @asynccontextmanager
     async def lifespan(app):
         root.mkdir(parents=True, exist_ok=True)
-        migrate(engine)
+        if os.getenv('DENTDOCS_MIGRATE', 'true') == 'true':
+            migrate(engine)
+            initialize_data()
+        yield
+        engine.dispose()
+
+    def initialize_data():
         with sessions() as db:
+            initialize_admin(db)
             if not db.scalar(select(Patient.id).limit(1)):
                 for p in seed['patients']:
                     db.add(Patient(id=p['id'], record_no=p['recordNo'], data=p))
@@ -90,33 +98,42 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
                 for a in seed['auditLogs']:
                     db.add(Audit(id=a['id'], data=a))
                 db.commit()
-        yield
-        engine.dispose()
 
-    app = FastAPI(title='DentDocs Phase 2 — mock data only', lifespan=lifespan)
+    app = FastAPI(title='DentDocs authenticated clinic API', lifespan=lifespan)
     app.state.engine = engine
 
     def database():
         with sessions() as db:
             yield db
 
-    def actor(x_demo_role: str = Header(default='dentist')):
-        if x_demo_role not in seed['users']:
-            raise HTTPException(400, 'Unknown demo persona')
-        return seed['users'][x_demo_role]
-
     def audit(db, user, action, doc=None, details=''):
         key = str(uuid4())
-        db.add(Audit(id=key, data=dict(id=key, timestamp=now(), userId=user['id'], userName=user['name'], userRole=user['role'], action=action, targetType='DOCUMENT' if doc else 'SYSTEM', targetId=doc['id'] if doc else user['id'], targetTitle=doc['title'] if doc else 'Demo session', details=details)))
+        db.add(Audit(id=key, data=dict(id=key, timestamp=now(), userId=user['id'], userName=user['name'], userRole=user['role'], action=action, targetType='DOCUMENT' if doc else 'SYSTEM', targetId=doc['id'] if doc else user['id'], targetTitle=doc['title'] if doc else 'Staff account or session', details=details)))
 
-    def get_doc(db, document_id):
+    actor = install_security(app, database, audit)
+
+    def get_doc(db, document_id, user):
         doc = db.get(Document, document_id)
         if not doc:
             raise HTTPException(404, 'Document not found')
+        authorize(user, doc.data)
         return doc
 
-    def public(doc):
-        return {**doc.data, 'revision': doc.revision}
+    def public(doc, user):
+        return safe_data({**doc.data, 'revision': doc.revision}, user)
+
+    def safe_data(value, user):
+        data = copy.deepcopy(value)
+        if user['role'] == 'front_desk':
+            for key in ('radiographDetails', 'prescriptionDetails', 'reviewNotes', 'resolutionNote'):
+                data.pop(key, None)
+            data['versionHistory'] = [v for v in data.get('versionHistory', []) if v.get('type') in ADMINISTRATIVE]
+        return data
+
+    def claim_file(db, file_id, user):
+        result = db.execute(update(FileUpload).where(FileUpload.file_id == file_id, FileUpload.user_id == user['id'], FileUpload.consumed == False).values(consumed=True))
+        if result.rowcount != 1:
+            raise HTTPException(403, 'Upload a new original file from your own account')
 
     def persist(db, row, expected, data):
         result = db.execute(update(Document).where(Document.id == row.id, Document.revision == expected).values(data=data, revision=expected + 1), execution_options={'synchronize_session': False})
@@ -138,31 +155,51 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
     @app.middleware('http')
     async def no_cache(request, call_next):
         response = await call_next(request)
+        if response.status_code == 403 and hasattr(request.state, 'identity'):
+            with sessions() as db:
+                audit(db, request.state.identity, 'ACCESS_DENIED', details=f'{request.method} {request.url.path}')
+                db.commit()
         response.headers['Cache-Control'] = 'no-store'
         response.headers['X-Content-Type-Options'] = 'nosniff'
+        response.headers['X-Frame-Options'] = 'DENY'
+        response.headers['Referrer-Policy'] = 'no-referrer'
         return response
 
     @app.get('/api/health')
     def health(db=Depends(database)):
         db.execute(select(Patient.id).limit(1))
-        return {'status': 'ok', 'mode': 'mock', 'authentication': False}
+        return {'status': 'ok', 'mode': 'mock', 'authentication': True}
 
     @app.get('/api/bootstrap')
-    def bootstrap(db=Depends(database)):
-        return {'patients': [p.data for p in db.scalars(select(Patient))], 'documents': [public(d) for d in db.scalars(select(Document))], 'auditLogs': [a.data for a in db.scalars(select(Audit))], 'users': seed['users']}
+    def bootstrap(user=Depends(actor), db=Depends(database)):
+        patients = [copy.deepcopy(p.data) for p in db.scalars(select(Patient))]
+        if user['role'] == 'front_desk':
+            for patient in patients:
+                patient.update(medicalAlerts=[], fdiTreatedTeeth=[], fdiMissingTeeth=[], fdiWatchTeeth=[], dob='', age=0, isMinor=False)
+                for key in ('guardianName', 'guardianPhone', 'emergencyContact'):
+                    patient.pop(key, None)
+                patient['emergencyContact'] = {'name': '', 'relation': '', 'phone': ''}
+        logs = [a.data for a in db.scalars(select(Audit))] if user['role'] == 'admin' else []
+        logs.sort(key=lambda a: a['timestamp'], reverse=True)
+        return {'patients': patients, 'documents': [public(d, user) for d in db.scalars(select(Document)) if can_read(user, d.data)], 'auditLogs': logs, 'currentUser': user}
 
     @app.get('/api/documents/{document_id}')
-    def read_document(document_id: str, db=Depends(database)):
-        return public(get_doc(db, document_id))
+    def read_document(document_id: str, user=Depends(actor), db=Depends(database)):
+        doc = get_doc(db, document_id, user)
+        audit(db, user, 'VIEW_DOCUMENT', doc.data)
+        db.commit()
+        return public(doc, user)
 
     @app.post('/api/documents/search')
-    def search(body: dict, db=Depends(database)):
+    def search(body: dict, user=Depends(actor), db=Depends(database)):
         query = str(body.get('query', '')).strip().lower()
         filters = body.get('filters') or {}
         synonyms = {'reseta': 'Prescription', 'prescription': 'Prescription', 'gamot': 'Prescription', 'xray': 'X-ray', 'radiograph': 'X-ray', 'opg': 'X-ray', 'billing': 'Billing/Receipt', 'receipt': 'Billing/Receipt', 'resibo': 'Billing/Receipt', 'consent': 'Consent Form', 'pahintulot': 'Consent Form'}
         results = []
         for row in db.scalars(select(Document)):
-            d = public(row)
+            if not can_read(user, row.data):
+                continue
+            d = public(row, user)
             if d.get('archived'):
                 continue
             if any(filters.get(k) not in (None, '', 'ALL', d[field]) for k, field in [('type', 'type'), ('patientId', 'patientId')]):
@@ -184,7 +221,7 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
         return results
 
     @app.post('/api/files', status_code=201)
-    async def upload_file(file: UploadFile, db=Depends(database)):
+    async def upload_file(file: UploadFile, user=Depends(actor), db=Depends(database)):
         payload = await file.read(MAX_FILE + 1)
         await file.close()
         if not payload or len(payload) > MAX_FILE:
@@ -197,6 +234,8 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
         target.write_bytes(cipher.encrypt(payload))
         try:
             db.add(FileRecord(id=key, mime=mime, size=len(payload), sha256=hashlib.sha256(payload).hexdigest(), created_at=now()))
+            db.flush()
+            db.add(FileUpload(file_id=key, user_id=user['id'], consumed=False))
             db.commit()
         except Exception:
             target.unlink(missing_ok=True)
@@ -204,11 +243,12 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
         return {'id': key, 'size': len(payload), 'mime': mime}
 
     @app.get('/api/documents/{document_id}/file')
-    def download_file(document_id: str, version: int | None = None, db=Depends(database)):
-        row = get_doc(db, document_id)
+    def download_file(document_id: str, version: int | None = None, user=Depends(actor), db=Depends(database)):
+        row = get_doc(db, document_id, user)
         selected = db.scalar(select(Version).where(Version.document_id == document_id, Version.number == (version or row.data['version'])))
         if not selected or not selected.file_id:
             raise HTTPException(404, 'This fictional fixture has no original file')
+        authorize(user, selected.snapshot)
         info = file_info(db, selected.file_id)
         target = root / info.id
         if not target.is_file():
@@ -217,6 +257,8 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
         if hashlib.sha256(payload).hexdigest() != info.sha256:
             raise HTTPException(503, 'Stored file integrity check failed')
         ext = {'application/pdf': 'pdf', 'image/png': 'png', 'image/jpeg': 'jpg'}[info.mime]
+        audit(db, user, 'DOWNLOAD', row.data, f'Version {selected.number}')
+        db.commit()
         return Response(payload, media_type=info.mime, headers={'Content-Disposition': f'attachment; filename="{row.id}-v{selected.number}.{ext}"'})
 
     @app.post('/api/documents', status_code=201)
@@ -229,24 +271,32 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
         if not body.fileId:
             raise HTTPException(422, 'Choose an original PDF or image before saving')
         d.update(id=str(uuid4()), patientRecordNo=patient.record_no, patientName=patient.data['fullName'], version=1, versionHistory=[], versionStatus='active', archived=False, uploadedAt=now(), uploadedBy=user['name'])
+        authorize(user, d)
+        claim_file(db, body.fileId, user)
+        if user['role'] not in {'admin', 'dentist'}:
+            d['completenessStatus'] = 'needs_review'
+        for field in ('reviewedBy', 'reviewedAt', 'resolvedBy', 'resolvedAt', 'resolutionNote'):
+            d.pop(field, None)
         attach_file(db, d, body.fileId)
         db.add(Document(id=d['id'], patient_id=patient.id, revision=1, data=d))
         db.flush()
         db.add(Version(id=str(uuid4()), document_id=d['id'], number=1, file_id=body.fileId, snapshot=d))
         audit(db, user, 'UPLOAD', d)
         db.commit()
-        return {**d, 'revision': 1}
+        return safe_data({**d, 'revision': 1}, user)
 
     @app.patch('/api/documents/{document_id}')
     def edit_document(document_id: str, body: Mutation, user=Depends(actor), db=Depends(database)):
-        row = get_doc(db, document_id)
+        row = get_doc(db, document_id, user)
         if row.revision != body.expectedRevision:
             raise HTTPException(409, 'Record changed. Reload before editing.')
+        authorize(user, row.data, write=True)
         if body.updates.keys() - EDITABLE:
             raise HTTPException(422, 'Unsupported metadata fields')
         if row.data.get('archived'):
             raise HTTPException(409, 'Restore the archived document before editing')
         d = {**row.data, **body.updates}
+        authorize(user, d, write=True, verify='completenessStatus' in body.updates)
         validate(d)
         d['displayDate'] = d['date']
         result = persist(db, row, body.expectedRevision, d)
@@ -254,25 +304,35 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
         current.snapshot = d
         audit(db, user, 'EDIT_METADATA', d, ', '.join(body.updates))
         db.commit()
-        return result
+        return safe_data(result, user)
+
+    @app.post('/api/documents/{document_id}/print')
+    def print_request(document_id: str, user=Depends(actor), db=Depends(database)):
+        row = get_doc(db, document_id, user)
+        audit(db, user, 'PRINT_REQUEST', row.data, 'Application print request; physical printing is not confirmed')
+        db.commit()
+        return {'ok': True}
+
 
     @app.post('/api/documents/{document_id}/{operation}')
     def action(document_id: str, operation: str, body: Mutation, user=Depends(actor), db=Depends(database)):
-        row = get_doc(db, document_id)
+        row = get_doc(db, document_id, user)
         if row.revision != body.expectedRevision:
             raise HTTPException(409, 'Record changed. Reload before editing.')
         d = copy.deepcopy(row.data)
+        authorize(user, d, write=True)
         if operation not in {'archive', 'restore-archive', 'completeness-resolution', 'versions'}:
             raise HTTPException(404, 'Unknown operation')
         if operation in {'archive', 'restore-archive'}:
             if user['role'] != 'admin':
-                raise HTTPException(403, 'Only the demo Admin can archive or restore')
+                raise HTTPException(403, 'Only administrators can archive or restore')
             should_archive = operation == 'archive'
             if bool(d.get('archived')) == should_archive:
                 raise HTTPException(409, 'Document already has that archive state')
             d.update(archived=should_archive, archivedAt=now() if should_archive else None, archivedBy=user['name'] if should_archive else None)
             event = 'ARCHIVE' if should_archive else 'RESTORE_ARCHIVE'
         elif operation == 'completeness-resolution':
+            authorize(user, d, write=True, verify=True)
             if d.get('archived'):
                 raise HTTPException(409, 'Restore the document first')
             if not body.note.strip():
@@ -288,7 +348,9 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
             snapshot.update(versionNumber=d['version'], status='superseded', changeSummary=body.note, supersededAt=now(), supersededBy=user['name'])
             d.update(body.updates)
             d.update(version=d['version'] + 1, versionHistory=[snapshot, *d.get('versionHistory', [])], uploadedAt=now(), uploadedBy=user['name'], versionStatus='active')
+            authorize(user, d, write=True, verify='completenessStatus' in body.updates)
             if body.fileId:
+                claim_file(db, body.fileId, user)
                 attach_file(db, d, body.fileId)
             elif snapshot.get('fileId'):
                 attach_file(db, d, snapshot['fileId'])
@@ -304,18 +366,20 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
             current.snapshot = d
         audit(db, user, event, d, body.note)
         db.commit()
-        return result
+        return safe_data(result, user)
 
     @app.post('/api/documents/{document_id}/versions/{number}/restore')
     def restore_version(document_id: str, number: int, body: Mutation, user=Depends(actor), db=Depends(database)):
-        row = get_doc(db, document_id)
+        row = get_doc(db, document_id, user)
         if row.revision != body.expectedRevision:
             raise HTTPException(409, 'Record changed. Reload before restoring.')
+        authorize(user, row.data, write=True, verify=True)
         if row.data.get('archived') or not body.note.strip():
             raise HTTPException(422, 'An active record and restore reason are required')
         target = db.scalar(select(Version).where(Version.document_id == row.id, Version.number == number))
         if not target:
             raise HTTPException(404, 'Version not found')
+        authorize(user, target.snapshot, write=True, verify=True)
         current = copy.deepcopy(row.data)
         history = {**current, 'versionNumber': current['version'], 'status': 'superseded', 'changeSummary': body.note}
         d = copy.deepcopy(target.snapshot)
@@ -324,15 +388,6 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
         db.add(Version(id=str(uuid4()), document_id=row.id, number=d['version'], file_id=target.file_id, snapshot=d))
         audit(db, user, 'RESTORE_VERSION', d, body.note)
         db.commit()
-        return result
-
-    @app.post('/api/demo/session-events')
-    def session_event(body: dict, user=Depends(actor), db=Depends(database)):
-        event = body.get('action')
-        if event not in {'USER_LOGIN', 'PRIVACY_ACK'}:
-            raise HTTPException(422, 'Unsupported demo session event')
-        audit(db, user, event, details='Prototype event; not an authenticated session')
-        db.commit()
-        return {'ok': True}
+        return safe_data(result, user)
 
     return app

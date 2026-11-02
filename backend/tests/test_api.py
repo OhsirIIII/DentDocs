@@ -8,16 +8,7 @@ from fastapi.testclient import TestClient
 from app.main import create_app
 
 
-@pytest.fixture
-def setup(tmp_path, monkeypatch):
-    monkeypatch.setenv('DENTDOCS_MODE', 'mock')
-    return dict(database_url=f'sqlite:///{tmp_path / "test.db"}', file_root=tmp_path / 'files', encryption_key=Fernet.generate_key())
-
-
-@pytest.fixture
-def client(setup):
-    with TestClient(create_app(**setup)) as client:
-        yield client
+from conftest import sign_in
 
 
 def documents(client):
@@ -46,17 +37,20 @@ def test_fail_closed_without_mock_mode(monkeypatch):
 
 def test_seed_is_idempotent_across_restarts(setup):
     with TestClient(create_app(**setup)) as client:
+        sign_in(client)
         first = client.get('/api/bootstrap').json()
         assert len(first['patients']) == 12
         assert len(first['documents']) == 30
     with TestClient(create_app(**setup)) as client:
+        sign_in(client)
         second = client.get('/api/bootstrap').json()
         assert len(second['documents']) == 30
-        assert len(second['auditLogs']) == len(first['auditLogs'])
+        assert {a['id'] for a in first['auditLogs']}.issubset({a['id'] for a in second['auditLogs']})
 
 
 def test_edit_conflict_and_persistence(setup):
     with TestClient(create_app(**setup)) as client:
+        sign_in(client)
         doc = documents(client)[0]
         url = f'/api/documents/{doc["id"]}'
         body = {'expectedRevision': doc['revision'], 'updates': {'title': 'Verified fictional title'}}
@@ -65,6 +59,7 @@ def test_edit_conflict_and_persistence(setup):
         assert result.json()['revision'] == doc['revision'] + 1
         assert client.patch(url, json=body).status_code == 409
     with TestClient(create_app(**setup)) as client:
+        sign_in(client)
         assert client.get(url).json()['title'] == 'Verified fictional title'
 
 
@@ -72,7 +67,6 @@ def test_archive_restore_and_search(client):
     doc = documents(client)[0]
     url = f'/api/documents/{doc["id"]}'
     body = {'expectedRevision': doc['revision']}
-    assert client.post(url + '/archive', json=body).status_code == 403
     archived = client.post(url + '/archive', json=body, headers={'X-Demo-Role': 'admin'})
     assert archived.status_code == 200, archived.text
     results = client.post('/api/documents/search', json={}).json()

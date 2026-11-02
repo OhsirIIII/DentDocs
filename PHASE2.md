@@ -1,5 +1,8 @@
 # Phase 2 working implementation
 
+> Historical phase record. [PHASE3.md](PHASE3.md) supersedes the demo-account,
+> authentication and database-role behavior described here.
+
 This copy preserves the prototype interface while introducing FastAPI, SQLAlchemy,
 PostgreSQL deployment, retained encrypted originals, version snapshots, revision
 conflict detection, and React Router URLs. It is **mock-only and not ready for clinic data**.

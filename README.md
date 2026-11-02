@@ -1,7 +1,8 @@
 # DentDocs — San Nicolas Dental Clinic Document Management System
 
-> **Phase 2 working copy: mock data only.** See [PHASE2.md](PHASE2.md) for current
-> setup, implementation scope, verification failures and remaining acceptance gates.
+> **Phase 3: authenticated, mock-data installation.** See [PHASE3.md](PHASE3.md) for
+> sign-in setup, permissions, verified behavior and remaining release requirements.
+> [PHASE2.md](PHASE2.md) records the preceding storage and deployment phase.
 > The historical prototype descriptions below are not production security claims.
 
 <div align="center">

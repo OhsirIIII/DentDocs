@@ -8,6 +8,9 @@ export interface StaffUser {
   license?: string;
   email: string;
   avatarInitials: string;
+  enabled?: boolean;
+  mustChangePassword?: boolean;
+  revision?: number;
 }
 
 export type DocumentType =
@@ -191,7 +194,7 @@ export interface AuditEntry {
   timestamp: string;
   userId: string;
   userName: string;
-  userRole: UserRole;
+  userRole: UserRole | 'system';
   action:
     | 'UPLOAD'
     | 'UPLOAD_VERSION'
@@ -204,7 +207,17 @@ export interface AuditEntry {
     | 'USER_LOGIN'
     | 'ARCHIVE'
     | 'RESTORE_ARCHIVE'
-    | 'PRIVACY_ACK';
+    | 'PRIVACY_ACK'
+    | 'DOWNLOAD'
+    | 'PRINT_REQUEST'
+    | 'USER_LOGOUT'
+    | 'SESSION_TIMEOUT'
+    | 'LOGIN_FAILED'
+    | 'USER_CREATE'
+    | 'USER_UPDATE'
+    | 'PASSWORD_CHANGE'
+    | 'PASSWORD_RESET'
+    | 'ACCESS_DENIED';
   targetType: 'DOCUMENT' | 'PATIENT' | 'SYSTEM';
   targetId: string;
   targetTitle: string;

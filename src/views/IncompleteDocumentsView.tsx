@@ -254,7 +254,7 @@ export const IncompleteDocumentsView: React.FC = () => {
                       <span>Inspect</span>
                     </button>
 
-                    {doc.completenessStatus !== 'complete' && (
+                    {doc.completenessStatus !== 'complete' && ['admin', 'dentist'].includes(currentUser.role) && (
                       <button
                         onClick={() => handleOpenResolveModal(doc)}
                         className="px-3.5 py-1.5 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-lg transition-colors flex items-center gap-1.5 shadow-xs"

@@ -110,9 +110,9 @@ export const PatientsView: React.FC = () => {
                   <div className="flex items-center gap-2 text-xs text-slate-500 mt-1 flex-wrap">
                     <span>{activePatient.gender}</span>
                     <span aria-hidden="true">·</span>
-                    <span>
+                    {canAccessClinicalDocs && <span>
                       {activePatient.age} yrs old (DOB: {activePatient.dob})
-                    </span>
+                    </span>}
                     <span aria-hidden="true">·</span>
                     <span>Last visit: {activePatient.lastVisit}</span>
                   </div>
@@ -275,7 +275,7 @@ export const PatientsView: React.FC = () => {
             </div>
 
             {/* FDI Interactive Charting (8 cols) */}
-            <div className="lg:col-span-8">
+            {canAccessClinicalDocs ? <div className="lg:col-span-8">
               <FdiDentalChart
                 treatedTeeth={activePatient.fdiTreatedTeeth}
                 missingTeeth={activePatient.fdiMissingTeeth}
@@ -288,7 +288,7 @@ export const PatientsView: React.FC = () => {
               <p className="text-[11px] text-slate-500 mt-2 text-right">
                 Click any tooth number to filter documents linked to that tooth
               </p>
-            </div>
+            </div> : <p className="lg:col-span-8 text-sm text-slate-600 p-5">Clinical chart and medical information are restricted to clinical staff.</p>}
           </div>
 
           {/* Linked Documents Section */}

@@ -5,6 +5,8 @@ against a production endpoint; /api/health must explicitly report mock mode.
 """
 import argparse
 import json
+import getpass
+import os
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import time
@@ -31,6 +33,15 @@ with httpx.Client(base_url=args.url, timeout=15) as client:
     else:
         raise SystemExit('API did not become healthy')
     assert health.json()['mode'] == 'mock', 'Refusing to test non-mock data'
+    if health.json().get('authentication'):
+        email = os.getenv('DENTDOCS_EMAIL') or input('Administrator email: ')
+        password = os.getenv('DENTDOCS_PASSWORD') or getpass.getpass('Password: ')
+        login = client.post('/api/auth/login', headers={'X-Requested-With': 'DentDocs'}, json={'email': email, 'password': password})
+        login.raise_for_status()
+        identity = login.json()
+        if identity['user']['role'] != 'admin' or identity['user']['mustChangePassword'] or not identity['privacyAcknowledged']:
+            raise SystemExit('Use an administrator account after changing its temporary password and acknowledging the notice in the app')
+        client.headers['X-CSRF-Token'] = identity['csrfToken']
 
     def call(method, url, **kwargs):
         response = client.request(method, url, **kwargs)
@@ -58,13 +69,13 @@ with httpx.Client(base_url=args.url, timeout=15) as client:
         assert restored['version'] == 3
         assert restored['fileId'] == doc['fileId']
         assert client.get(url + '/file').content == original
-        archived = call('POST', url + '/archive', headers={'X-Demo-Role': 'admin'}, json={'expectedRevision': restored['revision']})
+        archived = call('POST', url + '/archive', json={'expectedRevision': restored['revision']})
         results = call('POST', '/api/documents/search', json={'query': ''})
         assert doc['id'] not in {d['id'] for d in results}
-        active = call('POST', url + '/restore-archive', headers={'X-Demo-Role': 'admin'}, json={'expectedRevision': archived['revision']})
+        active = call('POST', url + '/restore-archive', json={'expectedRevision': archived['revision']})
         before_restart = call('GET', '/api/bootstrap')
         state_path.parent.mkdir(parents=True, exist_ok=True)
-        state_path.write_text(json.dumps({'id': doc['id'], 'revision': active['revision'], 'fileId': active['fileId'], 'count': len(before_restart['documents']), 'audits': len(before_restart['auditLogs'])}), encoding='utf-8')
+        state_path.write_text(json.dumps({'id': doc['id'], 'revision': active['revision'], 'fileId': active['fileId'], 'count': len(before_restart['documents']), 'audits': [a['id'] for a in before_restart['auditLogs']]}), encoding='utf-8')
         print('PASS: deployed health, original upload, concurrent conflict, replacement original, restore as v3, archive/search exclusion and recovery. Restart Compose, then run verify.')
     else:
         state = json.loads(state_path.read_text(encoding='utf-8'))
@@ -76,6 +87,6 @@ with httpx.Client(base_url=args.url, timeout=15) as client:
         assert client.get(url + '/file?version=2').content == replacement
         snapshot = call('GET', '/api/bootstrap')
         assert len(snapshot['documents']) == state['count'], 'Restart duplicated seeded records'
-        assert len(snapshot['auditLogs']) == state['audits'], 'Restart changed audit records'
-        call('POST', url + '/archive', headers={'X-Demo-Role': 'admin'}, json={'expectedRevision': doc['revision']})
+        assert set(state['audits']).issubset({a['id'] for a in snapshot['auditLogs']}), 'Restart lost audit records'
+        call('POST', url + '/archive', json={'expectedRevision': doc['revision']})
         print('PASS: restart retained PostgreSQL records, version history, both original files, revision and audit events without duplicate seeding. Verification record archived.')
