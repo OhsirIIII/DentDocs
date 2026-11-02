@@ -1,3 +1,4 @@
+import { uploadOriginal } from '../data/apiClient';
 import React, { useState, useEffect } from 'react';
 import { useClinic } from '../context/ClinicContext';
 import {
@@ -66,6 +67,10 @@ export const UploadView: React.FC = () => {
     setSelectedDocumentId,
   } = useClinic();
 
+  const [originalFile, setOriginalFile] = useState<File | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
+
   // Step state: 1. choose patient & drop file | 2. processing (3-4s) | 3. review & confirm
   const [currentStep, setCurrentStep] = useState<'input' | 'processing' | 'review'>('input');
   const [chosenPatientId, setChosenPatientId] = useState<string>(
@@ -94,9 +99,11 @@ export const UploadView: React.FC = () => {
   const handleFileChosen = (
     fileName: string,
     fileType: 'PDF' | 'JPG' | 'PNG' = 'PDF',
-    fileSize = '1.8 MB'
+    fileSize = '1.8 MB',
+    original?: File
   ) => {
     setUploadedFile({ name: fileName, type: fileType, size: fileSize });
+    setOriginalFile(original || null);
   };
 
   // Run the 3-4 second processing animation
@@ -266,12 +273,16 @@ export const UploadView: React.FC = () => {
     });
   };
 
-  const handleSaveToPatientRecord = (sendToReview = false) => {
-    if (!extractedData) return;
-
+  const handleSaveToPatientRecord = async (sendToReview = false) => {
+    if (!extractedData || isSaving) return;
+    if (!originalFile) { setSaveError('Choose an original PDF, JPG, or PNG file before saving.'); return; }
+    setIsSaving(true); setSaveError('');
+    try {
+    const fileId = await uploadOriginal(originalFile);
     const newDocId = `doc-${Date.now().toString().slice(-4)}`;
     const finalDoc: DentalDocument = {
       id: newDocId,
+      fileId,
       patientId: extractedData.patientId,
       patientRecordNo: extractedData.patientRecordNo,
       patientName: extractedData.patientName,
@@ -304,14 +315,18 @@ export const UploadView: React.FC = () => {
       versionHistory: [],
     };
 
-    addDocument(finalDoc);
-    setSelectedDocumentId(newDocId);
+    const saved = await addDocument(finalDoc);
+    setSelectedDocumentId(saved.id);
     setSelectedPatientId(extractedData.patientId);
-    navigateTo('viewer', { documentId: newDocId });
+    navigateTo('viewer', { documentId: saved.id });
+    } catch (error) { setSaveError(error instanceof Error ? error.message : 'Unable to save'); }
+    finally { setIsSaving(false); }
   };
 
   return (
     <div className="space-y-6 pb-12">
+      {saveError && <p role="alert" className="bg-rose-50 p-3 text-rose-900">{saveError}</p>}
+      {isSaving && <p role="status">Saving original file and reviewed record…</p>}
       {/* Header */}
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">
@@ -487,6 +502,14 @@ export const UploadView: React.FC = () => {
               </h2>
             </div>
 
+            <label className="block text-sm font-semibold mb-3">
+              Choose original file (required to save)
+              <input className="block mt-2" type="file" accept="application/pdf,image/jpeg,image/png" onChange={e => {
+                const file = e.target.files?.[0];
+                setOriginalFile(file || null);
+                if (file) handleFileChosen(file.name, file.type === 'image/png' ? 'PNG' : file.type === 'image/jpeg' ? 'JPG' : 'PDF', `${file.size.toLocaleString()} bytes`, file);
+              }} />
+            </label>
             {/* Interactive Drag & Drop Area */}
             <div
               onDragOver={(e) => e.preventDefault()}
@@ -494,8 +517,9 @@ export const UploadView: React.FC = () => {
                 e.preventDefault();
                 const file = e.dataTransfer.files[0];
                 if (file) {
+                  setOriginalFile(file);
                   const ext = file.name.split('.').pop()?.toUpperCase() as any;
-                  handleFileChosen(file.name, ['PDF', 'JPG', 'PNG'].includes(ext) ? ext : 'PDF');
+                  handleFileChosen(file.name, ['PDF', 'JPG', 'PNG'].includes(ext) ? ext : 'PDF', `${file.size.toLocaleString()} bytes`, file);
                 }
               }}
               className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all ${
@@ -538,7 +562,7 @@ export const UploadView: React.FC = () => {
                       const f = e.target.files?.[0];
                       if (f) {
                         const ext = f.name.split('.').pop()?.toUpperCase() as any;
-                        handleFileChosen(f.name, ['PDF', 'JPG', 'PNG'].includes(ext) ? ext : 'PDF');
+                        handleFileChosen(f.name, ['PDF', 'JPG', 'PNG'].includes(ext) ? ext : 'PDF', `${f.size.toLocaleString()} bytes`, f);
                       }
                     }}
                     className="hidden"
@@ -1061,6 +1085,7 @@ export const UploadView: React.FC = () => {
                 <div className="flex items-center gap-2.5 w-full sm:w-auto">
                   <button
                     type="button"
+                    disabled={isSaving}
                     onClick={() => handleSaveToPatientRecord(true)}
                     className="flex-1 sm:flex-initial px-4 py-2.5 text-xs font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-xl transition-colors"
                   >
@@ -1069,6 +1094,7 @@ export const UploadView: React.FC = () => {
 
                   <button
                     type="button"
+                    disabled={isSaving}
                     onClick={() => handleSaveToPatientRecord(false)}
                     className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-5 py-2.5 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-xl transition-colors shadow-xs"
                   >

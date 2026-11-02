@@ -1,3 +1,4 @@
+import { uploadOriginal } from '../data/apiClient';
 import React, { useState, useEffect } from 'react';
 import { useClinic } from '../context/ClinicContext';
 import {
@@ -64,12 +65,15 @@ export const DocumentViewerView: React.FC = () => {
   } = useClinic();
 
   const [loadingDoc, setLoadingDoc] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const [revisionFile, setRevisionFile] = useState<File | null>(null);
   const [activeDoc, setActiveDoc] = useState<DentalDocument | null>(null);
 
   // Sync and route through async data layer
   useEffect(() => {
     let isCurrent = true;
     setLoadingDoc(true);
+    setLoadError('');
     const targetId = selectedDocumentId || visibleDocuments[0]?.id;
     if (!targetId) {
       setActiveDoc(null);
@@ -99,7 +103,7 @@ export const DocumentViewerView: React.FC = () => {
         }
         setLoadingDoc(false);
       }
-    });
+    }).catch(error => { if (isCurrent) { setLoadError(error instanceof Error ? error.message : 'Unable to load document'); setActiveDoc(null); setLoadingDoc(false); } });
 
     return () => {
       isCurrent = false;
@@ -150,6 +154,7 @@ export const DocumentViewerView: React.FC = () => {
   if (loadingDoc) {
     return <DocumentViewerSkeleton />;
   }
+  if (loadError) return <p role="alert" className="bg-rose-50 p-4 text-rose-900">{loadError}</p>;
 
   // If Front Desk tries to view a clinical document
   if (doc && currentUser.role === 'front_desk' && doc.type !== 'Billing/Receipt' && doc.type !== 'Appointment Record') {
@@ -184,29 +189,29 @@ export const DocumentViewerView: React.FC = () => {
   const prevDoc = currentIndex > 0 ? visibleDocuments[currentIndex - 1] : null;
   const nextDoc = currentIndex < visibleDocuments.length - 1 ? visibleDocuments[currentIndex + 1] : null;
 
-  const handleAddTag = () => {
+  const handleAddTag = async () => {
     if (!newTagInput.trim()) return;
     if (!editedTags.includes(newTagInput.trim())) {
       const updated = [...editedTags, newTagInput.trim()];
       setEditedTags(updated);
-      updateDocument(doc.id, { tags: updated });
+      await updateDocument(doc.id, { tags: updated });
     }
     setNewTagInput('');
   };
 
-  const handleRemoveTag = (tagToRemove: string) => {
+  const handleRemoveTag = async (tagToRemove: string) => {
     const updated = editedTags.filter((t) => t !== tagToRemove);
     setEditedTags(updated);
-    updateDocument(doc.id, { tags: updated });
+    await updateDocument(doc.id, { tags: updated });
   };
 
-  const handleSaveAllChanges = () => {
+  const handleSaveAllChanges = async () => {
     const parsedTeeth = editedTeeth
       .split(',')
       .map((s) => parseInt(s.trim()))
       .filter((n) => !isNaN(n));
 
-    updateDocument(doc.id, {
+    await updateDocument(doc.id, {
       title: editedTitle,
       type: editedType,
       procedureCategory: editedProcedure,
@@ -226,6 +231,8 @@ export const DocumentViewerView: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-12">
+      {doc.fileId && <a className="inline-flex text-sm font-semibold underline text-brand-900" href={`/api/documents/${encodeURIComponent(doc.id)}/file`}>Download original file</a>}
+      {!doc.fileId && <p className="text-xs text-slate-500">Fictional fixture preview; no original file was supplied.</p>}
       {/* Top Bar: Back button, Title, Versioning info, Revision Upload & Pagination */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-xs">
         <div>
@@ -924,13 +931,13 @@ export const DocumentViewerView: React.FC = () => {
             </div>
 
             <form
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
                 if (!resolveNote.trim()) {
                   setResolveNoteError('A staff verification note is mandatory before marking a document complete.');
                   return;
                 }
-                resolveIncompleteDocument(doc.id, resolveNote.trim());
+                await resolveIncompleteDocument(doc.id, resolveNote.trim());
                 setIsResolveModalOpen(false);
               }}
               className="space-y-4"
@@ -1006,7 +1013,7 @@ export const DocumentViewerView: React.FC = () => {
             </div>
 
             <form
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
                 if (!revisedChangeSummary.trim()) {
                   setRevisedSummaryError('A change summary or reason for revision is required.');
@@ -1018,7 +1025,9 @@ export const DocumentViewerView: React.FC = () => {
                   .map((s) => parseInt(s.trim()))
                   .filter((n) => !isNaN(n));
 
-                uploadNewVersion(doc.id, {
+                const fileId = revisionFile ? await uploadOriginal(revisionFile) : undefined;
+                await uploadNewVersion(doc.id, {
+                  fileId,
                   title: revisedTitle.trim() || doc.title,
                   fileType: revisedFileType,
                   fileSize: '1.9 MB (Revised)',
@@ -1027,7 +1036,7 @@ export const DocumentViewerView: React.FC = () => {
                   procedureCategory: revisedProcedure,
                   tags: revisedTags,
                   changeSummary: revisedChangeSummary.trim(),
-                  completenessStatus: 'complete',
+                  completenessStatus: doc.completenessStatus,
                 });
 
                 setIsUploadRevisionOpen(false);
@@ -1069,6 +1078,10 @@ export const DocumentViewerView: React.FC = () => {
                 />
               </div>
 
+              <label className="block text-xs font-semibold">
+                Replacement original file (optional; otherwise retains current original)
+                <input className="block mt-2" type="file" accept="application/pdf,image/png,image/jpeg" onChange={e => setRevisionFile(e.target.files?.[0] || null)} />
+              </label>
               {/* File Type & Simulated Drop */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
@@ -1383,7 +1396,7 @@ export const DocumentViewerView: React.FC = () => {
             </div>
 
             <form
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
                 if (!restoreNote.trim()) {
                   setRestoreNoteError('A mandatory clinical or administrative reason is required to roll back a record.');
@@ -1456,13 +1469,11 @@ export const DocumentViewerView: React.FC = () => {
         cancelLabel="Keep Document"
         variant="danger"
         onCancel={() => setIsDeleteConfirmOpen(false)}
-        onConfirm={() => {
+        onConfirm={async () => {
+          const result = await deleteDocument(doc.id);
           setIsDeleteConfirmOpen(false);
-          const result = deleteDocument(doc.id);
           if (result.success) {
             navigateTo('dashboard');
-          } else {
-            alert(result.reason || 'Failed to archive document');
           }
         }}
       />
@@ -1478,8 +1489,8 @@ export const DocumentViewerView: React.FC = () => {
           cancelLabel="Back to Review"
           variant="warning"
           onCancel={() => setIsRestoreConfirmOpen(false)}
-          onConfirm={() => {
-            restoreVersion(doc.id, restoreTargetVersion.versionNumber, restoreNote.trim());
+          onConfirm={async () => {
+            await restoreVersion(doc.id, restoreTargetVersion.versionNumber, restoreNote.trim());
             setIsRestoreConfirmOpen(false);
             setIsRestoreModalOpen(false);
             setRestoreTargetVersion(null);

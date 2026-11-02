@@ -1,5 +1,9 @@
 # DentDocs — San Nicolas Dental Clinic Document Management System
 
+> **Phase 2 working copy: mock data only.** See [PHASE2.md](PHASE2.md) for current
+> setup, implementation scope, verification failures and remaining acceptance gates.
+> The historical prototype descriptions below are not production security claims.
+
 <div align="center">
   <img src="public/logo.png" alt="San Nicolas Dental Clinic Logo" width="160" />
   <p><strong>Secure, Local-First Dental Record Management & Clinical Completeness System</strong></p>

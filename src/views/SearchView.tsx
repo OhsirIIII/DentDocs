@@ -38,6 +38,7 @@ export const SearchView: React.FC = () => {
 
   const [results, setResults] = useState<DentalDocument[]>(visibleDocuments);
   const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState('');
 
   // Sync if context passes initial filters
   useEffect(() => {
@@ -50,6 +51,7 @@ export const SearchView: React.FC = () => {
   useEffect(() => {
     let active = true;
     setIsSearching(true);
+    setSearchError('');
     searchDocumentsAsync(
       visibleDocuments,
       query,
@@ -66,7 +68,7 @@ export const SearchView: React.FC = () => {
         setResults(res);
         setIsSearching(false);
       }
-    });
+    }).catch(error => { if (active) { setSearchError(error instanceof Error ? error.message : 'Unable to search clinic records'); setIsSearching(false); } });
 
     return () => {
       active = false;
@@ -97,6 +99,7 @@ export const SearchView: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-12">
+      {searchError && <p role="alert" className="bg-rose-50 text-rose-900 p-3">{searchError}</p>}
       {/* Header */}
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">

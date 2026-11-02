@@ -88,6 +88,8 @@ export interface PrescriptionDetails {
 }
 
 export interface DentalDocument {
+  revision?: number;
+  fileId?: string | null;
   id: string;
   patientId: string;
   patientRecordNo: string;

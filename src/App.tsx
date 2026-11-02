@@ -4,6 +4,8 @@
  */
 
 import React, { useState } from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { AccessRestricted } from './components/AccessRestricted';
 import { ClinicProvider, useClinic } from './context/ClinicContext';
 import { Navbar } from './components/Navbar';
 import { LoginModal } from './components/LoginModal';
@@ -19,7 +21,7 @@ import { InactivityWarningBanner } from './components/InactivityWarningBanner';
 import { useInactivityTimer } from './hooks/useInactivityTimer';
 
 function ClinicMainContent() {
-  const { currentScreen, currentUser, switchRole, navigateTo, addAuditLog } = useClinic();
+  const { currentUser, switchRole, navigateTo, addAuditLog, pending } = useClinic();
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(() => {
     return sessionStorage.getItem('dentdocs_privacy_acknowledged_v1') !== 'true';
@@ -77,13 +79,20 @@ function ClinicMainContent() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
-        {currentScreen === 'dashboard' && <DashboardView />}
-        {currentScreen === 'patients' && <PatientsView />}
-        {currentScreen === 'upload' && <UploadView />}
-        {currentScreen === 'viewer' && <DocumentViewerView />}
-        {currentScreen === 'search' && <SearchView />}
-        {currentScreen === 'audit' && <AuditLogView />}
-        {currentScreen === 'incomplete' && <IncompleteDocumentsView />}
+        <fieldset disabled={pending} aria-busy={pending} className="min-w-0">
+        <Routes>
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/dashboard" element={<DashboardView />} />
+          <Route path="/patients" element={<PatientsView />} />
+          <Route path="/patients/:patientId" element={<PatientsView />} />
+          <Route path="/upload" element={<UploadView />} />
+          <Route path="/documents/:documentId" element={<DocumentViewerView />} />
+          <Route path="/search" element={<SearchView />} />
+          <Route path="/admin/audit" element={<AdminRoute />} />
+          <Route path="/incomplete" element={<IncompleteDocumentsView />} />
+          <Route path="*" element={<div role="alert">Page not found. <a href="/dashboard">Return to dashboard</a></div>} />
+        </Routes>
+        </fieldset>
       </main>
 
       {/* Role Selection Modal */}
@@ -109,10 +118,29 @@ function ClinicMainContent() {
   );
 }
 
+function AdminRoute() {
+  const { canManageUsersAndAudit } = useClinic();
+  return canManageUsersAndAudit ? <AuditLogView /> : <AccessRestricted requiredRole="Admin" reason="The audit console is available to administrators." />;
+}
+
+function DataBoundary() {
+  const { loading, data, apiError, pending, reload, clearApiError } = useClinic();
+  if (loading) return <div role="status" className="p-8">Loading clinic records…</div>;
+  if (!data) return <div role="alert" className="p-8">Unable to connect to the clinic server. {apiError}<button className="ml-4 underline" onClick={() => window.location.reload()}>Retry</button></div>;
+  return <>
+    <div className="bg-amber-50 text-amber-950 px-4 py-2 text-sm" role="status">Phase 2 — fictional data only. Demo roles are not secure accounts.</div>
+    {pending && <div role="status" className="px-4 py-2 text-sm">Saving to clinic server…</div>}
+    {apiError && <div role="alert" className="bg-rose-50 text-rose-900 px-4 py-3">{apiError}<button className="ml-4 underline" onClick={() => { clearApiError(); void reload(); }}>Reload records</button></div>}
+    <ClinicMainContent />
+  </>;
+}
+
 export default function App() {
   return (
+    <BrowserRouter>
     <ClinicProvider>
-      <ClinicMainContent />
+      <DataBoundary />
     </ClinicProvider>
+    </BrowserRouter>
   );
 }

@@ -305,9 +305,9 @@ export const AuditLogView: React.FC = () => {
         consequenceNote="Reversible: An audit log entry will be created attributing this restoration to your Admin account."
         confirmLabel="Restore Document"
         variant="default"
-        onConfirm={() => {
+        onConfirm={async () => {
           if (docToRestore) {
-            restoreArchivedDocument(docToRestore.id);
+            await restoreArchivedDocument(docToRestore.id);
             setDocToRestore(null);
           }
         }}

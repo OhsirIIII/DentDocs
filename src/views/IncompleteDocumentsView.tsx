@@ -64,7 +64,7 @@ export const IncompleteDocumentsView: React.FC = () => {
     setNoteError('');
   };
 
-  const handleConfirmResolve = (e: React.FormEvent) => {
+  const handleConfirmResolve = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!staffNote.trim()) {
       setNoteError('A staff verification note is mandatory before marking a document complete.');
@@ -72,7 +72,7 @@ export const IncompleteDocumentsView: React.FC = () => {
     }
 
     if (resolvingDoc) {
-      resolveIncompleteDocument(resolvingDoc.id, staffNote.trim());
+      await resolveIncompleteDocument(resolvingDoc.id, staffNote.trim());
       setResolvingDoc(null);
     }
   };
