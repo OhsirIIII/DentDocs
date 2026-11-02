@@ -41,3 +41,11 @@ retry button, visible keyword-fallback notices, matched source snippets and
 version/revision attribution. It clears prior results during a new request and
 never presents semantic similarity as clinical truth or OCR accuracy. Desktop and
 390px mobile views were inspected against the deployed app.
+
+
+Phase 7 places Administrative summary in a document-viewer disclosure. Keep the
+accepted summary separate from editable drafts, with named approver and source
+version/revision. Show exact quotations with offsets, original download, source
+review blockers, and outdated-source states. Approval needs a note and explicit
+comparison checkbox; rejection needs a note. Never style a generated draft as an
+accepted result. Native labeled controls stack at 390px; errors and saves are visible.

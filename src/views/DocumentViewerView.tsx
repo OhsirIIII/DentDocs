@@ -1,4 +1,5 @@
 import { HandwritingHistory } from '../components/HandwritingHistory';
+import { SummaryPanel } from '../components/SummaryPanel';
 import { request, uploadOriginal } from '../data/apiClient';
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useClinic } from '../context/ClinicContext';
@@ -343,6 +344,7 @@ export const DocumentViewerView: React.FC = () => {
 
       {/* Main Dual-Pane View: Document Preview on Left, Extracted Metadata on Right */}
       <Suspense fallback={<p role="status" className="py-3 text-sm text-slate-600">Loading review and validity…</p>}><DocumentWorkflowPanel document={doc} /></Suspense>
+      <SummaryPanel key={doc.id} document={doc} />
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Pane: Document Visual Preview (6 cols) */}
         <div className="lg:col-span-6 space-y-3">

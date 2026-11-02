@@ -1,22 +1,24 @@
 # DentDocs session recap and recall
 
-Updated: November 2, 2026. Resume from this file before starting new work.
+Updated: November 3, 2026. Resume from this file and
+[DENTDOCS_RECALL_2026-11-03.md](DENTDOCS_RECALL_2026-11-03.md).
+The dated recall is the concise current handoff; older continuation sections below
+are historical and are superseded by the Phase 7 completion section at the end.
 
 ## Current stopping point
 
-Phases 2–6, including assisted handwriting and semantic/hybrid search, are implemented and
-verified in the local fictional-data installation. See PHASE6.md and PHASE5_HANDWRITING.md.
-The user approved Phase 5 in the continuation chat on November 2, 2026.
-**Phase 7 has not been approved or started.** Do not infer permission to implement
-later phases, push changes, merge branches or release the app from this document.
+Phases 2–7, including assisted handwriting, semantic/hybrid search and local
+administrative summaries with named approval, are implemented and verified locally.
+The user authorized Phase 7 implementation, verification, updating the recall and
+pushing the changes to the existing branch. Phase 8 remains pending and unstarted.
 
 - Repository: https://github.com/OhsirIIII/DentDocs
 - Working folder: `C:\Users\User\Documents\ChatGPT\DentDocs`
 - Branch: `codex/phase4-review-validity`
-- Committed tip at Phase 5 continuation: `ade6ba6` — session handoff.
-- Phase 5 implementation and documentation are local, uncommitted changes on the
-  existing branch; nothing from Phase 5 has been pushed.
-- Phases 2–4 were pushed to this branch. `main` was not changed. No PR was created.
+- Phase 5–6 source was pushed at `3749dbd`; this Phase 7 continuation is packaged
+  on the same branch. Use `git log -1` and compare the remote tracking branch for
+  the final current commit; the handoff cannot contain its own commit hash.
+- `main` was not changed. No PR, merge or production release was performed.
 - Local app: http://127.0.0.1:8080/dashboard
 - Docker Desktop engine is installed and working. The app was running at handoff.
 - This is still a **fictional-data, loopback-only installation**, not a production
@@ -138,7 +140,7 @@ Commit: `4d9d0d3`. Full details: `PHASE4.md`.
 |---|---|
 | Admin create/disable/reset-password/assign-role screen | Implemented in Phase 3 |
 | Low-confidence and mismatch review queue page | Implemented in Phase 4 |
-| Local draft administrative summaries with human approval before saving | Pending Phase 7; no real generation or approval pipeline yet |
+| Local draft administrative summaries with human approval before saving | Implemented Phase 7; local extractive drafts, source pinning and named staff decisions |
 | Views/downloads/print audit logging | Implemented in Phase 3; print logs represent requests |
 | Defined validity rules for expiring documents | Mechanism implemented in Phase 4; actual clinic policies still require approval |
 
@@ -212,31 +214,25 @@ configuration. A Git push is not a backup of the running clinic installation.
 
 ## Remaining work, in the v2 phase order
 
-1. **Phase 6 — semantic search:** local embeddings/pgvector plus keyword search
-   and filters, preserving server permissions and reliable result attribution. Explain
-   the proposed scope and choices and obtain user approval before implementation.
-2. **Phase 7 — document summaries:** generate locally for administrative use,
-   clearly label as drafts, require a named staff reviewer to approve before
-   saving an accepted summary. Do not treat existing prototype text as this feature.
-3. **Phase 8 — backup, testing and security release:** encrypted backups, key
-   custody, clean-machine restore drill, expanded integration/security validation,
-   dependency review and release criteria. Tests already exist; this phase expands
-   release coverage rather than starting testing from zero.
-4. **Clinic decisions and deliverables:** actual validity/checklist definitions,
+1. **Phase 8 — backup, testing and security release:** encrypted backups covering
+   database/files/keys, key custody, clean-machine restore drill, expanded integration
+   and security validation, dependency review and explicit release criteria. Existing
+   automated tests are already in place; this phase expands release coverage.
+2. **Clinic decisions and deliverables:** actual validity/checklist definitions,
    retention/disposal, notice/DPO approval, account operations, LAN HTTPS, installation
-   and user guides, final requirements/design/API/ERD documentation and release
-   sign-off. Validate current deliverable checklists against the code.
-5. **GitHub review:** optionally open a PR from `codex/phase4-review-validity` to
-   `main`. It contains the cumulative Phase 2–4 changes. Review and authorize any
-   merge separately; no merge or production deployment has been approved here.
+   and staff guides, final requirements/design/API/ERD documentation and release sign-off.
+3. **Handwriting evaluation:** clinic-confirmed labels, writer-disjoint held-out tests
+   and measured accuracy before claiming dental handwriting reliability. Existing
+   supplied transcriptions remain drafts and must not become trusted training labels.
+4. **GitHub review:** an optional PR from the existing branch to `main`; any merge or
+   production release needs its own instruction. Current branch contains Phases 2–7.
 
 ## Suggested message to resume
 
-> Continue DentDocs from SESSION_RECAP.md. Read PHASE5.md and the actual code.
-> Confirm the branch and Docker state without resetting data. Phase 5 is implemented
-> and verified locally but remains uncommitted on codex/phase4-review-validity.
-> Explain the proposed Phase 6 scope and choices before implementation.
-> Keep testing fictional; preserve credentials, originals and volumes.
+> Continue DentDocs from DENTDOCS_RECALL_2026-11-03.md and SESSION_RECAP.md.
+> Inspect the branch, source and Docker state without resetting data. Phases 2–7
+> are complete locally; explain the proposed Phase 8 scope before implementing it.
+> Preserve credentials, encrypted originals, models and volumes. Keep tests fictional.
 
 ## Notes for the next coding session
 
@@ -419,3 +415,31 @@ Private settings, clinic database/files, uploaded dental examples, model weights
 training environments and local review packets remain excluded under ignored work/.
 Verify the remote branch before claiming a push completed; this note records the
 user's authorization and packaged source rather than remote transport status.
+
+
+## Current stopping point — Phase 7 complete (November 3, 2026)
+
+This section supersedes historical Phase 5/6 statements about uncommitted work,
+Phase 6 being next, or Phase 7 lacking authorization. The user explicitly requested
+the next phase, push and a renewed recall document in this continuation.
+
+- Local administrative overview drafts now use deterministic extraction of selected
+  exact source lines. This is not an abstractive language model or a handwriting fix.
+- Drafts are stored separately from accepted summaries. Only a dentist/administrator
+  can accept or reject; acceptance requires edited/reviewed text, a note and explicit
+  source comparison confirmation. Pending extraction review blocks acceptance.
+- Source version/revision/fingerprint and original-file association are retained.
+  Any document revision invalidates earlier acceptance, including restore/archive.
+  Drafts and named decisions are append-only; one final decision per draft.
+- Source permissions apply to both current and historical types. The new audit
+  actions are SUMMARY_VIEW, SUMMARY_DRAFT, SUMMARY_APPROVED and SUMMARY_REJECTED.
+- Additive schema version 7, deployed PostgreSQL history protections and original
+  integrity verified. Twelve fictional patients retained; browser test documents
+  archived; temporary account disabled and sessions revoked. Existing clinic admin
+  password was not used or changed.
+- Validation: 79 backend tests, TypeScript, production build, deployed browser
+  acceptance, persistence after reload, source invalidation, exact original download
+  and desktop/390px mobile checks. Upstream Starlette/httpx deprecation and Vite's
+  bundle-size advisory remain. See PHASE7.md for details and limitations.
+- Detailed current handoff: DENTDOCS_RECALL_2026-11-03.md. Phase 8 backup/recovery
+  and release review remain pending. No PR, merge or real-data release.

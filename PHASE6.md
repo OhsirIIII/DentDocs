@@ -1,7 +1,8 @@
 # Phase 6 — local semantic and hybrid search
 
-Implemented and verified in the local fictional-data installation. Phase 7 draft
-summaries and Phase 8 release/recovery work remain pending. This phase retrieves
+Implemented and verified in the local fictional-data installation. Phase 7 summaries
+are now documented separately in PHASE7.md; Phase 8 release/recovery work remains
+pending. This search phase retrieves
 source passages; it does not generate clinical answers, diagnoses or summaries.
 
 ## Staff workflow

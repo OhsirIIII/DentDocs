@@ -19,7 +19,7 @@ async def initialize():
         db.exec_driver_sql('GRANT CONNECT ON DATABASE dentdocs_mock TO dentdocs_app')
         db.exec_driver_sql('GRANT USAGE ON SCHEMA public TO dentdocs_app')
         db.exec_driver_sql('GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO dentdocs_app')
-        db.exec_driver_sql('REVOKE UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON audit_logs, review_events, validity_events, file_extractions, handwriting_drafts FROM dentdocs_app')
+        db.exec_driver_sql('REVOKE UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON audit_logs, review_events, validity_events, file_extractions, handwriting_drafts, summary_drafts, summary_decisions FROM dentdocs_app')
         db.exec_driver_sql('REVOKE INSERT, UPDATE, DELETE, TRUNCATE ON schema_versions FROM dentdocs_app')
     engine.dispose()
     print('Schema, accounts and restricted application database role initialized')

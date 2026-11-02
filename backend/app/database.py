@@ -147,6 +147,29 @@ class SearchChunk(Base):
     embedding: Mapped[list] = mapped_column(JSON().with_variant(Vector384(), 'postgresql'))
 
 
+class SummaryDraft(Base):
+    __tablename__ = 'summary_drafts'
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    document_id: Mapped[str] = mapped_column(ForeignKey('documents.id'))
+    source_revision: Mapped[int] = mapped_column(Integer)
+    source_version: Mapped[int] = mapped_column(Integer)
+    source_fingerprint: Mapped[str] = mapped_column(String)
+    source_type: Mapped[str] = mapped_column(String)
+    file_id: Mapped[str | None] = mapped_column(ForeignKey('document_files.id'), nullable=True)
+    created_by: Mapped[str] = mapped_column(ForeignKey('users.id'))
+    data: Mapped[dict] = mapped_column(JSON)
+
+
+class SummaryDecision(Base):
+    __tablename__ = 'summary_decisions'
+    __table_args__ = (UniqueConstraint('draft_id'), CheckConstraint("action IN ('approve', 'reject')"))
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    draft_id: Mapped[str] = mapped_column(ForeignKey('summary_drafts.id'))
+    action: Mapped[str] = mapped_column(String)
+    decided_by: Mapped[str] = mapped_column(ForeignKey('users.id'))
+    data: Mapped[dict] = mapped_column(JSON)
+
+
 class ReviewItem(Base):
     __tablename__ = 'review_queue'
     __table_args__ = (UniqueConstraint('document_id', 'version'),)
@@ -239,7 +262,7 @@ def migrate(engine):
             db.add(SchemaVersion(version=1))
             db.commit()
     with engine.begin() as connection:
-        for table in ('audit_logs', 'review_events', 'validity_events', 'file_extractions', 'handwriting_drafts'):
+        for table in ('audit_logs', 'review_events', 'validity_events', 'file_extractions', 'handwriting_drafts', 'summary_drafts', 'summary_decisions'):
             if engine.dialect.name == 'sqlite':
                 for operation in ('UPDATE', 'DELETE'):
                     connection.exec_driver_sql(f"CREATE TRIGGER IF NOT EXISTS {table}_no_{operation.lower()} BEFORE {operation} ON {table} BEGIN SELECT RAISE(ABORT, 'History events are append-only'); END")
@@ -262,4 +285,7 @@ def migrate(engine):
             db.commit()
         if db.get(SchemaVersion, 6) is None:
             db.add(SchemaVersion(version=6))
+            db.commit()
+        if db.get(SchemaVersion, 7) is None:
+            db.add(SchemaVersion(version=7))
             db.commit()

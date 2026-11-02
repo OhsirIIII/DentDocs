@@ -1,6 +1,8 @@
 # DentDocs — San Nicolas Dental Clinic Document Management System
 
-> **Phase 6: local semantic/hybrid search, using fictional records.**
+> **Phase 7: local administrative summary drafts with named staff approval, using fictional records.**
+> See [PHASE7.md](PHASE7.md) for draft generation, approval and source-change handling.
+> Resume from [DENTDOCS_RECALL_2026-11-03.md](DENTDOCS_RECALL_2026-11-03.md) for current status and remaining work.
 > See [PHASE6.md](PHASE6.md) for search modes, source attribution, permissions and setup.
 > See [PHASE5_HANDWRITING.md](PHASE5_HANDWRITING.md) for image-region selection,
 > experimental draft suggestions and named staff review.

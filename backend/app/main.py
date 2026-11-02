@@ -19,6 +19,7 @@ from sqlalchemy import select, update
 from .database import make_database, migrate, Patient, Document, FileRecord, FileUpload, Version, Audit, Extraction, HandwritingDraft
 from .handwriting import read_region
 from .semantic import install_search
+from .summaries import install_summaries
 from .ocr import run_local, extract_fields, OcrError
 from .security import install_security, initialize_admin, authorize, can_read, ADMINISTRATIVE
 from .workflows import install_workflows, sync_review, workflow_summary, SYSTEM
@@ -451,6 +452,8 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
         db.commit()
         return {'ok': True}
 
+
+    install_summaries(app, actor, database, audit)
 
     @app.post('/api/documents/{document_id}/{operation}')
     def action(document_id: str, operation: str, body: Mutation, user=Depends(actor), db=Depends(database)):
