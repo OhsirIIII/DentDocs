@@ -1,15 +1,16 @@
-# DentDocs recall — November 3, 2026 (after Phase 8)
+# DentDocs recall — November 3, 2026 (after security follow-up)
 
-Read this, SESSION_RECAP.md, PHASE8.md, SECURITY_REVIEW.md and the code. Older recall
+Read this, SESSION_RECAP.md, PHASE8.md, SECURITY_REVIEW.md, SECURITY_FOLLOWUP.md
+and the code. Older recall
 text is historical context, not new instructions or the current release status.
 
 ## Current state
 
 Phases 2–7 and Phase 8 recovery tooling/local engineering review are implemented.
 **Real-patient release is blocked** by the remaining tasks below. User authorized
-Phase 8 after Phase 7 was pushed at e47aec0. Branch: `codex/phase4-review-validity`.
+the security continuation after Phase 8 was pushed at 0e4a5d1. Branch: `codex/phase4-review-validity`.
 Remote: https://github.com/OhsirIIII/DentDocs.git. Use `git log -1` and compare the
-remote tracking branch for the final Phase 8 commit/transport status. No PR, merge,
+remote tracking branch for the current commit/transport status. No PR, merge,
 main-branch change or production release.
 
 Workspace: `C:\Users\User\Documents\ChatGPT\DentDocs`.
@@ -34,8 +35,8 @@ schema 7 and pgvector 0.8.7 retained. Existing clinic admin/password and keys re
 - 81 backend and 22 recovery tests passed; type checking/build, security headers,
   local-only browser requests, actual PDF preview and printed OCR passed. Known
   Starlette/httpx deprecation and Vite bundle-size advisories remain.
-- API cryptography 50.0.0; reader Torch CPU 2.10.0, Transformers 5.10.0, Pillow 13.0.0,
-  setuptools 84.1.0; pip 26.3 and pinned reader dependencies. Available OS upgrades
+- API/recovery cryptography 50.0.2; reader Torch CPU 2.13.0, Transformers 5.10.0,
+  Pillow 13.0.0 and required setuptools 84.1.0. Pip removed from both runtime images. Available OS upgrades
   applied. Database now uses su-exec instead of gosu. Models preserved, not retrained.
 - Removed unused cloud/server packages and external fonts. Added CSP/privacy headers,
   disabled interactive schemas and rejected malformed/oversized document inputs.
@@ -47,7 +48,8 @@ schema 7 and pgvector 0.8.7 retained. Existing clinic admin/password and keys re
 
 ## Private recovery artifacts
 
-Final bundle: `work/backups/phase8-final-verified-2026-11-03`.
+Current bundle: `work/backups/security-followup-2026-11-03`.
+Preceding recovery point: `work/backups/phase8-final-verified-2026-11-03`.
 Separate local test key: `work/recovery-keys/phase8.key`.
 Evidence: ignored `work/phase8-*`. Other bundles/incomplete attempts are diagnostic,
 not the final recovery point. Do not print keys or private configuration.
@@ -91,3 +93,35 @@ a new backup destination. PHASE8.md provides exact recovery and safe cleanup com
 
 Suggested resume: “Continue DentDocs from this recall and SECURITY_REVIEW.md.
 Inspect state without resetting data, then address remaining release gates.”
+
+
+## Latest continuation — security follow-up
+
+The user instructed proceeding with the remaining security work after the Phase 8
+push at 0e4a5d1. SECURITY_FOLLOWUP.md supersedes prior untriaged scanner notes.
+
+- Grype 0.121.1, checksum-verified from official release, scanned effective image
+  filesystems without vulnerability filters. Database/web each have three medium
+  matches and no high/critical matches. Removed gosu and vendored setuptools
+  attributions are not reproduced as installed vulnerable components.
+- Reader Torch patched to 2.13.0; API/recovery crypto 50.0.2 uses bundled OpenSSL 4.0.3.
+  Independent report no longer flags Torch. Native-library findings remain: raw API
+  552 matches (20 critical/172 high); reader 232 (2 critical/78 high). Do not hide
+  those counts or call the images clean. Debian backport evidence, unsupported
+  invocation paths and unresolved XML/PDF findings are documented separately.
+- API/reader are nonroot/read-only with capabilities dropped, no-new-privileges,
+  bounded resources and noexec/nosuid temporary memory. Backend services use only an
+  internal Docker network. Only web bridges it and publishes loopback port 8080.
+- scripts/verify-security.py checks actual deployment/dependency invariants; it also
+  supports --drill-target. Pip is absent; use importlib metadata/host audit tools.
+  Reader retains patched setuptools because Torch requires it.
+- 81 backend, four reader and 22 recovery tests; type/build, browser/OCR/summary,
+  actual semantic search and both offline model checks passed. Models, keys and
+  original data preserved; draft clinic labels remain unused for dental training.
+- New encrypted snapshot and isolated recovery matched 19 tables and 35 originals,
+  preserved the restrictions and ran both actual offline models. Reports,
+  inventories and vendor data remain ignored under work/security-followup/. Existing
+  Phase 8 recovery point kept. Test account disabled; isolated drill cleaned up.
+- Remaining: unresolved native parser remediation or independently reviewed risk
+  decisions, physical off-device/second-machine recovery and key custody, approved
+  backup operations, clinic policies, LAN HTTPS, final docs/sign-off. No release.

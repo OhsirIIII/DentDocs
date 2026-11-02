@@ -9,7 +9,7 @@ are historical and are superseded by the Phase 7 completion section at the end.
 
 Phases 2–7 plus Phase 8 recovery tooling and local security review are implemented
 and verified locally. The user authorized proceeding with Phase 8. Read PHASE8.md
-and SECURITY_REVIEW.md. Real-patient release remains blocked by image findings,
+and SECURITY_REVIEW.md plus SECURITY_FOLLOWUP.md. Real-patient release remains blocked by image findings,
 a physical clean-machine/off-device drill and clinic decisions.
 
 - Repository: https://github.com/OhsirIIII/DentDocs
@@ -469,3 +469,27 @@ The user instructed proceeding with Phase 8 after the Phase 7 push at e47aec0.
   password, original keys and twelve patients retained. No PR, merge or release.
 - Physical clean-machine recovery, independent security assessment, remaining image
   remediation/triage, approved backup operations and clinic decisions remain pending.
+
+
+## Latest continuation — security follow-up (November 3, 2026)
+
+This supersedes earlier runtime versions and untriaged scanner notes. See
+SECURITY_FOLLOWUP.md and the updated dated recall. The user authorized proceeding.
+
+Crypto is 50.0.2 (bundled OpenSSL 4.0.3), Torch CPU 2.13.0; original keys/models kept.
+Pip removed, required reader setuptools 84.1.0 retained. API/reader are read-only,
+nonroot, capability-free/no-new-privileges and resource bounded; private backend
+network prevents direct external routing. Only web exposes loopback 8080.
+Independent checksum-verified Grype effective-filesystem scans support removal of
+old gosu/vendored-setuptools findings and the Torch fix. Raw API/reader native-library
+findings remain; documented vendor backports/path constraints are not release waivers.
+
+81 backend, four reader and 22 recovery tests plus type/build, browser/OCR/summary,
+real semantic retrieval, both model inference and runtime-boundary checks passed.
+New protected snapshot: work/backups/security-followup-2026-11-03; existing separate
+recovery key unchanged. Fresh isolated restore and cleanup completed; preceding
+Phase 8 snapshot retained. Test account disabled and original admin untouched.
+
+Next work is the remaining independently assessed parser/security release gates,
+physical clean-machine/off-device/key-custody drill, approved clinic/deployment
+operations and final deliverables/sign-off. No main merge or real-data release.

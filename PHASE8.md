@@ -1,5 +1,9 @@
 # Phase 8 — encrypted recovery and release review
 
+Current runtime changes and independent scan dispositions are in
+[SECURITY_FOLLOWUP.md](SECURITY_FOLLOWUP.md). Python pip is removed from app images;
+use host-side audit tools and importlib metadata for runtime inventories.
+
 Implemented for the local fictional-data installation. Recovery tools and local
 restore evidence are available; **real-patient release remains blocked** by the
 outstanding items in SECURITY_REVIEW.md. This phase does not certify compliance.

@@ -1,5 +1,9 @@
 # Security and release review — Phase 8
 
+Current continuation: [SECURITY_FOLLOWUP.md](SECURITY_FOLLOWUP.md) records independent
+filesystem scans, newer runtime versions and deployment restrictions. Counts and
+package-manager descriptions below are the preceding Phase 8 baseline.
+
 Local fictional-data installation reviewed November 3, 2026. This is an engineering
 baseline review, not a penetration-test certificate or compliance approval.
 **Release status: blocked for real patient data and LAN exposure.**

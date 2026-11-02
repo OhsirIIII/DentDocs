@@ -5,6 +5,8 @@ COPY requirements.lock .
 RUN pip install --no-cache-dir -r requirements.lock
 COPY app app
 COPY seed seed
-RUN useradd --create-home clinic && mkdir -p /data/files && chown -R clinic:clinic /data && python -m pip install --no-cache-dir --upgrade pip==26.3 setuptools==84.1.0
+RUN useradd --create-home clinic && mkdir -p /data/files && chown -R clinic:clinic /data
+# Build-time package managers and their vendored dependencies are not needed at runtime.
+RUN python -m pip uninstall -y pip setuptools
 USER clinic
 CMD ["uvicorn", "app.asgi:app", "--host", "0.0.0.0", "--port", "8000"]
