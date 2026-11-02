@@ -526,7 +526,7 @@ export const DashboardView: React.FC = () => {
                         </span>
                       )}
                       <span className="block text-[11px] text-slate-400 mt-0.5 tabular-nums">
-                        OCR {doc.confidenceScore}%
+                        {doc.handwritingSources?.length ? "Handwriting · review" : `OCR ${doc.confidenceScore}%`}
                       </span>
                     </span>
                   </button>

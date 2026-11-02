@@ -23,3 +23,21 @@ Phase 4 uses a queue beside a source/decision inspector, stacking on mobile. Rev
 and validity live in a disclosure in the document viewer. Policy drafts and explicit
 approval/retirement confirmations use labeled native forms. Keep extraction,
 completeness and validity labels distinct. Policy duration fields start blank.
+
+Phase 5 keeps the existing upload layout and adds actual-original PDF/image preview,
+editable OCR text, conservative confidence labels, explicit extraction warnings and
+manual entry after OCR failure. No simulated file buttons or fabricated completeness
+claims remain in this flow. Treat classification, extraction, completeness and
+validity as separate staff tasks. Desktop and 390px mobile layouts were inspected.
+
+The Phase 5 handwriting extension uses an inline disclosure under an image upload.
+It provides rotation, pointer selection and labeled percentage inputs as a keyboard
+alternative. Model drafts are editable and explicitly unscored; metadata and named
+review remain separate. Retained draft provenance is disclosed in the document text
+tab and review inspector. Desktop and 390px mobile acceptance checks passed.
+
+Phase 6 preserves the search layout and adds an explicit search-method selector,
+retry button, visible keyword-fallback notices, matched source snippets and
+version/revision attribution. It clears prior results during a new request and
+never presents semantic similarity as clinical truth or OCR accuracy. Desktop and
+390px mobile views were inspected against the deployed app.

@@ -177,6 +177,10 @@ export const AuditLogView: React.FC = () => {
               <option value="FLAG_INCOMPLETE">Flag Incomplete</option>
               <option value="EDIT_METADATA">Edit Metadata</option>
               <option value="MARK_COMPLETE">Mark Complete</option>
+              <option value="HANDWRITING_DRAFT">Handwriting Suggestion</option>
+              <option value="HANDWRITING_FAILED">Handwriting Failed</option>
+              <option value="OCR_EXTRACTED">Local OCR Extracted</option>
+              <option value="OCR_FAILED">Local OCR Failed</option>
               <option value="UPLOAD_VERSION">Upload Version</option>
               <option value="RESTORE_VERSION">Restore Version</option>
               <option value="ARCHIVE">Archive (Soft Delete)</option>

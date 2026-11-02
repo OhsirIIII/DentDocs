@@ -1,3 +1,4 @@
+import { HandwritingHistory } from '../components/HandwritingHistory';
 import { request, uploadOriginal } from '../data/apiClient';
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useClinic } from '../context/ClinicContext';
@@ -350,7 +351,7 @@ export const DocumentViewerView: React.FC = () => {
           {/* Quick status pill under preview */}
           <div className="flex items-center justify-between text-xs text-slate-500 px-2">
             <span>Uploaded: {doc.uploadedAt} by {doc.uploadedBy}</span>
-            <span className="font-mono">OCR Score: {doc.confidenceScore}%</span>
+            <span className="font-mono">{doc.handwritingSources?.length ? "Handwriting · unscored" : `OCR Score: ${doc.confidenceScore}%`}</span>
           </div>
         </div>
 
@@ -693,7 +694,7 @@ export const DocumentViewerView: React.FC = () => {
           {activeTab === 'text' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between text-xs text-slate-500">
-                <span>OCR Extracted Text Buffer</span>
+                <span>{doc.handwritingSources?.length ? "Staff transcription text" : "OCR Extracted Text Buffer"}</span>
                 <span className="font-mono">Characters: {doc.extractedText.length}</span>
               </div>
               <textarea
@@ -702,8 +703,9 @@ export const DocumentViewerView: React.FC = () => {
                 rows={14}
                 className="w-full text-xs font-mono bg-slate-50 border border-slate-200 rounded-xl p-4 text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
+              <HandwritingHistory sources={doc.handwritingSources} />
               <p className="text-[11px] text-slate-500 italic">
-                Extracted using simulated Philippine dental template heuristics
+                Extraction may contain errors. Verify text against the retained original.
               </p>
             </div>
           )}

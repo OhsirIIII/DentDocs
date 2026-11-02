@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:17-alpine
+    build: ./deployment/database
     environment:
       POSTGRES_DB: dentdocs_mock
       POSTGRES_USER: dentdocs
@@ -37,11 +37,28 @@ services:
       FILE_ENCRYPTION_KEY: ${FILE_ENCRYPTION_KEY}
       APP_ORIGIN: ${APP_ORIGIN:-http://127.0.0.1:8080,http://localhost:8080}
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      HANDWRITING_URL: http://handwriting:8091
+      HANDWRITING_TOKEN: ${HANDWRITING_TOKEN:-}
     volumes:
       - files:/data/files
     depends_on:
       migrate:
         condition: service_completed_successfully
+    restart: unless-stopped
+  handwriting:
+    profiles: [handwriting, semantic]
+    build: ./handwriting
+    environment:
+      HANDWRITING_TOKEN: ${HANDWRITING_TOKEN:-}
+    volumes:
+      - ./work/handwriting/amr-base-run-001/trained:/model:ro
+      - ./work/semantic/model:/embedding-model:ro
+    mem_limit: 3g
+    cpus: 2
+    pids_limit: 128
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
     restart: unless-stopped
   web:
     build: .

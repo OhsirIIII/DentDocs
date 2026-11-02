@@ -3,6 +3,8 @@ import copy
 import hashlib
 import json
 import os
+import math
+from typing import Literal
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
@@ -14,7 +16,10 @@ from fastapi.responses import Response
 from pydantic import BaseModel, Field, ConfigDict
 from sqlalchemy import select, update
 
-from .database import make_database, migrate, Patient, Document, FileRecord, FileUpload, Version, Audit
+from .database import make_database, migrate, Patient, Document, FileRecord, FileUpload, Version, Audit, Extraction, HandwritingDraft
+from .handwriting import read_region
+from .semantic import install_search
+from .ocr import run_local, extract_fields, OcrError
 from .security import install_security, initialize_admin, authorize, can_read, ADMINISTRATIVE
 from .workflows import install_workflows, sync_review, workflow_summary, SYSTEM
 
@@ -41,6 +46,16 @@ class CreateDocument(BaseModel):
     model_config = ConfigDict(extra='forbid')
     document: dict
     fileId: str | None = None
+
+
+class ExtractRequest(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    patientId: str
+
+
+class HandwritingRequest(ExtractRequest):
+    rotation: Literal[0, 90, 180, 270] = 0
+    box: tuple[float, float, float, float]
 
 
 def validate(data):
@@ -136,9 +151,11 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
     def safe_data(value, user):
         data = copy.deepcopy(value)
         if user['role'] == 'front_desk':
-            for key in ('radiographDetails', 'prescriptionDetails', 'reviewNotes', 'resolutionNote'):
+            for key in ('radiographDetails', 'prescriptionDetails', 'reviewNotes', 'resolutionNote', 'handwritingSources'):
                 data.pop(key, None)
             data['versionHistory'] = [v for v in data.get('versionHistory', []) if v.get('type') in ADMINISTRATIVE]
+            for version in data['versionHistory']:
+                version.pop('handwritingSources', None)
         return data
 
     def claim_file(db, file_id, user):
@@ -162,6 +179,17 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
     def attach_file(db, data, file_id):
         info = file_info(db, file_id)
         data.update(fileId=info.id, fileSize=f'{info.size:,} bytes', fileType={'application/pdf': 'PDF', 'image/png': 'PNG', 'image/jpeg': 'JPG'}[info.mime])
+
+    def attach_handwriting(db, data, file_id, patient_id, user):
+        data.pop('handwritingSources', None)
+        drafts = list(db.scalars(select(HandwritingDraft).where(HandwritingDraft.file_id == file_id)))
+        if not drafts:
+            return
+        if user['role'] == 'front_desk' or any(d.patient_id != patient_id or d.user_id != user['id'] for d in drafts):
+            raise HTTPException(403, 'Handwriting drafts must match your upload, patient and clinical role')
+        data['handwritingSources'] = sorted([copy.deepcopy(d.data) for d in drafts], key=lambda d: d['createdAt'])
+        data.update(confidenceScore=0, fieldConfidence={key: 0 for key in data['fieldConfidence']}, completenessStatus='needs_review')
+        data['missingFields'] = list(dict.fromkeys([*data.get('missingFields', []), 'Staff completeness verification']))
 
     @app.middleware('http')
     async def no_cache(request, call_next):
@@ -254,6 +282,85 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
             raise
         return {'id': key, 'size': len(payload), 'mime': mime}
 
+    @app.post('/api/files/{file_id}/extract')
+    def extract_file(file_id: str, body: ExtractRequest, user=Depends(actor), db=Depends(database)):
+        upload = db.scalar(select(FileUpload).where(FileUpload.file_id == file_id).with_for_update())
+        if not upload or upload.user_id != user['id'] or upload.consumed:
+            raise HTTPException(403, 'Process an unused original uploaded from your own account')
+        # OCR can expose clinical content before classification. Restrict this endpoint accordingly.
+        if user['role'] == 'front_desk':
+            raise HTTPException(403, 'Ask a dentist or assistant to process scans. Administrative uploads can be entered manually.')
+        patient = db.get(Patient, body.patientId)
+        if not patient:
+            raise HTTPException(422, 'Patient not found')
+        cached = db.get(Extraction, file_id)
+        if cached:
+            if cached.patient_id != patient.id:
+                raise HTTPException(409, 'Choose a new original upload to change the selected patient')
+            return cached.result
+        info = file_info(db, file_id)
+        try:
+            payload = cipher.decrypt((root / file_id).read_bytes())
+            if hashlib.sha256(payload).hexdigest() != info.sha256:
+                raise ValueError('Integrity failure')
+        except Exception:
+            raise HTTPException(503, 'Original file unavailable or integrity check failed')
+        try:
+            raw = run_local(payload, info.mime)
+        except OcrError as error:
+            audit(db, user, 'OCR_FAILED', details=f'Original {file_id}; local processing failed')
+            db.commit()
+            raise HTTPException(422, str(error))
+        result = extract_fields(raw, patient.data)
+        result.update(fileType={'application/pdf': 'PDF', 'image/png': 'PNG', 'image/jpeg': 'JPG'}[info.mime], fileSize=f'{info.size:,} bytes')
+        db.add(Extraction(file_id=file_id, patient_id=patient.id, result=result))
+        audit(db, user, 'OCR_EXTRACTED', details=f'Original {file_id}; {raw["pages"]} pages; staff review required')
+        db.commit()
+        return result
+
+    @app.post('/api/files/{file_id}/handwriting')
+    def handwriting_draft(file_id: str, body: HandwritingRequest, user=Depends(actor), db=Depends(database)):
+        if user['role'] == 'front_desk':
+            raise HTTPException(403, 'Ask clinical staff to transcribe unclassified scans')
+        upload = db.scalar(select(FileUpload).where(FileUpload.file_id == file_id).with_for_update())
+        if not upload or upload.user_id != user['id'] or upload.consumed:
+            raise HTTPException(403, 'Use your own unused original upload')
+        if not db.get(Patient, body.patientId):
+            raise HTTPException(422, 'Patient not found')
+        box = body.box
+        if not all(math.isfinite(v) and 0 <= v <= 1 for v in box) or not box[0] < box[2] or not box[1] < box[3]:
+            raise HTTPException(422, 'Select a region inside the image')
+        drafts = list(db.scalars(select(HandwritingDraft).where(HandwritingDraft.file_id == file_id)))
+        extracted = db.get(Extraction, file_id)
+        if any(d.patient_id != body.patientId for d in drafts) or extracted and extracted.patient_id != body.patientId:
+            raise HTTPException(409, 'Patient selection changed; upload a new original')
+        if len(drafts) >= 20:
+            raise HTTPException(422, 'At most 20 region suggestions per original; finish review or upload a new original')
+        info = file_info(db, file_id)
+        if info.mime not in {'image/png', 'image/jpeg'}:
+            raise HTTPException(422, 'Handwriting regions currently support JPG/PNG images. Use printed OCR for PDFs.')
+        try:
+            payload = cipher.decrypt((root / file_id).read_bytes())
+            if hashlib.sha256(payload).hexdigest() != info.sha256:
+                raise ValueError()
+        except Exception:
+            raise HTTPException(503, 'Original unavailable or integrity check failed')
+        try:
+            result = read_region(payload, body.rotation, list(box))
+            if result.get('sourceSha256') != info.sha256:
+                raise HTTPException(503, 'Handwriting source integrity check failed')
+        except HTTPException:
+            audit(db, user, 'HANDWRITING_FAILED', details=f'Original {file_id}; draft generation failed')
+            db.commit()
+            raise
+        key = str(uuid4())
+        result.update(id=key, rotation=body.rotation, box=list(box), createdAt=now(), suggestedBy=user['name'],
+                      status='draft', confidence=None, requiresStaffVerification=True)
+        db.add(HandwritingDraft(id=key, file_id=file_id, patient_id=body.patientId, user_id=user['id'], data=result))
+        audit(db, user, 'HANDWRITING_DRAFT', details=f'Original {file_id}; region suggestion retained; staff verification required')
+        db.commit()
+        return result
+
     @app.get('/api/documents/{document_id}/file')
     def download_file(document_id: str, version: int | None = None, user=Depends(actor), db=Depends(database)):
         row = get_doc(db, document_id, user)
@@ -282,6 +389,19 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
             raise HTTPException(422, 'Patient not found')
         if not body.fileId:
             raise HTTPException(422, 'Choose an original PDF or image before saving')
+        extraction = db.get(Extraction, body.fileId)
+        d.pop('extraction', None)
+        if extraction:
+            if user['role'] == 'front_desk':
+                raise HTTPException(403, 'An OCR-processed original requires clinical staff review')
+            if extraction.patient_id != patient.id:
+                raise HTTPException(409, 'OCR patient selection changed; upload and process again')
+            source = extraction.result
+            # Confidence/provenance and source flags cannot be raised/cleared by the upload client.
+            for field in ('confidenceScore', 'fieldConfidence', 'isNameMismatch', 'isBlurryWarning', 'extraction'):
+                d[field] = copy.deepcopy(source[field])
+            d['completenessStatus'] = 'needs_review'
+        attach_handwriting(db, d, body.fileId, patient.id, user)
         d.update(id=str(uuid4()), patientRecordNo=patient.record_no, patientName=patient.data['fullName'], version=1, versionHistory=[], versionStatus='active', archived=False, uploadedAt=now(), uploadedBy=user['name'])
         authorize(user, d)
         claim_file(db, body.fileId, user)
@@ -370,6 +490,17 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
             if body.fileId:
                 claim_file(db, body.fileId, user)
                 attach_file(db, d, body.fileId)
+                d.pop('extraction', None)
+                source_extraction = db.get(Extraction, body.fileId)
+                if source_extraction:
+                    if source_extraction.patient_id != row.patient_id or user['role'] == 'front_desk':
+                        raise HTTPException(403, 'Processed original does not match this patient or role')
+                    for field in ('extractedText', 'confidenceScore', 'fieldConfidence', 'isNameMismatch', 'isBlurryWarning', 'extraction'):
+                        d[field] = copy.deepcopy(source_extraction.result[field])
+                else:
+                    d.update(extractedText='', confidenceScore=0, fieldConfidence={key: 0 for key in d['fieldConfidence']}, isNameMismatch=False, isBlurryWarning=False)
+                d['completenessStatus'] = 'needs_review'
+                attach_handwriting(db, d, body.fileId, row.patient_id, user)
             elif snapshot.get('fileId'):
                 attach_file(db, d, snapshot['fileId'])
             else:
@@ -418,5 +549,6 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
         db.commit()
         return safe_data(result, user)
 
+    install_search(app, actor, database, search, public)
     install_workflows(app, actor, database, audit, lambda db, row, user: public(row, user, db))
     return app

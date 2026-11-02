@@ -17,7 +17,8 @@ export interface SearchFilters {
   date?: string;
 }
 
-export interface SimulatedOcrResult {
+export interface LocalOcrResult {
+  handwritingDraft?: boolean;
   title: string;
   type: DocumentType;
   patientId: string;
@@ -45,6 +46,7 @@ export interface SimulatedOcrResult {
   isBlurryWarning?: boolean;
   isNameMismatch?: boolean;
   mismatchedDetectedName?: string;
+  extraction?: import('../types/dental').ExtractionProvenance;
 }
 
 /**
@@ -67,9 +69,9 @@ export async function searchDocumentsAsync(
   documents: DentalDocument[],
   query: string,
   filters: SearchFilters = {},
-  delayMs = 220
-): Promise<DentalDocument[]> {
-  const results = await request<DentalDocument[]>('/documents/search', { method: 'POST', body: JSON.stringify({ query, filters }) });
+  mode: 'hybrid' | 'semantic' | 'keyword' = 'hybrid'
+): Promise<{ results: DentalDocument[]; modeUsed: string; notice: string | null }> {
+  const response = await request<{ results: DentalDocument[]; modeUsed: string; notice: string | null }>('/search', { method: 'POST', body: JSON.stringify({ query, filters, mode }) });
   const visibleIds = new Set(documents.map(d => d.id));
-  return results.filter(d => visibleIds.has(d.id));
+  return { ...response, results: response.results.filter(d => visibleIds.has(d.id)) };
 }

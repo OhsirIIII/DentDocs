@@ -1,3 +1,4 @@
+import { HandwritingHistory } from '../components/HandwritingHistory';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useClinic } from '../context/ClinicContext';
@@ -281,7 +282,7 @@ export function ReviewQueueView() {
                     {Object.entries(detail.source.fieldConfidence).map(
                       ([field, score]) => (
                         <li key={field}>
-                          {field}: {score}%
+                          {field}: {detail.source.handwritingSources?.length ? "Not scored; staff check" : `${score}%`}
                         </li>
                       ),
                     )}
@@ -290,6 +291,7 @@ export function ReviewQueueView() {
                     {detail.source.extractedText}
                   </pre>
                 </details>
+                <HandwritingHistory sources={detail.source.handwritingSources} />
                 {detail.source.fileId ? (
                   <a
                     className="inline-block mt-4 text-sm underline text-brand-800"

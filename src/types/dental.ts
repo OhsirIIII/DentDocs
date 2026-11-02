@@ -90,7 +90,34 @@ export interface PrescriptionDetails {
   s2No?: string;
 }
 
+export interface ExtractionProvenance {
+  engine: string;
+  rulesVersion: number;
+  status: 'extracted' | 'no_text';
+  pages: number;
+  warnings: string[];
+  pageResults: { page: number; confidence: number; characters: number }[];
+}
+
+export interface HandwritingSource {
+  id: string;
+  text: string;
+  engine: string;
+  modelSha256: string;
+  sourceSha256: string;
+  rotation: number;
+  box: [number, number, number, number];
+  createdAt: string;
+  suggestedBy: string;
+  confidence: null;
+  status: 'draft';
+  requiresStaffVerification: true;
+}
+
 export interface DentalDocument {
+  searchMatch?: { method: 'keyword' | 'semantic' | 'hybrid'; field: string; snippet: string; start: number; end: number; version: number; revision: number; similarity?: number; model?: string };
+  handwritingSources?: HandwritingSource[];
+  extraction?: ExtractionProvenance;
   review?: import('./workflows').ReviewSummary | null;
   validity?: import('./workflows').ValidityState;
   revision?: number;
@@ -204,6 +231,10 @@ export interface AuditEntry {
   action:
     | 'UPLOAD'
     | 'UPLOAD_VERSION'
+    | 'OCR_EXTRACTED'
+    | 'OCR_FAILED'
+    | 'HANDWRITING_DRAFT'
+    | 'HANDWRITING_FAILED'
     | 'RESTORE_VERSION'
     | 'EDIT_METADATA'
     | 'MARK_COMPLETE'

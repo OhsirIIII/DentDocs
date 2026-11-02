@@ -1,8 +1,23 @@
 import os
+import json
 from datetime import date
 from sqlalchemy import create_engine, event, ForeignKey, UniqueConstraint, CheckConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 from sqlalchemy.types import JSON, String, Integer, Boolean, Float, Date
+from sqlalchemy.types import UserDefinedType
+
+
+class Vector384(UserDefinedType):
+    cache_ok = True
+
+    def get_col_spec(self, **kw):
+        return 'vector(384)'
+
+    def bind_processor(self, dialect):
+        return lambda value: json.dumps(value)
+
+    def result_processor(self, dialect, coltype):
+        return lambda value: json.loads(value) if isinstance(value, str) else value
 
 
 class Base(DeclarativeBase):
@@ -100,6 +115,38 @@ class FileUpload(Base):
     consumed: Mapped[bool] = mapped_column(Boolean, default=False)
 
 
+class Extraction(Base):
+    __tablename__ = 'file_extractions'
+    file_id: Mapped[str] = mapped_column(ForeignKey('document_files.id'), primary_key=True)
+    patient_id: Mapped[str] = mapped_column(ForeignKey('patients.id'))
+    result: Mapped[dict] = mapped_column(JSON)
+
+
+class HandwritingDraft(Base):
+    __tablename__ = 'handwriting_drafts'
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    file_id: Mapped[str] = mapped_column(ForeignKey('document_files.id'))
+    patient_id: Mapped[str] = mapped_column(ForeignKey('patients.id'))
+    user_id: Mapped[str] = mapped_column(ForeignKey('users.id'))
+    data: Mapped[dict] = mapped_column(JSON)
+
+
+class SearchChunk(Base):
+    __tablename__ = 'search_chunks'
+    __table_args__ = (UniqueConstraint('document_id', 'number'),)
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    document_id: Mapped[str] = mapped_column(ForeignKey('documents.id'))
+    revision: Mapped[int] = mapped_column(Integer)
+    number: Mapped[int] = mapped_column(Integer)
+    field: Mapped[str] = mapped_column(String)
+    start: Mapped[int] = mapped_column(Integer)
+    end: Mapped[int] = mapped_column(Integer)
+    snippet: Mapped[str] = mapped_column(String)
+    fingerprint: Mapped[str] = mapped_column(String)
+    model_id: Mapped[str] = mapped_column(String)
+    embedding: Mapped[list] = mapped_column(JSON().with_variant(Vector384(), 'postgresql'))
+
+
 class ReviewItem(Base):
     __tablename__ = 'review_queue'
     __table_args__ = (UniqueConstraint('document_id', 'version'),)
@@ -183,13 +230,16 @@ def make_database(url=None):
 def migrate(engine):
     # Initial additive migration. Later changes must add numbered migrations,
     # rather than assuming create_all modifies existing columns.
+    if engine.dialect.name == 'postgresql':
+        with engine.begin() as connection:
+            connection.exec_driver_sql('CREATE EXTENSION IF NOT EXISTS vector')
     Base.metadata.create_all(engine)
     with sessionmaker(engine)() as db:
         if db.get(SchemaVersion, 1) is None:
             db.add(SchemaVersion(version=1))
             db.commit()
     with engine.begin() as connection:
-        for table in ('audit_logs', 'review_events', 'validity_events'):
+        for table in ('audit_logs', 'review_events', 'validity_events', 'file_extractions', 'handwriting_drafts'):
             if engine.dialect.name == 'sqlite':
                 for operation in ('UPDATE', 'DELETE'):
                     connection.exec_driver_sql(f"CREATE TRIGGER IF NOT EXISTS {table}_no_{operation.lower()} BEFORE {operation} ON {table} BEGIN SELECT RAISE(ABORT, 'History events are append-only'); END")
@@ -203,4 +253,13 @@ def migrate(engine):
             db.commit()
         if db.get(SchemaVersion, 3) is None:
             db.add(SchemaVersion(version=3))
+            db.commit()
+        if db.get(SchemaVersion, 4) is None:
+            db.add(SchemaVersion(version=4))
+            db.commit()
+        if db.get(SchemaVersion, 5) is None:
+            db.add(SchemaVersion(version=5))
+            db.commit()
+        if db.get(SchemaVersion, 6) is None:
+            db.add(SchemaVersion(version=6))
             db.commit()

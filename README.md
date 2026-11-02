@@ -1,7 +1,11 @@
 # DentDocs — San Nicolas Dental Clinic Document Management System
 
-> **Phase 4: human review and verified validity, using fictional records.** See
-> [PHASE4.md](PHASE4.md) for review workflows and explicit policy approval.
+> **Phase 6: local semantic/hybrid search, using fictional records.**
+> See [PHASE6.md](PHASE6.md) for search modes, source attribution, permissions and setup.
+> See [PHASE5_HANDWRITING.md](PHASE5_HANDWRITING.md) for image-region selection,
+> experimental draft suggestions and named staff review.
+> See [PHASE5.md](PHASE5.md) for supported formats, staff review and processing limits.
+> [PHASE4.md](PHASE4.md) records review workflows and explicit policy approval.
 > See [PHASE3.md](PHASE3.md) for
 > sign-in setup, permissions, verified behavior and remaining release requirements.
 > [PHASE2.md](PHASE2.md) records the preceding storage and deployment phase.
