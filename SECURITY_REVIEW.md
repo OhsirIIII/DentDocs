@@ -1,5 +1,9 @@
 # Security and release review — Phase 8
 
+Latest architecture: [PARSER_ISOLATION.md](PARSER_ISOLATION.md) moves native OCR
+out of the API and adds a fifth recovery image. Earlier runtime descriptions and
+scan counts below describe the preceding baseline.
+
 Current continuation: [SECURITY_FOLLOWUP.md](SECURITY_FOLLOWUP.md) records independent
 filesystem scans, newer runtime versions and deployment restrictions. Counts and
 package-manager descriptions below are the preceding Phase 8 baseline.

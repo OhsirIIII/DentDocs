@@ -1,5 +1,9 @@
 # Security follow-up — November 3, 2026
 
+Latest architecture: [PARSER_ISOLATION.md](PARSER_ISOLATION.md) moves native OCR
+out of the API and adds a fifth recovery image. Earlier runtime descriptions and
+scan counts below describe the preceding baseline.
+
 This continues Phase 8 and supersedes its pending scanner-triage notes.
 **Real-patient/LAN release remains blocked.** Hardening and applicability evidence
 are recorded here; neither scanner differences nor mitigations waive open findings.

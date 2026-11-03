@@ -1,6 +1,7 @@
 # DentDocs — San Nicolas Dental Clinic Document Management System
 
 > **Phase 8: encrypted recovery tools and local security review, using fictional records.**
+> See [parser isolation](PARSER_ISOLATION.md) for the current OCR architecture and setup.
 > The [security follow-up](SECURITY_FOLLOWUP.md) records current hardening and unresolved findings.
 > See [PHASE8.md](PHASE8.md) for recovery instructions and [SECURITY_REVIEW.md](SECURITY_REVIEW.md) for unresolved release gates.
 > See [PHASE7.md](PHASE7.md) for draft generation, approval and source-change handling.

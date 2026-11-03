@@ -5,7 +5,7 @@ from pathlib import Path
 import subprocess
 import sys
 
-from .ocr import MAX_PAGES, parse_tsv
+from .ocr_protocol import MAX_PAGES, parse_tsv
 
 
 def command(args):
@@ -21,8 +21,9 @@ def main():
     source, mime = Path(sys.argv[1]), sys.argv[2]
     if mime == 'application/pdf':
         info = command(['pdfinfo', str(source)])
-        pages = next(int(line.split(':', 1)[1].strip()) for line in info.splitlines() if line.startswith('Pages:'))
-        if not 1 <= pages <= MAX_PAGES or 'Encrypted:       yes' in info:
+        details=dict(line.split(':',1) for line in info.splitlines() if ':' in line)
+        pages=int(details['Pages'].strip())
+        if not 1 <= pages <= MAX_PAGES or details.get('Encrypted','').strip().startswith('yes'):
             raise ValueError('Unsupported PDF')
         command(['pdftoppm', '-png', '-r', '200', '-scale-to', '2400', str(source), str(source.parent / 'page')])
         images = sorted(source.parent.glob('page-*.png'))

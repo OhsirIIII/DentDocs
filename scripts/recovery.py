@@ -181,9 +181,9 @@ def backup(destination, key_path):
     def capture(name, args):
         manifest['components'][name] = encrypt_process(partial / (name+'.enc'), key, name, args)
     running = run(compose('ps','--services','--status','running')).decode().split()
-    if not {'db','api','web','handwriting'}.issubset(running):
+    if not {'db','api','web','handwriting','ocr'}.issubset(running):
         raise ValueError('Start the complete semantic profile before a full backup')
-    for service in ['db','api','web','handwriting']:
+    for service in ['db','api','web','handwriting','ocr']:
         container = run(compose('ps','-q',service)).decode().strip()
         manifest['images'][service] = run([docker(),'inspect','--format','{{.Image}}',container]).decode().strip()
     for service,image in manifest['images'].items():
@@ -201,7 +201,7 @@ def backup(destination, key_path):
         if stopped: run(compose('start','api','web'))
     capture('images.tar',[docker(),'image','save',*sorted(set(manifest['images'].values()))])
     manifest['components']['config.env'] = encrypt_stream(partial/'config.env.enc',key,'config.env',io.BytesIO((ROOT/'.env').read_bytes()))
-    names = run(['git','-C',str(ROOT),'ls-files','-co','--exclude-standard','-z']).decode().split('\0')
+    names = run(['git','-C',str(ROOT),'ls-files','-z']).decode().split('\0')
     paths = [(ROOT/name,name) for name in sorted(set(names)) if name and (ROOT/name).is_file()]
     manifest['components']['source.tar'] = archive_paths(partial/'source.tar.enc',key,'source.tar',paths)
     paths = []
@@ -293,11 +293,11 @@ def drill(bundle, key_path, target, port):
     run([*command,'up','-d','--no-build','db'])
     for _ in range(60):
         try:
-            run([*command,'exec','-T','db','pg_isready','-U','dentdocs','-d','dentdocs_mock']); break
+            run([*command,'exec','-T','db','pg_isready','-h','127.0.0.1','-U','dentdocs','-d','dentdocs_mock']); break
         except RuntimeError: time.sleep(1)
     else: raise RuntimeError('Isolated database did not become ready')
     with (target/'database.dump').open('rb') as dump:
-        run([*command,'exec','-T','db','pg_restore','--exit-on-error','--no-owner','--no-acl','-U','dentdocs','-d','dentdocs_mock'],stdin=dump)
+        run([*command,'exec','-T','db','pg_restore','--single-transaction','--exit-on-error','--no-owner','--no-acl','-U','dentdocs','-d','dentdocs_mock'],stdin=dump)
     run([*command,'create','--no-build','migrate'])
     container = run([*command,'ps','-a','-q','migrate']).decode().strip()
     run([docker(),'cp',str(target/'originals/files')+'/.',container+':/data/files'])

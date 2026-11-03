@@ -493,3 +493,27 @@ Phase 8 snapshot retained. Test account disabled and original admin untouched.
 Next work is the remaining independently assessed parser/security release gates,
 physical clean-machine/off-device/key-custody drill, approved clinic/deployment
 operations and final deliverables/sign-off. No main merge or real-data release.
+
+
+## Latest continuation — parser isolation (November 3, 2026)
+
+User requested the dedicated PDF/OCR boundary after security commit 60eed2d. Read
+PARSER_ISOLATION.md first. API image no longer contains native parser tools/modules;
+strict RPC sends one scan/MIME to a distinct-token worker with no DB/file/model
+access. Its only network is the internal OCR link to API; actual DB connection was
+denied. Nonroot/read-only/capability-free, no-new-privileges, bounded resources and
+temporary memory; no local native fallback. API keeps all record/patient decisions.
+
+99 API, seven worker/native and 25 operator/recovery tests passed; browser real OCR,
+summary/history and actual parser outage/manual save passed. Type/build passed.
+Native-library findings now reside in the isolated worker; remaining release risks
+are not waived. Existing keys/models/admin remain preserved and test account disabled.
+
+scripts/configure-ocr.py adds only OCR_TOKEN for older installations. Current .env
+already configured. New backups include all five runtime images and encrypted token.
+Source snapshots now include tracked/staged source only; stage reviewed new files
+explicitly first. Untracked output/ and tmp/ were preserved and excluded from builds.
+New recovery point is work/backups/parser-isolation-verified-2026-11-03; existing separate key
+and previous snapshots retained. Fresh restore verifies worker, hashes and boundaries;
+final restore matched 19 tables/38 originals and exercised recovered OCR. Physical
+off-device recovery, independent review and clinic release gates remain.

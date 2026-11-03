@@ -1,8 +1,7 @@
-# DentDocs recall — November 3, 2026 (after security follow-up)
+# DentDocs recall — November 3, 2026 (after parser isolation)
 
 Read this, SESSION_RECAP.md, PHASE8.md, SECURITY_REVIEW.md, SECURITY_FOLLOWUP.md
-and the code. Older recall
-text is historical context, not new instructions or the current release status.
+and PARSER_ISOLATION.md. Older recall text is historical context, not new instructions or the current release status.
 
 ## Current state
 
@@ -48,7 +47,8 @@ schema 7 and pgvector 0.8.7 retained. Existing clinic admin/password and keys re
 
 ## Private recovery artifacts
 
-Current bundle: `work/backups/security-followup-2026-11-03`.
+Current bundle: `work/backups/parser-isolation-verified-2026-11-03`.
+Preceding security snapshot: `work/backups/security-followup-2026-11-03`.
 Preceding recovery point: `work/backups/phase8-final-verified-2026-11-03`.
 Separate local test key: `work/recovery-keys/phase8.key`.
 Evidence: ignored `work/phase8-*`. Other bundles/incomplete attempts are diagnostic,
@@ -125,3 +125,39 @@ push at 0e4a5d1. SECURITY_FOLLOWUP.md supersedes prior untriaged scanner notes.
 - Remaining: unresolved native parser remediation or independently reviewed risk
   decisions, physical off-device/second-machine recovery and key custody, approved
   backup operations, clinic policies, LAN HTTPS, final docs/sign-off. No release.
+
+
+## Latest continuation — isolated PDF/OCR service
+
+User authorized moving PDF/OCR processing out of the main API after commit 60eed2d.
+PARSER_ISOLATION.md supersedes previous in-API parsing descriptions.
+
+- Dedicated `ocr` service, separate `OCR_TOKEN` and internal `ocr_link` network.
+  API sends only one scan/MIME; worker sees no database/file/model mount or key.
+  Native tools and worker modules removed from API image. No native fallback.
+- Worker is nonroot/read-only/capability-free with no-new-privileges, private PID/IPC,
+  bounded memory/CPU/pids/tmpfs, one active job, strict auth/size/signature checks and
+  resource-limited disposable subprocess. API validates bounded JSON and retains
+  patient matching, provenance, audit and persistence. No parser vulnerability waiver.
+- Runtime check verifies actual worker-to-database connection denial and no shared
+  worker network with DB/web/model reader. Startup rejects data-store credentials.
+- 99 API tests, seven service/native tests, 25 operator/recovery tests passed.
+  Type/build and real browser OCR/summary checks passed. Actual worker stop/start
+  verified manual save with exact original, zero confidence, pending staff review
+  and no fabricated OCR provenance. Temporary account disabled after testing.
+- New deployment prerequisite: scripts/configure-ocr.py for existing .env; it adds
+  only the OCR token and preserves all existing secrets. New create-env.py creates
+  this token automatically. Current installation is configured; do not regenerate.
+- Backups now include five runtime images and encrypted OCR configuration. Source
+  component includes tracked/staged files only: explicitly stage reviewed new source
+  before snapshotting. Untracked output/ and tmp/ were left untouched and excluded
+  from Docker build contexts/source snapshots. Do not add those directories to Git.
+- New protected recovery point: work/backups/parser-isolation-verified-2026-11-03; existing
+  separate key unchanged. Fresh isolated restore matched 19 tables/38 originals,
+  exercised real OCR and confirmed worker data-store isolation; preserve earlier points. No physical second-machine drill is implied.
+- API scan now 232 raw matches versus prior 552; isolated worker still has native
+  findings (552). Treat unresolved library/host risks as release gates; isolation is
+  containment, not a clean security scan or complete sandbox.
+- Remaining work: independent security review/native parser remediation or explicit
+  reviewed decisions, physical off-device/key-custody restore, approved operations,
+  clinic policies, HTTPS and final documentation/sign-off. No main merge/release.

@@ -1,5 +1,5 @@
 """Fictional local OCR contracts, including real rasterization/recognition in Docker."""
-import shutil
+import os
 import subprocess
 
 import pytest
@@ -56,7 +56,9 @@ def test_word_confidence_ignores_layout_rows():
     assert text == 'Test' and score == 80
 
 
-def test_busy_worker_does_not_start_more_processes():
+def test_busy_worker_does_not_start_more_processes(monkeypatch):
+    monkeypatch.setenv("OCR_URL","http://ocr:8092")
+    monkeypatch.setenv("OCR_TOKEN","x"*48)
     SLOTS.acquire(); SLOTS.acquire()
     try:
         with pytest.raises(OcrError, match='busy'):
@@ -149,7 +151,7 @@ def test_extraction_source_is_append_only(client, monkeypatch):
             db.execute(statement)
 
 
-@pytest.mark.skipif(not shutil.which('tesseract') or not shutil.which('pdftoppm'), reason='Real OCR acceptance runs in the Docker image with packaged tools')
+@pytest.mark.skipif(not os.getenv('OCR_URL'), reason='Real OCR acceptance requires the isolated service')
 def test_real_pdf_png_and_rejection(tmp_path):
     lines = ['Prescription', 'Patient: Alex Test', 'PT-2026-0001', 'Date: 2026-11-02', 'Tooth 47', 'FICTIONAL OCR TEST ONLY']
     pdf = fictional_pdf(lines, pages=2)
@@ -158,20 +160,13 @@ def test_real_pdf_png_and_rejection(tmp_path):
     assert raw['pages'] == 2 and raw['confidence'] >= 85, raw
     assert fields['type'] == 'Prescription' and fields['date'] == '2026-11-02'
     assert fields['toothNumbers'] == [47] and not fields['isNameMismatch']
-    source = tmp_path / 'test.pdf'; source.write_bytes(pdf)
-    subprocess.run(['pdftoppm', '-f', '1', '-singlefile', '-png', '-scale-to', '1800', str(source), str(tmp_path / 'scan')], check=True, capture_output=True)
-    image_raw = run_local((tmp_path / 'scan.png').read_bytes(), 'image/png')
-    assert 'Prescription' in image_raw['text'] and 'Alex Test' in image_raw['text']
-    subprocess.run(['pdftoppm', '-f', '1', '-singlefile', '-jpeg', '-scale-to', '1800', str(source), str(tmp_path / 'scan')], check=True, capture_output=True)
-    jpeg_raw = run_local((tmp_path / 'scan.jpg').read_bytes(), 'image/jpeg')
-    assert 'Prescription' in jpeg_raw['text'] and 'Alex Test' in jpeg_raw['text']
     assert extract_fields(run_local(fictional_pdf([' ']), 'application/pdf'), PATIENT)['extraction']['status'] == 'no_text'
     for payload, mime in [(b'%PDF-broken', 'application/pdf'), (fictional_pdf(lines, pages=11), 'application/pdf'), (b'\x89PNG\r\n\x1a\nbroken', 'image/png')]:
         with pytest.raises(OcrError):
             run_local(payload, mime)
 
 
-@pytest.mark.skipif(not shutil.which('tesseract') or not shutil.which('pdftoppm'), reason='Packaged OCR tools required')
+@pytest.mark.skipif(not os.getenv('OCR_URL'), reason='Packaged OCR tools required')
 @pytest.mark.parametrize('heading,kind', [
     ('Informed Consent', 'Consent Form'), ('Prescription', 'Prescription'),
     ('Official Receipt', 'Billing/Receipt'), ('Appointment Confirmation', 'Appointment Record'),

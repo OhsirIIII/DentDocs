@@ -70,7 +70,7 @@ def test_failed_snapshot_restarts_live_services(tmp_path,monkeypatch):
     calls=[]
     def run(args,**kwargs):
         calls.append(args)
-        if '--services' in args:return b'db\napi\nweb\nhandwriting\n'
+        if '--services' in args:return b'db\napi\nweb\nhandwriting\nocr\n'
         if '{{.Image}}' in args:return ('sha256:'+'a'*64).encode()
         return b'fictional-container'
     monkeypatch.setattr(r,'docker',lambda:'docker')

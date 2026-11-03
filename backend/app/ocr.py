@@ -1,68 +1,38 @@
-"""Local printed-text OCR. No network, inferred clinical findings, or signature claims."""
-import csv
-import io
+"""Data extraction rules and private OCR transport; no native parsers in the API."""
 import json
 import os
 import re
-import signal
-import subprocess
-import sys
-import tempfile
 import threading
 from datetime import date
-from pathlib import Path
+import httpx
+from .ocr_protocol import OcrError, MAX_PAGES, MAX_FILE, parse_tsv, validate_result
 
 SLOTS = threading.BoundedSemaphore(2)
-MAX_PAGES = 10
-
-
-class OcrError(Exception):
-    pass
-
 
 def run_local(payload, mime):
-    if not SLOTS.acquire(blocking=False):
-        raise OcrError('Local OCR is busy. Please retry shortly.')
+    url,token=os.getenv('OCR_URL',''),os.getenv('OCR_TOKEN','')
+    if not url or len(token)<32:
+        raise OcrError('Local OCR service is unavailable. Retry or enter text manually.')
+    if mime not in {'application/pdf','image/png','image/jpeg'} or not 0<len(payload)<=MAX_FILE:
+        raise OcrError('Use a PDF, PNG or JPEG of at most 20 MB.')
+    if not SLOTS.acquire(blocking=False):raise OcrError('Local OCR is busy. Please retry shortly.')
     try:
-        with tempfile.TemporaryDirectory(prefix='dentdocs-ocr-') as directory:
-            source = Path(directory) / ('original.pdf' if mime == 'application/pdf' else 'original.image')
-            source.write_bytes(payload)
-            environment = {key: value for key, value in os.environ.items() if key in {'PATH', 'SYSTEMROOT', 'WINDIR', 'LANG', 'PYTHONPATH'}}
-            environment['OMP_THREAD_LIMIT'] = '1'
-            process = subprocess.Popen([sys.executable, '-m', 'app.ocr_worker', str(source), mime],
-                                       stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                       start_new_session=os.name == 'posix', env=environment)
-            try:
-                output, _ = process.communicate(timeout=90)
-            except subprocess.TimeoutExpired:
-                if os.name == 'posix':
-                    os.killpg(process.pid, signal.SIGKILL)
-                else:
-                    process.kill()
-                process.communicate()
-                raise
-            if process.returncode:
-                raise OcrError('Cannot process this file. Use a readable, unencrypted PDF (up to 10 pages) or PNG/JPEG.')
-            return json.loads(output)
-    except FileNotFoundError:
-        raise OcrError('Local OCR tools are unavailable. Contact the administrator.')
-    except (subprocess.TimeoutExpired, ValueError):
-        raise OcrError('Local OCR did not finish. Try a smaller or clearer scan.')
-    finally:
-        SLOTS.release()
-
-
-def parse_tsv(value):
-    lines, scores = {}, []
-    for word in csv.DictReader(io.StringIO(value), delimiter='\t', quoting=csv.QUOTE_NONE):
-        text = (word.get('text') or '').strip()
-        if word.get('level') != '5' or not text:
-            continue
-        confidence = max(0, min(100, float(word['conf'])))
-        scores.extend([confidence] * len(text))
-        key = tuple(word[k] for k in ('page_num', 'block_num', 'par_num', 'line_num'))
-        lines.setdefault(key, []).append(text)
-    return '\n'.join(' '.join(words) for words in lines.values()), round(sum(scores) / len(scores)) if scores else 0
+        with httpx.Client(timeout=httpx.Timeout(100,connect=3,write=15,pool=3),trust_env=False,follow_redirects=False) as client:
+            with client.stream('POST',url+'/extract',content=payload,headers={'Authorization':'Bearer '+token,'Content-Type':mime,'Accept-Encoding':'identity'}) as response:
+                if response.status_code==422:
+                    raise OcrError('Cannot process this file. Use a readable, unencrypted PDF (up to 10 pages) or PNG/JPEG.')
+                if response.status_code!=200:
+                    raise OcrError('Local OCR service is busy or unavailable. Retry or enter text manually.')
+                if response.headers.get('Content-Encoding','identity')!='identity':raise ValueError('Unexpected content encoding')
+                output=bytearray()
+                for chunk in response.iter_bytes(chunk_size=65536):
+                    if len(output)+len(chunk)>1024*1024:raise ValueError('Oversized response')
+                    output.extend(chunk)
+                return validate_result(json.loads(output),mime)
+    except OcrError:raise
+    except (httpx.HTTPError,ValueError,TypeError,KeyError,OverflowError,RecursionError):
+        raise OcrError('Local OCR did not return a usable result. Retry or enter text manually.') from None
+    finally:SLOTS.release()
 
 
 RULES = {

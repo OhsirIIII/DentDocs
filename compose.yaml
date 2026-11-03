@@ -9,7 +9,7 @@ services:
     volumes:
       - database:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U dentdocs -d dentdocs_mock"]
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U dentdocs -d dentdocs_mock"]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -30,7 +30,7 @@ services:
       db:
         condition: service_healthy
   api:
-    networks: [backend]
+    networks: [backend, ocr_link]
     read_only: true
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
@@ -48,13 +48,38 @@ services:
       FILE_ENCRYPTION_KEY: ${FILE_ENCRYPTION_KEY}
       APP_ORIGIN: ${APP_ORIGIN:-http://127.0.0.1:8080,http://localhost:8080}
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      OCR_URL: http://ocr:8092
+      OCR_TOKEN: ${OCR_TOKEN:?Run scripts/configure-ocr.py}
       HANDWRITING_URL: http://handwriting:8091
       HANDWRITING_TOKEN: ${HANDWRITING_TOKEN:-}
     volumes:
       - files:/data/files
     depends_on:
+      ocr:
+        condition: service_healthy
       migrate:
         condition: service_completed_successfully
+    restart: unless-stopped
+  ocr:
+    networks: [ocr_link]
+    build:
+      context: .
+      dockerfile: ocr/Dockerfile
+    environment:
+      OCR_TOKEN: ${OCR_TOKEN:?Run scripts/configure-ocr.py}
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 1g
+    cpus: 2
+    pids_limit: 64
+    tmpfs:
+      - /tmp:size=256m,mode=1777,noexec,nosuid
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8092/health',timeout=2).read()"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
     restart: unless-stopped
   handwriting:
     networks: [backend]
@@ -88,4 +113,6 @@ volumes:
 networks:
   default: {}
   backend:
+    internal: true
+  ocr_link:
     internal: true

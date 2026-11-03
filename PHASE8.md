@@ -1,5 +1,9 @@
 # Phase 8 — encrypted recovery and release review
 
+Latest architecture: [PARSER_ISOLATION.md](PARSER_ISOLATION.md) moves native OCR
+out of the API and adds a fifth recovery image. Earlier runtime descriptions and
+scan counts below describe the preceding baseline.
+
 Current runtime changes and independent scan dispositions are in
 [SECURITY_FOLLOWUP.md](SECURITY_FOLLOWUP.md). Python pip is removed from app images;
 use host-side audit tools and importlib metadata for runtime inventories.
@@ -13,7 +17,7 @@ Database schema remains version 7; Phase 8 adds operational tools, not a schema 
 
 `scripts/recovery.py` creates a full encrypted bundle containing a PostgreSQL custom
 format dump, encrypted originals volume, `.env` (including required private keys),
-source snapshot, both offline models and the exact four runtime Docker images.
+source snapshot, both offline models and the exact five runtime Docker images.
 Runtime grants are recreated by the restored migration job. Accounts/password hashes,
 history, versions, extraction provenance, policies and summary decisions are in the dump.
 
@@ -30,7 +34,7 @@ volume, then restarts those services in a `finally` block, including snapshot fa
 No volume is deleted. Run in a maintenance window with no other SQL/maintenance
 writers and no source/model/config edits. The offline reader remains running.
 Image identities are checked before stopping writers. Source is selected from Git
-tracked and nonignored files; `work/`, local credentials and data are excluded from
+tracked/staged files; `work/`, local credentials and data are excluded from
 that source component. The full encrypted bundle deliberately includes `.env`,
 models and originals as their separate protected components.
 
