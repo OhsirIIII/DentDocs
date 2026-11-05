@@ -117,10 +117,12 @@ the reader HTTP service; no experiment settings were silently enabled in the app
 ## Release preparation
 
 Implementation `7683524` was committed and pushed to the existing branch; local
-and remote-tracking hashes matched after push. Draft PR creation was blocked by
-the integration's write permissions (403); CLI/browser checks found no available
-authenticated fallback. No PR was created. The review title/body is preserved in
-[PULL_REQUEST_DRAFT.md](PULL_REQUEST_DRAFT.md), with a direct comparison link.
+and remote-tracking hashes matched after push. The initial PR attempt failed with
+403. On November 6, 2026 (Asia/Shanghai), the user corrected the GitHub installation
+under `OhsirIIII`; discovery and creation succeeded through the connector.
+Draft PR [#1](https://github.com/OhsirIIII/DentDocs/pull/1) is open and unmerged.
+The review title/body is preserved in [PULL_REQUEST_DRAFT.md](PULL_REQUEST_DRAFT.md).
+This resolves the connector blocker, not the outstanding release conditions.
 
 See [RELEASE_PREPARATION.md](RELEASE_PREPARATION.md) for the review scope, HTTPS
 topology, host Caddy template, configuration steps, planned staging checks, rollback

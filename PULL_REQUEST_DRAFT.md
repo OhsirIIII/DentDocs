@@ -1,9 +1,10 @@
 # Draft pull request
 
-Status: prepared but **not created**. The connected GitHub integration returned
-403 (resource not accessible); no local GitHub CLI is installed and the available
-browser is signed out. Source push succeeded. No permissions or account settings
-were changed to work around this limitation.
+Status: **created as draft PR [#1](https://github.com/OhsirIIII/DentDocs/pull/1)**
+on November 6, 2026 (Asia/Shanghai). The user installed/reconnected the GitHub app
+under `OhsirIIII`; repository discovery and PR creation then succeeded through the
+connector. The earlier 403 permission blocker is resolved. The description below
+is retained as review material; no merge or real-patient deployment occurred.
 
 Repository: `OhsirIIII/DentDocs`
 Base: `main`

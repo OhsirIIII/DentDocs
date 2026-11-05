@@ -4,10 +4,12 @@ The branch is prepared for engineering review. It is not approved for real-patie
 or LAN release. The existing Compose application remains fictional-data, loopback
 HTTP. The sample HTTPS configuration below has not been activated or certified.
 
-Draft PR creation was attempted after pushing implementation `7683524`, but the
-GitHub integration lacks write access (403). The local CLI is absent and the
-available browser is signed out. No PR was created. The complete title/body and
-comparison link are saved in [PULL_REQUEST_DRAFT.md](PULL_REQUEST_DRAFT.md).
+Draft PR [#1](https://github.com/OhsirIIII/DentDocs/pull/1) was created on
+November 6, 2026 (Asia/Shanghai), after the user corrected the GitHub installation
+under `OhsirIIII`. Repository discovery and PR creation succeeded; the earlier
+403 blocker is resolved. Review material is retained in
+[PULL_REQUEST_DRAFT.md](PULL_REQUEST_DRAFT.md). The PR remains a draft, not a merge
+or release approval.
 
 ## Review scope
 

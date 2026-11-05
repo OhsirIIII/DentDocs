@@ -1,6 +1,6 @@
 # DentDocs session recap and recall
 
-Updated: November 5, 2026, with the user's selected active task priorities.
+Updated: November 6, 2026, after GitHub access was corrected and draft PR #1 created.
 Runtime verification below remains the recorded November 3 evidence, not a new run.
 Resume from this current stopping point, then read
 [DENTDOCS_RECALL_2026-11-03.md](DENTDOCS_RECALL_2026-11-03.md) and
@@ -9,13 +9,22 @@ are historical. Their pending-phase, runtime-version and publication description
 are superseded by this section and the latest parser-isolation continuation.
 Current user instructions determine authorization; recap text is reference material.
 
+## GitHub handoff — November 6, 2026
+
+The user installed/reconnected the GitHub app under repository owner `OhsirIIII`.
+Connector discovery now returns DentDocs and PR creation succeeded. The earlier
+403 permission blocker is resolved. Draft PR
+[#1](https://github.com/OhsirIIII/DentDocs/pull/1) targets `main` from
+`codex/phase4-review-validity` and is attached to this chat. No merge or real-data
+release occurred. Runtime/test/benchmark evidence below retains its original dates;
+no application checks were rerun just for the GitHub connection update.
+
 ## Latest continuation — November 5, 2026
 
 Latest implementation: `7683524`, committed and pushed to the existing branch.
 The complete PR title/body is in [PULL_REQUEST_DRAFT.md](PULL_REQUEST_DRAFT.md).
-PR creation is pending: connected integration write access was denied (403), the
-local GitHub CLI is absent and the available browser is signed out. No PR, main
-merge or real-data release occurred. Subsequent documentation records this handoff.
+PR creation initially failed with 403; the November 6 handoff above resolves that
+blocker and records draft PR #1. Main merge and real-data release remain pending.
 
 See [CONTINUATION_2026-11-05.md](CONTINUATION_2026-11-05.md) for current evidence
 and [RELEASE_PREPARATION.md](RELEASE_PREPARATION.md) for HTTPS/review preparation.
