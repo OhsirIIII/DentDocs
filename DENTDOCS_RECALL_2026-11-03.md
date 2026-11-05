@@ -1,5 +1,10 @@
 # DentDocs recall — November 3, 2026 (after parser isolation)
 
+Latest continuation: [November 6 security refresh](SECURITY_REFRESH_2026-11-06.md).
+Read SESSION_RECAP.md's latest security section for tested image/package state and
+the stopped local installation. Older figures and pending scanner-refresh notes
+below are historical; independent review and release conditions remain open.
+
 ## Latest work — November 5, 2026
 
 Read [CONTINUATION_2026-11-05.md](CONTINUATION_2026-11-05.md) for transport fixes,

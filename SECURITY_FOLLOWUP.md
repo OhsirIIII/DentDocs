@@ -1,5 +1,8 @@
 # Security follow-up — November 3, 2026
 
+Current scan/package state: [November 6 security refresh](SECURITY_REFRESH_2026-11-06.md).
+It supersedes the older scan totals below and records remaining independent review.
+
 Latest architecture: [PARSER_ISOLATION.md](PARSER_ISOLATION.md) moves native OCR
 out of the API and adds a fifth recovery image. Earlier runtime descriptions and
 scan counts below describe the preceding baseline.

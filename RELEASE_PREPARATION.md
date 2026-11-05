@@ -13,6 +13,10 @@ or release approval.
 
 ## Review scope
 
+Latest security state: [SECURITY_REFRESH_2026-11-06.md](SECURITY_REFRESH_2026-11-06.md).
+The advisory database was refreshed and supported OS updates verified on all six
+images. Independent native/OS review remains pending; older scan notes retain dates.
+
 The branch `codex/phase4-review-validity` contains persistent document/original
 handling, real staff accounts, source-bound review and validity, isolated printed
 OCR, experimental selected-line handwriting, local retrieval, named administrative

@@ -1,0 +1,73 @@
+{
+  "date_local": "2026-11-06",
+  "timezone": "Asia/Shanghai",
+  "scanner": "Grype 0.121.1",
+  "advisory_database_built_utc": "2026-11-05T06:21:06Z",
+  "scan_scope": "squashed",
+  "suppressions": false,
+  "images": {
+    "api": "sha256:591cdc223e06d0faec815762352a13bcbbafbc9abe971ea59a32e486af5d24ba",
+    "handwriting": "sha256:f6e00a06b5033d14fd479e9c0c8a23469f84cf32d587b5cf9b16ba7f44e3dae9",
+    "ocr": "sha256:d7bb79de3cad613b106ada21ded7095e7bff7a7212ced9a45dde1f1715866928",
+    "db": "sha256:b5732e298732b94b584090b98e6bd5833dd9a835a7be9d6d20e1076c85e302d0",
+    "web": "sha256:ccd97a82213bfaab1cb451a4f15fa5d0bcbae3a308c0dacc62a0197def6069b4",
+    "migrate": "sha256:8939c2caa65b534a42f796899c2d5dfa95b7efa1e3901d5651ce13a3129b25d2"
+  },
+  "verified_packages": {
+    "api": {
+      "apt": "3.0.4"
+    },
+    "handwriting": {
+      "apt": "3.0.4"
+    },
+    "ocr": {
+      "apt": "3.0.4"
+    },
+    "migrate": {
+      "apt": "3.0.4"
+    },
+    "db": {
+      "alpine_packages": [
+        "alpine-release-3.24.4-r0 x86_64 {alpine-base} (MIT) [installed]",
+        "apk-tools-3.0.9-r0 x86_64 {apk-tools} (GPL-2.0-only) [installed]",
+        "libapk-3.0.9-r0 x86_64 {apk-tools} (GPL-2.0-only) [installed]"
+      ]
+    },
+    "web": {
+      "alpine_packages": [
+        "alpine-release-3.24.4-r0 x86_64 {alpine-base} (MIT) [installed]",
+        "apk-tools-3.0.9-r0 x86_64 {apk-tools} (GPL-2.0-only) [installed]",
+        "libapk-3.0.9-r0 x86_64 {apk-tools} (GPL-2.0-only) [installed]"
+      ]
+    }
+  },
+  "services_left_stopped": true,
+  "independent_release_approval": false,
+  "evidence_sha256": {
+    "after-image-identities.json": "944a8e5621c81e446efa6a7f224e7ec43a87023218dd8072c85f4d60f175607f",
+    "after-summary.json": "39ec37bb057342957694a306c9bbd9a9c54361d3de2ea263339a6345fa467303",
+    "api-after.json": "6e6cfcbd3f5429c92c308c97345437c2253c8e66c1b5454056806e421cd9ca81",
+    "api-before.json": "6160e3d0d4e4730a6fffab5e44fe8ee273dc279b59bb661de44b3822e434d663",
+    "before-summary.json": "7833f78ce62b6a23f976a47d89120e429ee03fdd5f19fa7ce75589046f335e0c",
+    "db-after.json": "24585f31061aa900baeb102ac64476c16e8d005cc7122279e608b7dc2baff312",
+    "db-before.json": "2c2747f0f0843fd3222048fb0aba180ddf40143f717830551a9d1f9fd73f2911",
+    "handwriting-after.json": "f745d09444f6f23babc15a6e4de34d07539a06387bc394b8b887daa1c3c756c7",
+    "handwriting-before.json": "682bafe0a8c2f98017b3df3e41e01d4d59bed43d30eb09b25c8157997a275411",
+    "high-critical-vendor-triage.json": "5813c62ce67de75c3fc5339ff821e2c73a08eb9f10b230fbc336273f851fcd74",
+    "isolated-runtime-security.json": "f63c40030e0327f4ce3d9f9ab1bf8d606cc734160d8023dbc49df65d49816d33",
+    "migrate-after.json": "beb771c79f13eaef3b16ecae8da1922fe2518a0e7c702ef64eff9417449d4aeb",
+    "migrate-before.json": "b8ee6fe2d904db346feff40f68001489ec8f92c69d8fbe877af8f89c5bce8093",
+    "model-database-smoke.json": "6cbdba1eef0bde9784a8480ee2f8c9582b89bb51400f00503922b6a222fc6dc9",
+    "npm-audit.json": "d90ccb79014351c93bf60b6d928fffc7b9dd234aafeffccffb55c0f24306c3fc",
+    "ocr-after.json": "baf4c9a7a10ca292dc8696db81218fa1cccfcf13762d64e7e3d824a615edd49d",
+    "ocr-before.json": "8838da7025ad09fd707e04de9069fd67a4c50c3027bb3b1aa24abcf55c171851",
+    "scanned-image-identities.json": "190eb1f231f488fcca595c317332e7acb4acfe92c4b0ca12c2a4ec6f1347129a",
+    "vendor-triage-summary.json": "81247bd4cf7b8e1cab67d860b9b7333aea247d97c3a9669d007d216d67212494",
+    "verified-package-versions.json": "db2558f0f6c98204a54f19275e8d1160d3a64c77a00a1e369e920611025d5cb8",
+    "web-after.json": "daaf6193992611e2fe0ef4c840f6c41ff9d311ad1f5e000f524feed2173f636f",
+    "web-before.json": "67a69cb919f35d103adaddadc6735cecd8cdc935b275c68fa973c53bf1e24316"
+  },
+  "vendor_tracker_sha256": "cdb16f5e492749cf021f77b954b4302f0715fa279a49e6e831791de9e403f661",
+  "scanner_archive_sha256": "37f7b1b9c7d93a74174c5619ee16b321fc135670509f234235fdf2dc5f2c0852",
+  "database_source_url": "https://grype.anchore.io/databases/v6/vulnerability-db_v6.1.10_2026-11-05T00:20:34Z_1793859666.tar.zst?checksum=sha256%3A9fbc8d8f2428cd715ffc9591cce16c4179955a7f45c76c12fbcb9cea8dc93813"
+}

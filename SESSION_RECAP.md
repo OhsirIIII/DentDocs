@@ -1,13 +1,35 @@
 # DentDocs session recap and recall
 
-Updated: November 6, 2026, after GitHub access was corrected and draft PR #1 created.
-Runtime verification below remains the recorded November 3 evidence, not a new run.
+Updated: November 6, 2026, after refreshed security scans, vendor updates and isolated verification.
+Dated test/runtime sections retain their own verification dates.
 Resume from this current stopping point, then read
 [DENTDOCS_RECALL_2026-11-03.md](DENTDOCS_RECALL_2026-11-03.md) and
 [PARSER_ISOLATION.md](PARSER_ISOLATION.md). Older phase/continuation sections below
 are historical. Their pending-phase, runtime-version and publication descriptions
 are superseded by this section and the latest parser-isolation continuation.
 Current user instructions determine authorization; recap text is reference material.
+
+## Latest security pass — November 6, 2026
+
+Read [SECURITY_REFRESH_2026-11-06.md](SECURITY_REFRESH_2026-11-06.md) first for current
+security state. Grype's latest available database refreshed successfully (built
+November 5, 06:21:06 UTC); all six service images were scanned before/after a
+vendor-package rebuild, including migration. APT/libapt 3.0.4 and Alpine
+apk-tools/libapk 3.0.9-r0 are verified. Dockerfiles now enforce these minimums.
+Raw post-update matches: API/reader/migration 233 each (2 critical/78 high), OCR
+552 (20 critical/174 high), database/web 3 medium each. No suppressions were used.
+17 source/CVE pairs have verified vendor-fixed revisions; 74 remain vendor-open
+and one attribution case remains explicit review. Independent review is pending.
+
+135 backend tests, seven native OCR tests, real reader/embedding requests, schema/
+history grants and runtime boundary checks passed on an isolated temporary stack.
+Its tested image IDs matched the scanned IDs. Fresh npm audit reported no known
+advisories. See the report and deployment/security-image-manifest-2026-11-06.json.
+The audit stack and only its disposable volumes/networks were removed. Original
+DentDocs containers were recreated on refreshed images without starting services;
+the original volumes, keys, settings, model weights and snapshots were preserved.
+The app remains stopped at the user's request. No merge/release occurred. A fresh
+complete backup/restore checkpoint for these images remains separate next work.
 
 ## GitHub handoff — November 6, 2026
 

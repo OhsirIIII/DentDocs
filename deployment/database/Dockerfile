@@ -4,7 +4,8 @@ RUN apk add --no-cache su-exec \
     && sed -i 's/exec gosu postgres/exec su-exec postgres/' /usr/local/bin/docker-entrypoint.sh \
     && rm /usr/local/bin/gosu \
     && su-exec nobody true
-RUN apk upgrade --no-cache && apk add --no-cache --virtual .vector-build build-base curl \
+RUN apk upgrade --no-cache && apk add --no-cache 'apk-tools>=3.0.9-r0' 'libapk>=3.0.9-r0' \
+    && apk add --no-cache --virtual .vector-build build-base curl \
     && curl -fsSL https://github.com/pgvector/pgvector/archive/refs/tags/v0.8.7.tar.gz -o /tmp/pgvector.tar.gz \
     && tar -xzf /tmp/pgvector.tar.gz -C /tmp \
     && cd /tmp/pgvector-0.8.7 \

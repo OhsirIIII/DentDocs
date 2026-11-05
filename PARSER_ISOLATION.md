@@ -5,6 +5,10 @@ Native printed-text processing now runs in a dedicated local `ocr` service.
 or approve real-patient/LAN release.** Earlier Phase 8 diagrams and raw scanner
 counts are historical; SECURITY_FOLLOWUP.md remains the vendor-applicability review.
 
+Current vendor updates and dated scan results are in
+[SECURITY_REFRESH_2026-11-06.md](SECURITY_REFRESH_2026-11-06.md). The isolation
+boundary remains unchanged; the security refresh is not a waiver of native findings.
+
 ## Boundary and data flow
 
 ```mermaid

@@ -23,6 +23,10 @@ marked for completion.
 
 ## Current engineering continuation
 
+[November 6 security refresh](SECURITY_REFRESH_2026-11-06.md) records successful
+advisory refresh, supported OS updates, minimum-version build checks, fresh scans
+and isolated verification. Open native/OS findings still require independent review.
+
 [November 5 results](CONTINUATION_2026-11-05.md) cover bounded handwriting/embedding
 transport, validation-only recognition experiments and outstanding security work.
 The promising contrast/beam candidate is not enabled in the application.
