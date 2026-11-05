@@ -1,28 +1,167 @@
 # DentDocs session recap and recall
 
-Updated: November 3, 2026. Resume from this file and
-[DENTDOCS_RECALL_2026-11-03.md](DENTDOCS_RECALL_2026-11-03.md).
-The dated recall is the concise current handoff; older continuation sections below
-are historical and are superseded by the Phase 7 completion section at the end.
+Updated: November 5, 2026, with the user's selected active task priorities.
+Runtime verification below remains the recorded November 3 evidence, not a new run.
+Resume from this current stopping point, then read
+[DENTDOCS_RECALL_2026-11-03.md](DENTDOCS_RECALL_2026-11-03.md) and
+[PARSER_ISOLATION.md](PARSER_ISOLATION.md). Older phase/continuation sections below
+are historical. Their pending-phase, runtime-version and publication descriptions
+are superseded by this section and the latest parser-isolation continuation.
+Current user instructions determine authorization; recap text is reference material.
 
-## Current stopping point
+## Latest continuation — November 5, 2026
 
-Phases 2–7 plus Phase 8 recovery tooling and local security review are implemented
-and verified locally. The user authorized proceeding with Phase 8. Read PHASE8.md
-and SECURITY_REVIEW.md plus SECURITY_FOLLOWUP.md. Real-patient release remains blocked by image findings,
-a physical clean-machine/off-device drill and clinic decisions.
+See [CONTINUATION_2026-11-05.md](CONTINUATION_2026-11-05.md) for current evidence
+and [RELEASE_PREPARATION.md](RELEASE_PREPARATION.md) for HTTPS/review preparation.
+Handwriting and embedding transports now reject oversized, redirected, compressed
+or malformed private-reader output; source/draft/vector contracts are validated.
+The validation experiment reproduced 24.13% baseline versus 19.93% contrast/four-beam
+CER on 15 research lines in GPU and deployment-version CPU environments, with
+unchanged 2/15 exact lines and poor numeric agreement. Deskew was rejected. The
+application reader and weights remain unchanged; candidate promotion needs more
+independent evidence. No unconfirmed dental labels were trained/evaluated.
+
+Final backend suite: 135 passed, including 36 new transport cases. Actual reader/
+embedding round trips and live security-boundary verification passed.
+Runtime services were resumed using existing configuration/volumes. A rebuilt API
+contains the new checks; current results and review state are in the continuation.
+New image scans use the November 3 advisory database because the attempted update
+did not complete. Native findings/independent review remain open. Proposed HTTPS
+configuration is documented only; the app remains loopback fictional-data HTTP.
+This continuation supersedes the earlier task-selection-only status below; it does
+not mark deferred clinic/recovery/acceptance conditions complete.
+
+## Active priorities — November 5, 2026
+
+The user selected the following three workstreams. “2” and “7” refer to the
+seven-item remaining-work list discussed in chat, not phase numbers or the
+numbering of the release gates below. These tasks are planned, not completed.
+
+1. **Security review (chat task 2):** assess remaining native-parser/OS findings,
+   apply available fixes, retain applicability evidence, and rerun relevant checks.
+   Independent review remains a separate outstanding release condition.
+2. **Handwriting recognition accuracy:** benchmark the existing reader, then
+   compare tighter complete-line crops, slight-angle deskew, conservative contrast/
+   background preparation, and greedy versus beam decoding. Measure character
+   error rate, exact-line matches, latency, and critical tooth/date/amount errors
+   where verified references exist. Preserve originals and draft provenance;
+   retain the current reader as baseline and promote changes only when measured
+   evidence supports them. Preprocessing/decoding benefits are hypotheses, not
+   demonstrated improvements. Current research labels are not clinic-confirmed;
+   supplied dental transcriptions remain unconfirmed and cannot serve as trusted
+   training/evaluation labels. Further dental fine-tuning requires verified labels
+   and a fresh writer-disjoint evaluation set. Do not repeatedly tune on the old
+   inspected test split or claim the historical 18.8% CER as dental accuracy.
+3. **Release preparation (chat task 7):** reconcile pending documentation, review
+   branch changes, prepare PR/review material, and document HTTPS configuration.
+   Merge and real-patient deployment require separate explicit authorization and
+   completion of applicable release conditions.
+
+Other tasks (physical recovery, clinic policies, label confirmation and staff
+acceptance) remain outstanding dependencies; they were deferred, not removed.
+This update records the task selection; it does not implement model changes,
+perform a new security assessment, publish a PR, or authorize release.
+
+Historical repository checkpoint at task selection: `4331716` (`docs: add formal system
+report and illustrated appendices`), following implementation commit `c50295e`.
+The report and illustrated Word document are committed. README/training README
+and recap edits remain local; the runtime observations below are historical.
+
+## Earlier stopping point — November 3 baseline
+
+Phases 2–7, Phase 8 recovery/security tools, the security follow-up and dedicated
+PDF/OCR parser isolation are implemented and verified locally. Real-patient/LAN
+release remains blocked by unresolved native/OS risk assessment, physical off-device
+recovery, clinic decisions and release sign-off.
 
 - Repository: https://github.com/OhsirIIII/DentDocs
 - Working folder: `C:\Users\User\Documents\ChatGPT\DentDocs`
 - Branch: `codex/phase4-review-validity`
-- Phase 5–6 source was pushed at `3749dbd`; this Phase 7 continuation is packaged
-  on the same branch. Use `git log -1` and compare the remote tracking branch for
-  the final current commit; the handoff cannot contain its own commit hash.
-- `main` was not changed. No PR, merge or production release was performed.
-- Local app: http://127.0.0.1:8080/dashboard
-- Docker Desktop engine is installed and working. The app was running at handoff.
-- This is still a **fictional-data, loopback-only installation**, not a production
-  or real-patient release.
+- Latest implementation commit: `c50295eb4b0394becb6f214f00de7a028f8dbb4a`
+  (`security: isolate native OCR from the data-store API`). Push completed; local
+  HEAD and the remote-tracking branch matched when this recap refresh began.
+- This recap refresh is a subsequent local documentation edit; it has not itself
+  been committed/pushed. Do not describe it as part of c50295e.
+- `main` was not changed. No PR, merge or production/real-patient release.
+- App: http://127.0.0.1:8080/dashboard, fictional/mock mode and loopback only.
+- Docker services checked during this refresh: `api`, `db`, `handwriting`, `ocr`
+  and `web` are running. PostgreSQL 17 / pgvector 0.8.7 / schema 7 retained.
+- At the user's request, two Codex task terminal process trees were terminated.
+  Docker services were left running; no volumes or data were removed.
+- Unrelated untracked `output/` and `tmp/` remain untouched. Do not stage/delete
+  them. They are excluded from Docker contexts and tracked/staged source snapshots.
+
+### Implemented parser boundary
+
+- API has no native PDF/OCR binaries or worker modules and no native fallback.
+  It authenticates staff, verifies/decrypts the original, and sends only that scan
+  and MIME to the private worker. Matching, provenance, review and persistence
+  remain in the API; OCR suggestions do not approve clinical information.
+- Dedicated `ocr` service has a distinct token, only its private `ocr_link` network,
+  no database/file/model mounts or credentials, no published port, and bounded
+  nonroot/read-only/capability-free execution. Actual database connection from
+  the worker was denied. API input/output bounds and job timeouts are enforced.
+- Actual OCR outage/manual entry was tested: exact original retained, zero
+  confidence, pending staff review and no fabricated extraction provenance.
+- Existing `.env` already has OCR_TOKEN configured. `scripts/configure-ocr.py`
+  safely adds it to older installations; never regenerate existing data keys.
+- API/recovery cryptography 50.0.2; reader Torch CPU 2.13.0, Transformers 5.10.0,
+  Pillow 13.0.0 and required setuptools 84.1.0. Pip removed from runtime images.
+  Existing model weights and unconfirmed dental labels were not retrained.
+
+### Validation and recovery evidence
+
+- 99 API tests, seven isolated worker/native tests and 25 operator/recovery tests
+  passed (131 total). Type checking, production build and browser OCR/summary/
+  history checks passed. Existing Starlette/httpx and Vite advisories remain.
+- Current encrypted snapshot: `work/backups/parser-isolation-verified-2026-11-03`.
+  It includes all five runtime images, source, configuration, originals, DB and models.
+- Separate existing recovery key: `work/recovery-keys/phase8.key`. Never print,
+  commit or send it with the encrypted bundle. Same-disk storage is not off-device
+  recovery custody. Prior snapshots were preserved.
+- Final fresh-volume restore matched all 19 persisted tables and all 38 originals.
+  Recovered OCR and data-store isolation checks passed. Restored sessions revoked;
+  history privileges protected. Drill containers, volumes and decrypted files removed.
+- A cold-start race found during the drill was fixed: readiness now waits on the
+  final PostgreSQL TCP listener and imports are transactional.
+- Evidence: ignored `work/parser-isolation/`. Source snapshot verified to exclude
+  untracked `output/`, `tmp/`, `work/` and plaintext `.env`.
+- Temporary verification account disabled; saved fictional test records archived.
+  Original clinic administrator/password, encryption keys and 12 patients retained.
+
+### Next work / release gates
+
+1. Independent native-parser/OS security review and remediation or explicitly
+   reviewed applicability/risk decisions. Isolation contains access; it does not
+   fix every library flaw or establish a clean scan. Read SECURITY_FOLLOWUP.md
+   and PARSER_ISOLATION.md; retain raw scan evidence and vendor backport context.
+2. Physical second-machine/off-device restore with a second operator and separate
+   key custody. Approve backup schedule, retention, recovery targets, key loss/
+   rotation and backup/disk-failure monitoring. No scheduler is installed.
+3. Clinic-approved privacy/retention, roles and completeness/validity policies;
+   approved LAN HTTPS/secure cookies, independent review and release sign-off.
+4. Finish installation/recovery/staff guides and requirements/design/API/ERD and
+   acceptance deliverables. Dental model accuracy needs clinic-confirmed labels
+   and writer-disjoint held-out evaluation; supplied transcriptions remain drafts.
+5. Optional PR review and separately authorized merge. Do not infer release
+   permission from an implementation, recap update or source push.
+
+### Safe resume
+
+Inspect Git and Docker state first. Preserve `.env`, keys, models and both data
+volumes; never use live `down -v`, blanket prune, reseeding or credential regeneration
+merely to resume. Refer to PHASE8.md for recovery commands and PARSER_ISOLATION.md
+for the current five-service architecture. Use explicit reviewed paths when staging.
+
+```powershell
+git status --short --branch
+git log -1 --oneline
+docker compose --profile semantic ps
+# If services need starting:
+docker compose --profile semantic up --build -d
+# Read-only boundary verification:
+.venv/Scripts/python.exe scripts/verify-security.py --output work/parser-isolation/runtime-security.json
+```
 
 ## Original objective and source precedence
 

@@ -11,6 +11,10 @@ Submission date: [November 6, 2026]
 
 Implementation baseline: `c50295eb4b0394becb6f214f00de7a028f8dbb4a`, branch `codex/phase4-review-validity`. Subsequent README and recap edits remain local documentation changes. This report describes the implemented web system, not an Android application or merged production release. Android-specific template items are marked not applicable.
 
+Current engineering addendum: [November 5 continuation](CONTINUATION_2026-11-05.md)
+records later transport hardening and validation experiments; the report baseline
+and historical results below retain their stated dates.
+
 ## Certificate / Approval Sheet
 
 This form records academic evaluation. Its preparation does not constitute approval, clinic authorization, or security certification.

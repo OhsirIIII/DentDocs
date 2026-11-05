@@ -33,20 +33,28 @@ def embed(texts):
         raise HTTPException(503, 'Local semantic reader is unavailable')
     vectors = []
     try:
-        with httpx.Client(timeout=45, trust_env=False) as client:
+        with httpx.Client(timeout=httpx.Timeout(45, connect=3, write=15, pool=3), trust_env=False, follow_redirects=False) as client:
             for start in range(0, len(texts), 32):
-                response = client.post(url + '/embed', json={'texts': texts[start:start+32]}, headers={'Authorization': 'Bearer ' + token})
-                if response.status_code != 200:
+                with client.stream('POST', url + '/embed', json={'texts': texts[start:start+32]},
+                                   headers={'Authorization': 'Bearer ' + token, 'Accept-Encoding': 'identity'}) as response:
+                    if response.status_code != 200 or response.headers.get('Content-Encoding', 'identity') != 'identity':
+                        raise ValueError()
+                    output = bytearray()
+                    for chunk in response.iter_bytes(chunk_size=8192):
+                        if len(output) + len(chunk) > 1024*1024:
+                            raise ValueError('Oversized embedding response')
+                        output.extend(chunk)
+                    result = json.loads(output)
+                if not isinstance(result, dict) or set(result) != {'model', 'vectors'}:
                     raise ValueError()
-                result = response.json()
                 batch = result['vectors']
-                if result['model'] != MODEL or len(batch) != len(texts[start:start+32]):
+                if result['model'] != MODEL or not isinstance(batch, list) or len(batch) != len(texts[start:start+32]):
                     raise ValueError()
                 for vector in batch:
-                    if len(vector) != 384 or not all(type(v) in (int, float) and math.isfinite(v) and abs(v) <= 1.001 for v in vector) or not .99 <= sum(v*v for v in vector) <= 1.01:
+                    if not isinstance(vector, list) or len(vector) != 384 or not all(type(v) in (int, float) and math.isfinite(v) and abs(v) <= 1.001 for v in vector) or not .99 <= sum(v*v for v in vector) <= 1.01:
                         raise ValueError()
                 vectors.extend(batch)
-    except (httpx.HTTPError, ValueError, KeyError, TypeError):
+    except (httpx.HTTPError, ValueError, KeyError, TypeError, OverflowError, RecursionError):
         raise HTTPException(503, 'Local semantic reader is unavailable; keyword search remains available')
     return vectors
 

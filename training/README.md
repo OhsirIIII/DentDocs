@@ -1,10 +1,11 @@
 # Handwriting experiments for DentDocs
 
 The first clinical handwriting preparation, baseline comparison and bounded
-fine-tuning experiment are complete. The experimental base checkpoint is now connected to the DentDocs Upload screen
-through the Phase 5 handwriting extension; see ../PHASE5_HANDWRITING.md. The
-experiments below describe its limited measured quality. No clinic accounts, records, originals, keys or
-Docker services were changed by these experiments.
+fine-tuning experiment are complete. The experimental base checkpoint is connected
+to the DentDocs Upload screen through the Phase 5 handwriting extension; see
+[PHASE5_HANDWRITING.md](../PHASE5_HANDWRITING.md). The experiments below describe
+its limited measured quality. No clinic accounts, records, originals, keys or Docker
+services were changed by these experiments.
 
 ## Data and attribution
 
@@ -107,7 +108,10 @@ any prepared train/validation/test manifests of image/text pairs. Training and
 evaluation use local GPU inference. Only initial public dataset/model downloads
 require network access. Exact installed packages are recorded in
 `work/handwriting/training-environment.lock` (PyTorch 2.7.1+cu128 and Transformers
-4.57.1). The application environment and backend dependency locks are unchanged.
+4.57.1). Those versions describe the historical GPU experiment, not the current deployed
+CPU service. Application dependencies have since changed during security work;
+see the runtime notes below. The reported CER/exact-line measurements were not
+rerun as part of those runtime upgrades.
 
 The earlier user-supplied names archive was prepared into a separate 2,048/128/128
 subset with empty/sentinel labels filtered and identical-image hashes excluded
@@ -122,7 +126,7 @@ An offline held-out crop transcribed successfully using local trained weights.
 
 The crop/rotation selector, authenticated local inference, editable draft text,
 retained source history and named staff review are now implemented in Upload.
-See ../PHASE5_HANDWRITING.md for operation and validation. Further model adaptation
+See [PHASE5_HANDWRITING.md](../PHASE5_HANDWRITING.md) for operation and validation. Further model adaptation
 still depends on verified dental labels; application integration did not turn
 these research measurements into clinical validation.
 
@@ -142,3 +146,62 @@ no `[unclear]` marker and a matching crop hash are eligible. The importer create
 verified candidates without training or automatically splitting writers. Its first
 run accepted zero of the 24 pending entries, as intended. Keep source photos, crop
 images and annotations private under ignored `work/` rather than committing them.
+
+
+## Current application runtime and recovery
+
+The experiment environment under `work/htr-env/` remains separate from deployment.
+The private `handwriting` Docker service currently uses Torch CPU 2.13.0,
+Transformers 5.10.0 and Pillow 13.0.0. It loads the existing checkpoint read-only
+from `work/handwriting/amr-base-run-001/trained/`; it also serves pinned local
+embeddings from `work/semantic/model/`. The `semantic` and `handwriting` profiles
+start the same reader. GPU hardware is used for the documented research experiment,
+not required for the deployed CPU inference path.
+
+Prepared weights are not committed to Git. After provisioning that checkpoint,
+follow the [root README](../README.md#enable-the-optional-model-reader) to configure
+the pinned embedding artifact and private reader credential, then start Compose.
+The reader uses local/offline model loading and has no published host port. Runtime
+package installation is disabled; rebuild its image for dependency changes.
+
+Native printed-text OCR is now a separate `ocr` service with its own credential and
+network, no database/file/model mounts and no access to the research dataset.
+See [PARSER_ISOLATION.md](../PARSER_ISOLATION.md). It handles printed PDF/PNG/JPEG;
+handwriting suggestions still use the selected image-line model workflow. All
+suggestions require comparison with the original and named staff review.
+
+Security upgrades preserved model weights and tested inference and application
+workflows. They did not provide a new dental accuracy benchmark or independently
+verify the historical assistant-produced crop labels. No corrected clinic labels
+have been used for further training. Next data work remains clinic-confirmed crops
+from multiple writers and a fresh independent held-out evaluation.
+
+Current full encrypted recovery bundles include both models, all five runtime
+images, database, originals and private configuration. Source-only clones lack
+those artifacts. See [PHASE8.md](../PHASE8.md) for recovery/key custody and
+[SESSION_RECAP.md](../SESSION_RECAP.md) for current state. Keep datasets, patient
+photos, review CSVs, weights, drafts, credentials and recovery keys outside Git;
+never attach a recovery key to its encrypted bundle.
+
+
+## November 5 reader ablation (no deployment promotion)
+
+[Current continuation](../CONTINUATION_2026-11-05.md) records validation-only
+raw/contrast/beam/deskew comparisons using `benchmark_reader.py`. On 15 existing
+validation lines, contrast plus four beams reduced CER from 24.13% to 19.93%;
+exact lines remained 2/15 and ordered numeric-string agreement was only 1/6.
+The deployment-version CPU environment reproduced character-error counts; median
+recognition increased from 2.28 to 5.68 seconds in this isolated run. Deskew worsened
+results and was rejected. No old test samples or unconfirmed dental labels were
+evaluated, no training occurred, and the deployed reader remains raw/greedy.
+These are previously inspected research validation labels, not dental validation.
+
+Use a compatible environment with local weights and a new result directory:
+
+```powershell
+python training/benchmark_reader.py --device cpu --profiles raw contrast --beams 1 4 --output work/handwriting/new-validation-ablation
+```
+
+The script verifies crop hashes, path containment and writer separation, records
+versions/latency/character and numeric errors, and refuses to overwrite evidence.
+Read the continuation before interpreting the small-sample measurements.

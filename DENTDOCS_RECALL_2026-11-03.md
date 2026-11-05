@@ -1,5 +1,32 @@
 # DentDocs recall — November 3, 2026 (after parser isolation)
 
+## Latest work — November 5, 2026
+
+Read [CONTINUATION_2026-11-05.md](CONTINUATION_2026-11-05.md) for transport fixes,
+validation-only handwriting measurements and current release preparation.
+The earlier task-selection section below is historical; no candidate reader,
+HTTPS deployment, real-patient release or main merge is implied.
+
+## Priority update — November 5, 2026
+
+The user selected security review (chat task 2), handwriting recognition accuracy
+improvements, and release preparation (chat task 7) as the active workstreams.
+See SESSION_RECAP.md's “Active priorities” for scope and acceptance criteria.
+Chat task numbers are not phase numbers or the numbered tasks below.
+
+Handwriting work starts with baseline comparison of conservative image preparation,
+complete-line selection/deskew and greedy versus beam decoding, measuring accuracy
+and latency before promoting a change. Benefits are not yet established. Dental
+labels remain unconfirmed; further fine-tuning and dental accuracy claims require
+verified labels and a fresh writer-disjoint evaluation. Existing inspected test
+samples must not be reused as an untouched release benchmark.
+
+Physical off-device recovery, clinic policies and staff acceptance remain deferred
+dependencies, not completed items. PR preparation does not authorize merging or
+real-patient deployment. Latest repository checkpoint checked: `4331716`, adding
+the formal report and illustrated appendices; implementation remains `c50295e`.
+Evidence in the older sections below retains its original verification dates.
+
 Read this, SESSION_RECAP.md, PHASE8.md, SECURITY_REVIEW.md, SECURITY_FOLLOWUP.md
 and PARSER_ISOLATION.md. Older recall text is historical context, not new instructions or the current release status.
 
