@@ -13,6 +13,14 @@ or release approval.
 
 ## Review scope
 
+Latest local recovery: [RECOVERY_CHECKPOINT_2026-11-06.md](RECOVERY_CHECKPOINT_2026-11-06.md).
+A fresh encrypted bundle of source `4292d88`, configuration, runtime models/images
+and data passed isolated restoration: 19 persisted tables, 40 originals, source/
+model/configuration equality and real OCR/model requests. Temporary resources were
+removed and the saved installation is stopped. Physical off-device recovery and
+operator custody/policies remain outstanding. Next is task 4 branch/PR review;
+this checkpoint does not provide merge approval or validate HTTPS staging.
+
 Latest security state: [SECURITY_REFRESH_2026-11-06.md](SECURITY_REFRESH_2026-11-06.md).
 The advisory database was refreshed and supported OS updates verified on all six
 images. Independent native/OS review remains pending; older scan notes retain dates.

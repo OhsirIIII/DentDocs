@@ -23,6 +23,10 @@ marked for completion.
 
 ## Current engineering continuation
 
+[November 6 recovery checkpoint](RECOVERY_CHECKPOINT_2026-11-06.md) records a fresh
+encrypted backup and isolated restore matching 19 tables and 40 originals, with
+source, model, configuration and actual OCR/model checks. The app is stopped.
+
 [Handwriting candidate evaluation](HANDWRITING_EVALUATION_2026-11-06.md) extends
 the existing contrast/beam experiment with robustness, numeric and timing checks.
 It does not change the application reader or claim independently validated dental accuracy.
@@ -211,8 +215,9 @@ Keep an encrypted off-device copy and a separately custodied recovery key. GitHu
 source is not a backup of the running installation. Do not put the key in the bundle
 or share both together. A same-disk trial copy is not disaster recovery.
 
-The final isolated restore matched 19 tables and 38 originals, exercised recovered
-OCR and retained its data-store isolation. Database readiness uses the final TCP
+The [November 6 isolated restore](RECOVERY_CHECKPOINT_2026-11-06.md) matched 19
+persisted tables and 40 registered originals, exercised recovered OCR and both
+models, and retained data-store isolation. Database readiness uses the final TCP
 listener and imports are transactional. This was a fresh-volume test on the same
 Docker host. A physical second-machine/operator drill is still outstanding.
 

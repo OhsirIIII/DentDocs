@@ -1,5 +1,13 @@
 # Phase 8 — encrypted recovery and release review
 
+Latest verified checkpoint: [November 6 recovery report](RECOVERY_CHECKPOINT_2026-11-06.md).
+The fresh encrypted runtime bundle captures source `4292d88` and refreshed images;
+its isolated restore matched all 19 persisted tables, 40 registered originals,
+524 source files, 16 model artifacts and private configuration. Actual recovered
+OCR/handwriting/embedding checks passed. The temporary restore was removed and
+the original installation is stopped. Physical off-device recovery remains open.
+Current security findings are in [SECURITY_REFRESH_2026-11-06.md](SECURITY_REFRESH_2026-11-06.md).
+
 Latest architecture: [PARSER_ISOLATION.md](PARSER_ISOLATION.md) moves native OCR
 out of the API and adds a fifth recovery image. Earlier runtime descriptions and
 scan counts below describe the preceding baseline.

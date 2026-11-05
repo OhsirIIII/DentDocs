@@ -1,6 +1,6 @@
 # DentDocs session recap and recall
 
-Updated: November 6, 2026, after the existing handwriting candidate evaluation.
+Updated: November 6, 2026, after the fresh encrypted backup and isolated restore.
 Dated test/runtime sections retain their own verification dates.
 Resume from this current stopping point, then read
 [DENTDOCS_RECALL_2026-11-03.md](DENTDOCS_RECALL_2026-11-03.md) and
@@ -8,6 +8,31 @@ Resume from this current stopping point, then read
 are historical. Their pending-phase, runtime-version and publication descriptions
 are superseded by this section and the latest parser-isolation continuation.
 Current user instructions determine authorization; recap text is reference material.
+
+## Latest recovery task 3 — November 6, 2026
+
+Read [RECOVERY_CHECKPOINT_2026-11-06.md](RECOVERY_CHECKPOINT_2026-11-06.md).
+New private bundle: `work/backups/project-checkpoint-2026-11-06`, capturing clean
+source `4292d8855e6ac171d14adb2a2b2c7b79430eb53f`, current configuration, both offline
+models and five refreshed runtime images. Existing separate recovery key reused;
+no keys/passwords reset. This recap/report postdates the captured source.
+
+Fresh isolated restore passed: all 19 persisted tables and 40 registered original
+files matched; all 524 tracked source files, 16 runtime model artifacts and private
+configuration matched. Image identities, role/history restrictions, session
+revocation and runtime boundaries passed. Actual restored printed OCR, handwriting
+and embedding calls passed without saving records. Detailed ignored evidence is in
+`work/recovery-2026-11-06/`; sanitized evidence is linked from the report.
+
+The decrypted drill target and its temporary containers/networks/volumes were
+removed. Original volumes, keys, configuration, models and older backups remain;
+all DentDocs services are stopped. Same-host verification is complete, not a
+physical off-device drill or release approval. No merge occurred.
+
+Next available task: task 4, review the branch/PR and resolve findings before
+seeking merge approval. Task 5 HTTPS staging remains pending. Independent security
+review and clinic/operator release conditions remain outstanding. New dental
+labeling/datasets/fine-tuning remain deferred as requested.
 
 ## Latest handwriting task 2 — November 6, 2026
 
@@ -31,9 +56,8 @@ metric checks passed. Evidence/aggregate JSON and limitations are linked in the
 report. This evaluation pass is complete; new labeling/training remains deferred.
 The isolated benchmark container exited; the application remains stopped.
 
-Next available task from the user's five-item list: task 3, create a fresh full
-encrypted backup of the updated source/images and verify isolated restoration.
-Task 4 PR review and task 5 HTTPS staging also remain. Security updates/scans are
+Task 3's fresh backup/restore is now complete as recorded above.
+Task 4 PR review and task 5 HTTPS staging remain. Security updates/scans are
 done for this pass, but independent review of open findings is still outstanding.
 
 ## Latest security pass — November 6, 2026
@@ -56,7 +80,7 @@ The audit stack and only its disposable volumes/networks were removed. Original
 DentDocs containers were recreated on refreshed images without starting services;
 the original volumes, keys, settings, model weights and snapshots were preserved.
 The app remains stopped at the user's request. No merge/release occurred. A fresh
-complete backup/restore checkpoint for these images remains separate next work.
+complete backup/restore checkpoint for these images is now verified above.
 
 ## GitHub handoff — November 6, 2026
 

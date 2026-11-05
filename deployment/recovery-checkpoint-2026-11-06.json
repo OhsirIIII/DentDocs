@@ -1,0 +1,121 @@
+{
+  "date": "2026-11-06",
+  "sourceCommit": "4292d8855e6ac171d14adb2a2b2c7b79430eb53f",
+  "bundle": "work/backups/project-checkpoint-2026-11-06",
+  "scope": "same-host isolated runtime restoration; not physical off-device recovery",
+  "sourceHadNoTrackedChangesAtCapture": true,
+  "componentsAuthenticatedBeforeExtraction": 6,
+  "tablesCompared": 19,
+  "originalsVerified": 40,
+  "allRestoredSessionsRevoked": true,
+  "historyPrivilegesProtected": true,
+  "sourceModelConfiguration": {
+    "sourceFilesMatched": 524,
+    "allTrackedSourceHashesMatched": true,
+    "untrackedFilesExcluded": true,
+    "plainEnvExcludedFromSource": true,
+    "modelArtifactsMatched": 16,
+    "privateConfigurationMatched": true
+  },
+  "runtimeImageIdentities": {
+    "db": "sha256:b5732e298732b94b584090b98e6bd5833dd9a835a7be9d6d20e1076c85e302d0",
+    "api": "sha256:591cdc223e06d0faec815762352a13bcbbafbc9abe971ea59a32e486af5d24ba",
+    "web": "sha256:ccd97a82213bfaab1cb451a4f15fa5d0bcbae3a308c0dacc62a0197def6069b4",
+    "handwriting": "sha256:f6e00a06b5033d14fd479e9c0c8a23469f84cf32d587b5cf9b16ba7f44e3dae9",
+    "ocr": "sha256:d7bb79de3cad613b106ada21ded7095e7bff7a7212ced9a45dde1f1715866928"
+  },
+  "runtimeSmoke": {
+    "actualPrintedOcrPassed": true,
+    "actualRestoredHandwritingPassed": true,
+    "handwritingModelHashMatched": true,
+    "actualRestoredEmbeddingPassed": true,
+    "noRecordsSaved": true
+  },
+  "runtimeSecurity": {
+    "services": {
+      "api": {
+        "internalNetworkOnly": true,
+        "noPublishedPort": true,
+        "nonroot": true,
+        "noNewPrivileges": true,
+        "effectiveCapabilitiesZero": true,
+        "pipAbsent": true,
+        "temporaryMemoryFilesystemVerified": true,
+        "dependencyConsistencyVerified": true,
+        "readOnlyRoot": true
+      },
+      "handwriting": {
+        "internalNetworkOnly": true,
+        "noPublishedPort": true,
+        "nonroot": true,
+        "noNewPrivileges": true,
+        "effectiveCapabilitiesZero": true,
+        "pipAbsent": true,
+        "temporaryMemoryFilesystemVerified": true,
+        "dependencyConsistencyVerified": true,
+        "readOnlyRoot": true
+      },
+      "db": {
+        "internalNetworkOnly": true,
+        "noPublishedPort": true
+      },
+      "web": {
+        "internalNetworkOnly": false,
+        "noPublishedPort": false
+      },
+      "ocr": {
+        "internalNetworkOnly": true,
+        "noPublishedPort": true,
+        "nonroot": true,
+        "noNewPrivileges": true,
+        "effectiveCapabilitiesZero": true,
+        "noDataStoreLibrariesOrMounts": true,
+        "temporaryMemoryFilesystemVerified": true,
+        "readOnlyRoot": true
+      }
+    },
+    "port": 18080,
+    "parserHasNoDataStoreAccess": true,
+    "apiHasNoNativeParsers": true,
+    "mockModeAndBrowserHeadersVerified": true
+  },
+  "cleanup": {
+    "drillPlaintextRemoved": true,
+    "drillContainersAndVolumesRemoved": true,
+    "savedInstallationStopped": true,
+    "originalVolumesRetained": true,
+    "existingKeyAndConfigurationRetained": true
+  },
+  "encryptedArtifacts": {
+    "config.env.enc": {
+      "bytes": 471,
+      "sha256": "27f3b4da2f6f102e7c8fc8c5f29362c4e7e1bda23f66e74a4025f81063918b8b"
+    },
+    "database.dump.enc": {
+      "bytes": 490164,
+      "sha256": "6f96ba524cb5a184a5eb459cf1b957d2819f864ab01bb1ca95043b484204edb7"
+    },
+    "files.tar.enc": {
+      "bytes": 1300526,
+      "sha256": "7461c2475e9b5b36eb246a2d786111e30d203eb51a27da50f3df49899b260afe"
+    },
+    "images.tar.enc": {
+      "bytes": 593795630,
+      "sha256": "89f0295ef78d6a434362c465407af312eda5db48d340ddc7ac9d2dd204f5c8cb"
+    },
+    "manifest.enc": {
+      "bytes": 1222,
+      "sha256": "e8b62bd865ff7fd91e6fa786ef2df9d99d6635792830bece141f71e1f324eebf"
+    },
+    "models.tar.enc": {
+      "bytes": 1432166446,
+      "sha256": "71883a275049a9de461cc65d3becc9534ec220f2809b87ee88260e8997705ae6"
+    },
+    "source.tar.enc": {
+      "bytes": 20203566,
+      "sha256": "0499c67c0e2c2548aabf997f7099b1242dd65b943ca94586f3e3846ed9bf776f"
+    }
+  },
+  "documentationPostdatesCapturedSource": true,
+  "releaseAuthorized": false
+}

@@ -1,9 +1,18 @@
 # DentDocs recall — November 3, 2026 (after parser isolation)
 
-Latest task 2 outcome: [HANDWRITING_EVALUATION_2026-11-06.md](HANDWRITING_EVALUATION_2026-11-06.md).
+Latest task 3 outcome: [RECOVERY_CHECKPOINT_2026-11-06.md](RECOVERY_CHECKPOINT_2026-11-06.md).
+Fresh encrypted bundle `work/backups/project-checkpoint-2026-11-06` captures source
+`4292d88` and refreshed runtime images. Isolated restore matched 19 persisted
+tables, 40 originals, 524 source files, 16 model artifacts and private configuration;
+actual restored OCR and both models passed. Temporary restore/plaintext removed,
+original volumes/key/settings preserved, application stopped. Same-host only;
+physical off-device recovery remains open. Next task is branch/PR review (task 4),
+then merge approval; HTTPS staging (task 5) remains pending. No merge authorized.
+
+Task 2 outcome: [HANDWRITING_EVALUATION_2026-11-06.md](HANDWRITING_EVALUATION_2026-11-06.md).
 Existing contrast/beam evaluation is complete; defaults unchanged. New datasets,
-dental labels and fine-tuning were deferred. Next available task is the fresh full
-backup/restore checkpoint (task 3). Read SESSION_RECAP.md before older plans below.
+dental labels and fine-tuning were deferred. Read SESSION_RECAP.md before older
+plans below; historical recovery points and running-service descriptions are superseded.
 
 Latest continuation: [November 6 security refresh](SECURITY_REFRESH_2026-11-06.md).
 Read SESSION_RECAP.md's latest security section for tested image/package state and
