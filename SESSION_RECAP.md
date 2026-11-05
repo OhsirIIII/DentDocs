@@ -1,6 +1,6 @@
 # DentDocs session recap and recall
 
-Updated: November 6, 2026, after the fresh encrypted backup and isolated restore.
+Updated: November 6, 2026, after branch review and version-history permission fixes.
 Dated test/runtime sections retain their own verification dates.
 Resume from this current stopping point, then read
 [DENTDOCS_RECALL_2026-11-03.md](DENTDOCS_RECALL_2026-11-03.md) and
@@ -8,6 +8,35 @@ Resume from this current stopping point, then read
 are historical. Their pending-phase, runtime-version and publication descriptions
 are superseded by this section and the latest parser-isolation continuation.
 Current user instructions determine authorization; recap text is reference material.
+
+## Latest branch/PR review task 4 — November 6, 2026
+
+Read [PR_REVIEW_2026-11-06.md](PR_REVIEW_2026-11-06.md).
+Review of head `283a106` against refreshed `origin/main` (`b5d2607`) reproduced
+and fixed three findings: nested clinical history leaked after administrative
+reclassification; older clinical review notes were exposed through queue/detail;
+version/restore histories recursively duplicated earlier history. New flat snapshot
+helpers, role checks against review source versions and four regressions resolve
+these cases, including legacy reads/edits/restores. No schema/model/frontend change.
+
+130 backend tests passed, nine OCR-service-dependent cases skipped on host; 29
+operator/setup/research checks and seven real native OCR/service checks passed.
+Frontend type checking/build passed. A separately built API image passed fresh
+PostgreSQL permission/version/restore/concurrency/restart checks, real printed OCR,
+exact source hashes and security-boundary verification. Same refreshed advisory DB
+scan of that exact API image retains 233 matches (2 critical/78 high); independent
+review remains open. Report/JSON link detailed evidence and limitations.
+
+Disposable containers/volumes/networks and credentials were removed. Original
+data/configuration/keys remain; saved installation is stopped on its preceding
+images. The new tested API image is separate, not installed into saved containers.
+Task 3's verified source `4292d88` backup predates these fixes. Rebuild images when
+applying new source and refresh the runtime backup before a new release checkpoint.
+
+Local review/fixes are complete. PR #1 remains draft/unmerged; seek explicit merge
+approval for continued local fictional-data development. Task 5 HTTPS staging and
+independent security/clinic/operator release conditions remain open. New dental
+datasets, labeling and fine-tuning remain deferred.
 
 ## Latest recovery task 3 — November 6, 2026
 
@@ -29,8 +58,8 @@ removed. Original volumes, keys, configuration, models and older backups remain;
 all DentDocs services are stopped. Same-host verification is complete, not a
 physical off-device drill or release approval. No merge occurred.
 
-Next available task: task 4, review the branch/PR and resolve findings before
-seeking merge approval. Task 5 HTTPS staging remains pending. Independent security
+Task 4's local review/fixes are complete above; merge approval is pending.
+Task 5 HTTPS staging remains pending. Independent security
 review and clinic/operator release conditions remain outstanding. New dental
 labeling/datasets/fine-tuning remain deferred as requested.
 

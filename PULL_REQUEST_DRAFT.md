@@ -1,8 +1,8 @@
 # Draft pull request
 
 Status: draft [PR #1](https://github.com/OhsirIIII/DentDocs/pull/1), targeting `main`
-from `codex/phase4-review-validity`. No merge or real-patient deployment occurred.
-Description synchronized with the November 6 recovery checkpoint update.
+from `codex/phase4-review-validity`. Local review/fixes complete; merge approval pending.
+Description synchronized with the November 6 branch review update.
 
 ## Title
 
@@ -11,6 +11,10 @@ Implement local document workflows, isolated OCR and encrypted recovery
 ## Description
 
 DentDocs extends the frontend prototype into a persistent fictional-data local system. Staff retain encrypted originals and versions, correct recognition drafts, record separate review/completeness/validity decisions, search source passages and approve administrative summaries. The branch adds named accounts, isolated native OCR, encrypted recovery and illustrated system documentation.
+
+Local branch review (November 6): three reproduced findings are fixed: nested clinical history could leak after administrative reclassification; historical clinical review notes were exposed through queue/detail; repeated version/restore operations recursively duplicated history. Flat version snapshots now prevent recursive histories, legacy responses/writes are flattened, and review access independently checks the source version's type. Four API regressions cover repeated versions/restoration, nested legacy history, clinical review isolation and legacy edit/restore. No schema, model or frontend changes.
+
+Validation for these fixes: 130 host backend checks passed, nine OCR-service-dependent cases skipped; 29 recovery/setup/research checks and seven real native OCR/service checks passed. Type checking and production build passed. A separate reviewed API image passed fresh PostgreSQL permission/version/restore/concurrency/restart checks, original-byte preservation, actual OCR and full process/network/browser boundary checks. Source hashes matched the tested image. Grype with the existing refreshed November 5 database retains 233 API matches (2 critical/78 high), without suppressions. Temporary resources/credentials were removed; the saved installation stays stopped on preceding images. The task 3 backup predates these fixes; applying the patch requires rebuilt images and a matching recovery checkpoint before release. See PR_REVIEW_2026-11-06.md and deployment/pr-review-2026-11-06.json. This local review is complete; explicit merge approval and independent security/release conditions remain pending.
 
 Latest security pass (November 6, commit b45fc78):
 - Successfully refreshed Grype's advisory database to the latest returned build, November 5 at 06:21:06 UTC. Scanned all six exact service images, including migration, before/after vendor-package rebuilds without suppressions.

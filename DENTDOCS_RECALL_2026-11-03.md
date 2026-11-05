@@ -1,13 +1,22 @@
 # DentDocs recall — November 3, 2026 (after parser isolation)
 
+Latest task 4 outcome: [PR_REVIEW_2026-11-06.md](PR_REVIEW_2026-11-06.md).
+Three reproduced version-history/review-permission findings fixed; four regressions
+added. 130 host backend checks passed (nine OCR-dependent skips), 29 operator/
+research checks and seven native checks passed. Fresh PostgreSQL/runtime checks
+passed. Temporary resources removed; saved installation remains stopped on older
+images, with original data/key/configuration preserved. Task 3 backup predates
+these fixes. Merge approval and task 5 HTTPS staging remain pending; no merge or
+release authorized. Read SESSION_RECAP.md before historical sections below.
+
 Latest task 3 outcome: [RECOVERY_CHECKPOINT_2026-11-06.md](RECOVERY_CHECKPOINT_2026-11-06.md).
 Fresh encrypted bundle `work/backups/project-checkpoint-2026-11-06` captures source
 `4292d88` and refreshed runtime images. Isolated restore matched 19 persisted
 tables, 40 originals, 524 source files, 16 model artifacts and private configuration;
 actual restored OCR and both models passed. Temporary restore/plaintext removed,
 original volumes/key/settings preserved, application stopped. Same-host only;
-physical off-device recovery remains open. Next task is branch/PR review (task 4),
-then merge approval; HTTPS staging (task 5) remains pending. No merge authorized.
+physical off-device recovery remains open. Task 4 is now reviewed above, with
+merge approval and HTTPS staging (task 5) pending. No merge authorized.
 
 Task 2 outcome: [HANDWRITING_EVALUATION_2026-11-06.md](HANDWRITING_EVALUATION_2026-11-06.md).
 Existing contrast/beam evaluation is complete; defaults unchanged. New datasets,

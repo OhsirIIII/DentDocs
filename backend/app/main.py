@@ -23,6 +23,7 @@ from .summaries import install_summaries
 from .ocr import run_local, extract_fields, OcrError
 from .security import install_security, initialize_admin, authorize, can_read, ADMINISTRATIVE
 from .workflows import install_workflows, sync_review, workflow_summary, SYSTEM
+from .versions import snapshot as version_snapshot, document_data
 
 TYPES = {'Patient Record', 'X-ray', 'Treatment Plan', 'Prescription', 'Consent Form', 'Laboratory Report', 'Billing/Receipt', 'Appointment Record'}
 PROCEDURES = {'Restorative', 'Endodontics', 'Oral Surgery', 'Orthodontics', 'Prosthodontics', 'Periodontics', 'Preventive', 'Billing & Administrative'}
@@ -115,14 +116,14 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
                     db.add(Patient(id=p['id'], record_no=p['recordNo'], data=p))
                 db.flush()
                 for original in seed['documents']:
-                    d = copy.deepcopy(original)
+                    d = document_data(original)
                     # Fixture previews have no original file. Never invent one.
                     d['fileId'] = None
                     db.add(Document(id=d['id'], patient_id=d['patientId'], revision=1, data=d))
                     db.flush()
-                    db.add(Version(id=str(uuid4()), document_id=d['id'], number=d['version'], file_id=None, snapshot=d))
+                    db.add(Version(id=str(uuid4()), document_id=d['id'], number=d['version'], file_id=None, snapshot=version_snapshot(d)))
                     for old in d.get('versionHistory', []):
-                        historical = {**d, **old, 'version': old['versionNumber'], 'versionHistory': [], 'fileId': None}
+                        historical = {**version_snapshot(d), **version_snapshot(old), 'version': old['versionNumber'], 'fileId': None}
                         db.add(Version(id=str(uuid4()), document_id=d['id'], number=old['versionNumber'], file_id=None, snapshot=historical))
                 for a in seed['auditLogs']:
                     db.add(Audit(id=a['id'], data=a))
@@ -159,13 +160,14 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
         return result
 
     def safe_data(value, user):
-        data = copy.deepcopy(value)
+        data = document_data(value)
         if user['role'] == 'front_desk':
             for key in ('radiographDetails', 'prescriptionDetails', 'reviewNotes', 'resolutionNote', 'handwritingSources'):
                 data.pop(key, None)
             data['versionHistory'] = [v for v in data.get('versionHistory', []) if v.get('type') in ADMINISTRATIVE]
             for version in data['versionHistory']:
-                version.pop('handwritingSources', None)
+                for key in ('radiographDetails', 'prescriptionDetails', 'reviewNotes', 'resolutionNote', 'handwritingSources'):
+                    version.pop(key, None)
         return data
 
     def claim_file(db, file_id, user):
@@ -426,7 +428,7 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
         row = Document(id=d['id'], patient_id=patient.id, revision=1, data=d)
         db.add(row)
         db.flush()
-        db.add(Version(id=str(uuid4()), document_id=d['id'], number=1, file_id=body.fileId, snapshot=d))
+        db.add(Version(id=str(uuid4()), document_id=d['id'], number=1, file_id=body.fileId, snapshot=version_snapshot(d)))
         audit(db, user, 'UPLOAD', d)
         sync_review(db, row, user, audit)
         db.commit()
@@ -442,13 +444,13 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
             raise HTTPException(422, 'Unsupported metadata fields')
         if row.data.get('archived'):
             raise HTTPException(409, 'Restore the archived document before editing')
-        d = {**row.data, **body.updates}
+        d = {**document_data(row.data), **body.updates}
         authorize(user, d, write=True, verify='completenessStatus' in body.updates)
         validate(d)
         d['displayDate'] = d['date']
         result = persist(db, row, body.expectedRevision, d)
         current = db.scalar(select(Version).where(Version.document_id == row.id, Version.number == d['version']))
-        current.snapshot = d
+        current.snapshot = version_snapshot(d)
         audit(db, user, 'EDIT_METADATA', d, ', '.join(body.updates))
         db.refresh(row)
         sync_review(db, row, user, audit)
@@ -470,7 +472,7 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
         row = get_doc(db, document_id, user)
         if row.revision != body.expectedRevision:
             raise HTTPException(409, 'Record changed. Reload before editing.')
-        d = copy.deepcopy(row.data)
+        d = document_data(row.data)
         authorize(user, d, write=True)
         if operation not in {'archive', 'restore-archive', 'completeness-resolution', 'versions'}:
             raise HTTPException(404, 'Unknown operation')
@@ -495,7 +497,7 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
                 raise HTTPException(409, 'Restore the document first')
             if not body.note.strip() or body.updates.keys() - VERSION_FIELDS:
                 raise HTTPException(422, 'A revision reason and supported fields are required')
-            snapshot = copy.deepcopy(d)
+            snapshot = version_snapshot(d)
             snapshot.update(versionNumber=d['version'], status='superseded', changeSummary=body.note, supersededAt=now(), supersededBy=user['name'])
             d.update(body.updates)
             d.update(version=d['version'] + 1, versionHistory=[snapshot, *d.get('versionHistory', [])], uploadedAt=now(), uploadedBy=user['name'], versionStatus='active')
@@ -524,10 +526,10 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
             d.pop('reviewedAt', None)
         result = persist(db, row, body.expectedRevision, d)
         if operation == 'versions':
-            db.add(Version(id=str(uuid4()), document_id=row.id, number=d['version'], file_id=d.get('fileId'), snapshot=d))
+            db.add(Version(id=str(uuid4()), document_id=row.id, number=d['version'], file_id=d.get('fileId'), snapshot=version_snapshot(d)))
         else:
             current = db.scalar(select(Version).where(Version.document_id == row.id, Version.number == d['version']))
-            current.snapshot = d
+            current.snapshot = version_snapshot(d)
         audit(db, user, event, d, body.note)
         db.refresh(row)
         sync_review(db, row, user, audit)
@@ -546,16 +548,16 @@ def create_app(database_url=None, file_root=None, seed_path=None, encryption_key
         if not target:
             raise HTTPException(404, 'Version not found')
         authorize(user, target.snapshot, write=True, verify=True)
-        current = copy.deepcopy(row.data)
-        history = {**current, 'versionNumber': current['version'], 'status': 'superseded', 'changeSummary': body.note}
-        d = copy.deepcopy(target.snapshot)
+        current = document_data(row.data)
+        history = {**version_snapshot(current), 'versionNumber': current['version'], 'status': 'superseded', 'changeSummary': body.note}
+        d = version_snapshot(target.snapshot)
         d.update(id=row.id, patientId=row.patient_id, archived=False, archivedBy=None, archivedAt=None, version=current['version'] + 1, versionStatus='active', versionHistory=[history, *current.get('versionHistory', [])], uploadedAt=now(), uploadedBy=user['name'], fileId=target.file_id)
         d.pop('reviewedBy', None)
         d.pop('reviewedAt', None)
         patient = db.get(Patient, row.patient_id)
         d.update(patientRecordNo=patient.record_no, patientName=patient.data['fullName'])
         result = persist(db, row, body.expectedRevision, d)
-        db.add(Version(id=str(uuid4()), document_id=row.id, number=d['version'], file_id=target.file_id, snapshot=d))
+        db.add(Version(id=str(uuid4()), document_id=row.id, number=d['version'], file_id=target.file_id, snapshot=version_snapshot(d)))
         audit(db, user, 'RESTORE_VERSION', d, body.note)
         db.refresh(row)
         sync_review(db, row, user, audit)

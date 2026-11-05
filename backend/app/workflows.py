@@ -1,5 +1,4 @@
 """Human review and explicitly verified validity, separate from completeness."""
-import copy
 import hashlib
 import json
 import os
@@ -14,6 +13,7 @@ from sqlalchemy.exc import IntegrityError
 
 from .database import Document, Patient, Version, User, ReviewItem, ReviewEvent, ValidityRule, DocumentValidity, ValidityEvent
 from .security import authorize, can_read, ADMINISTRATIVE, stamp
+from .versions import snapshot as version_snapshot, document_data
 
 DOCUMENT_TYPES = {'Patient Record', 'X-ray', 'Treatment Plan', 'Prescription', 'Consent Form', 'Laboratory Report', 'Billing/Receipt', 'Appointment Record'}
 ACTIVE_REVIEW = {'pending', 'in_review', 'changes_requested'}
@@ -200,7 +200,15 @@ def install_workflows(app, actor, database, audit, serialize):
             raise HTTPException(404, 'Review item not found')
         row = document(db, found.document_id, user, lock=True)
         item = db.scalar(select(ReviewItem).where(ReviewItem.id == item_id).with_for_update().execution_options(populate_existing=True))
+        if not can_read_review(db, item, user):
+            raise HTTPException(403, 'Your account cannot access this historical clinical review')
         return item, row
+
+    def can_read_review(db, item, user):
+        if user['role'] != 'front_desk':
+            return True
+        source = db.scalar(select(Version).where(Version.document_id == item.document_id, Version.number == item.version))
+        return source is not None and source.snapshot.get('type') in ADMINISTRATIVE
 
     def item_data(db, item, row):
         assignee = db.get(User, item.assignee_id) if item.assignee_id else None
@@ -209,7 +217,7 @@ def install_workflows(app, actor, database, audit, serialize):
     @router.get('/reviews')
     def queue(user=Depends(actor), db=Depends(database)):
         rows = {d.id: d for d in db.scalars(select(Document)) if not d.data.get('archived') and can_read(user, d.data)}
-        items = [item_data(db, item, rows[item.document_id]) for item in db.scalars(select(ReviewItem).order_by(ReviewItem.updated_at)) if item.document_id in rows]
+        items = [item_data(db, item, rows[item.document_id]) for item in db.scalars(select(ReviewItem).order_by(ReviewItem.updated_at)) if item.document_id in rows and can_read_review(db, item, user)]
         reviewers = [dict(id=u.id, name=u.name, role=u.role) for u in db.scalars(select(User).where(User.enabled == True, User.role.in_(['admin', 'dentist'])).order_by(User.name))] if user['role'] in {'admin', 'dentist'} else []
         return {'items': items, 'reviewers': reviewers}
 
@@ -265,7 +273,7 @@ def install_workflows(app, actor, database, audit, serialize):
                 raise HTTPException(422, 'Confirm the original is readable or request a replacement')
             if body.patientId and not body.patientVerified:
                 raise HTTPException(422, 'Patient reassignment requires explicit verification')
-            data = copy.deepcopy(row.data)
+            data = document_data(row.data)
             if body.patientVerified:
                 patient = db.get(Patient, body.patientId or row.patient_id)
                 if not patient:
@@ -276,7 +284,7 @@ def install_workflows(app, actor, database, audit, serialize):
             row.data = data
             row.revision += 1
             current = db.scalar(select(Version).where(Version.document_id == row.id, Version.number == data['version']))
-            current.snapshot = data
+            current.snapshot = version_snapshot(data)
             item.source_fingerprint = fingerprint(data, review=True)
         item.status = 'approved' if body.decision == 'approve' else 'changes_requested'
         item.decided_by, item.decided_at, item.decision_note = user['id'], stamp(), body.note.strip()

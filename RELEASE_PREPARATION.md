@@ -13,13 +13,21 @@ or release approval.
 
 ## Review scope
 
+Local task 4 review/fixes are complete:
+[PR_REVIEW_2026-11-06.md](PR_REVIEW_2026-11-06.md). Three reproduced history/access
+findings were resolved and tested against fresh PostgreSQL/runtime resources.
+Explicit merge approval remains pending; the PR is still draft. The saved app is
+stopped on preceding images, and task 3's backup predates the reviewed fixes.
+Applying the patch requires rebuilt API/migration images and a matching recovery
+checkpoint before release. This does not satisfy independent security review.
+
 Latest local recovery: [RECOVERY_CHECKPOINT_2026-11-06.md](RECOVERY_CHECKPOINT_2026-11-06.md).
 A fresh encrypted bundle of source `4292d88`, configuration, runtime models/images
 and data passed isolated restoration: 19 persisted tables, 40 originals, source/
 model/configuration equality and real OCR/model requests. Temporary resources were
 removed and the saved installation is stopped. Physical off-device recovery and
-operator custody/policies remain outstanding. Next is task 4 branch/PR review;
-this checkpoint does not provide merge approval or validate HTTPS staging.
+operator custody/policies remain outstanding. Task 4's later review is recorded
+above; this checkpoint does not provide merge approval or validate HTTPS staging.
 
 Latest security state: [SECURITY_REFRESH_2026-11-06.md](SECURITY_REFRESH_2026-11-06.md).
 The advisory database was refreshed and supported OS updates verified on all six

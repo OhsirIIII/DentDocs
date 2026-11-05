@@ -23,6 +23,10 @@ marked for completion.
 
 ## Current engineering continuation
 
+[November 6 branch review](PR_REVIEW_2026-11-06.md) fixes nested history growth and
+two front-desk access gaps involving older clinical versions/review notes. Local
+regression and isolated PostgreSQL checks passed; merge approval remains pending.
+
 [November 6 recovery checkpoint](RECOVERY_CHECKPOINT_2026-11-06.md) records a fresh
 encrypted backup and isolated restore matching 19 tables and 40 originals, with
 source, model, configuration and actual OCR/model checks. The app is stopped.
