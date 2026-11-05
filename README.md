@@ -27,7 +27,8 @@ marked for completion.
 
 [Local HTTPS staging rehearsal](HTTPS_STAGING_2026-11-06.md) fixes redirects behind
 the host TLS proxy and verifies secure sessions/workflows using the working name
-`dentdocs`. The new staging branch is unmerged. Test services were removed; clinic
+`dentdocs`. The changes are in unmerged draft
+[PR #2](https://github.com/OhsirIIII/DentDocs/pull/2). Test services were removed; clinic
 network/browser/second-device acceptance remains pending.
 
 [November 6 branch review](PR_REVIEW_2026-11-06.md) fixes nested history growth and

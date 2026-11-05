@@ -18,6 +18,11 @@ and have not been merged. New work fixes an API redirect that lost HTTPS and its
 port behind the host proxy. Nginx now emits a relative redirect. New local Caddy
 profile and read-only HTTPS verifier have 14 focused regression cases.
 
+Implementation/evidence commit `2f2759f` is pushed. Draft
+[PR #2](https://github.com/OhsirIIII/DentDocs/pull/2) targets `main` and is attached
+to the chat. This documentation handoff follows that commit. PR #2 review/merge
+is separate from the user's completed approval of PR #1; no new merge occurred.
+
 Checksum-verified Caddy 2.11.9, real verified TLS 1.3, secure-cookie/auth/expiry,
 original/OCR/review/validity/hybrid-search/summary workflows and private service
 boundaries passed in a disposable fresh-volume installation. All 43 operator/

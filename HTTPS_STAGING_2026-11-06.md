@@ -106,6 +106,9 @@ installation's volumes, configuration, existing recovery key and models remain;
 DentDocs is stopped. The checked Caddy binary and separately tagged test web image
 remain local tools/artifacts; no system service or persistent HTTPS deployment was
 installed. The source changes are on `codex/https-staging-verification` for review.
+Implementation/evidence commit `2f2759f` is pushed in draft
+[PR #2](https://github.com/OhsirIIII/DentDocs/pull/2), targeting `main`; no merge
+approval or merge has occurred for this new PR.
 
 The user chose `dentdocs` as a working name and can contact a groupmate remotely.
 To continue, agree on an authorized private-network connection and actual hostname

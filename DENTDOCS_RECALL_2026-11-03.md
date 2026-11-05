@@ -9,6 +9,8 @@ firewall/OS-trust changes. Temporary services/CA/credentials removed; saved app
 stopped and original volumes/settings/keys preserved. The user can contact a
 groupmate; a second-computer/private-network/browser test still needs coordination.
 This new branch is unmerged; read SESSION_RECAP.md before historical notes below.
+Implementation/evidence `2f2759f` is pushed in draft
+[PR #2](https://github.com/OhsirIIII/DentDocs/pull/2), targeting `main`.
 
 Latest handoff: user-approved PR #1 merged into `main` as `3677354` on November 6,
 2026. Task 4 is complete; subsequent task 5 branch work is recorded above.
