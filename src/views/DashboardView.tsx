@@ -18,15 +18,15 @@ export const DashboardView: React.FC = () => {
     visibleDocuments,
     patients,
     alerts,
+    reviewPendingCount,
     navigateTo,
     setSelectedDocumentId,
     setSelectedPatientId,
   } = useClinic();
 
   // Metrics
-  const incompleteDocs = visibleDocuments.filter((d) => d.completenessStatus === 'incomplete');
-  const reviewNeededDocs = visibleDocuments.filter(
-    (d) => d.completenessStatus === 'needs_review' || d.confidenceScore < 85
+  const incompleteDocs = visibleDocuments.filter(
+    (d) => d.completenessStatus === 'incomplete',
   );
   const recentDocs = [...visibleDocuments].slice(0, 7);
 
@@ -52,10 +52,10 @@ export const DashboardView: React.FC = () => {
     },
     {
       label: 'Needs review',
-      value: reviewNeededDocs.length,
-      hint: 'Low OCR confidence',
+      value: reviewPendingCount,
+      hint: 'Extraction and staff referrals',
       tone: 'default',
-      onClick: () => navigateTo('search', { filterStatus: 'needs_review' }),
+      onClick: () => navigateTo('review'),
     },
     {
       label: 'Accessible documents',
@@ -77,12 +77,12 @@ export const DashboardView: React.FC = () => {
     type === 'X-ray'
       ? 'bg-brand-950 text-brand-200'
       : type === 'Billing/Receipt'
-      ? 'bg-emerald-50 text-emerald-700'
-      : type === 'Prescription'
-      ? 'bg-indigo-50 text-indigo-700'
-      : type === 'Consent Form'
-      ? 'bg-amber-50 text-amber-700'
-      : 'bg-brand-50 text-brand-700';
+        ? 'bg-emerald-50 text-emerald-700'
+        : type === 'Prescription'
+          ? 'bg-indigo-50 text-indigo-700'
+          : type === 'Consent Form'
+            ? 'bg-amber-50 text-amber-700'
+            : 'bg-brand-50 text-brand-700';
 
   return (
     <div className="space-y-10 pb-16">
@@ -93,7 +93,11 @@ export const DashboardView: React.FC = () => {
             Welcome, {currentUser.name}
           </h1>
           <p className="text-sm text-slate-600 mt-1">
-            Signed in as <span className="font-medium text-slate-800">{currentUser.title}</span>.{' '}
+            Signed in as{' '}
+            <span className="font-medium text-slate-800">
+              {currentUser.title}
+            </span>
+            .{' '}
             {currentUser.role === 'front_desk'
               ? 'Showing billing and appointment records.'
               : 'Managing clinical documents, radiographs, and patient charts.'}
@@ -123,7 +127,10 @@ export const DashboardView: React.FC = () => {
         <section aria-labelledby="alerts-heading" className="space-y-3">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
             <div className="flex items-center gap-2.5">
-              <h2 id="alerts-heading" className="text-base font-semibold text-slate-900">
+              <h2
+                id="alerts-heading"
+                className="text-base font-semibold text-slate-900"
+              >
                 Clinical &amp; missing document alerts
               </h2>
               <span className="tabular-nums text-xs font-semibold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 whitespace-nowrap shrink-0">
@@ -131,7 +138,8 @@ export const DashboardView: React.FC = () => {
               </span>
             </div>
             <p className="text-xs text-slate-500">
-              Unsigned consents, expiring clearances, and missing licences for scheduled procedures
+              Unsigned consents, expiring clearances, and missing licences for
+              scheduled procedures
             </p>
           </div>
 
@@ -146,7 +154,9 @@ export const DashboardView: React.FC = () => {
                   <div className="flex items-start gap-3 min-w-0">
                     <span
                       className={`mt-0.5 w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
-                        critical ? 'bg-rose-50 text-rose-600' : 'bg-amber-50 text-amber-600'
+                        critical
+                          ? 'bg-rose-50 text-rose-600'
+                          : 'bg-amber-50 text-amber-600'
                       }`}
                       aria-hidden="true"
                     >
@@ -163,22 +173,32 @@ export const DashboardView: React.FC = () => {
                             critical ? 'text-rose-700' : 'text-amber-700'
                           }`}
                         >
-                          {critical ? 'Urgent: missing document' : 'Expiring soon'}
+                          {critical
+                            ? 'Urgent: missing document'
+                            : 'Expiring soon'}
                         </span>
                         {alert.scheduledDate && (
                           <>
-                            <span className="text-slate-300" aria-hidden="true">·</span>
+                            <span className="text-slate-300" aria-hidden="true">
+                              ·
+                            </span>
                             <span className="text-[11px] text-slate-500 tabular-nums">
                               Scheduled {alert.scheduledDate}
                             </span>
                           </>
                         )}
                       </div>
-                      <h3 className="text-sm font-semibold text-slate-900 mt-0.5">{alert.title}</h3>
+                      <h3 className="text-sm font-semibold text-slate-900 mt-0.5">
+                        {alert.title}
+                      </h3>
                       <p className="text-xs text-slate-600 mt-1 leading-relaxed max-w-[75ch]">
-                        <span className="font-medium text-slate-800">{alert.patientName}</span>
+                        <span className="font-medium text-slate-800">
+                          {alert.patientName}
+                        </span>
                         <span className="text-slate-400"> · </span>
-                        <span className="font-mono text-[11px]">{alert.patientRecordNo}</span>
+                        <span className="font-mono text-[11px]">
+                          {alert.patientRecordNo}
+                        </span>
                         <span className="text-slate-400"> · </span>
                         {alert.description}
                       </p>
@@ -197,11 +217,16 @@ export const DashboardView: React.FC = () => {
                     </button>
                     {alert.linkedDocId ? (
                       <button
-                        onClick={() => handleOpenDoc(alert.linkedDocId!, alert.patientId)}
+                        onClick={() =>
+                          handleOpenDoc(alert.linkedDocId!, alert.patientId)
+                        }
                         className="inline-flex items-center gap-1.5 h-8 px-3 text-xs font-semibold text-brand-800 bg-brand-50 hover:bg-brand-100 border border-brand-200 rounded-md transition-colors whitespace-nowrap"
                       >
                         <span>{alert.actionLabel}</span>
-                        <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+                        <ArrowRight
+                          className="w-3.5 h-3.5"
+                          aria-hidden="true"
+                        />
                       </button>
                     ) : (
                       <button
@@ -212,7 +237,10 @@ export const DashboardView: React.FC = () => {
                         className="inline-flex items-center gap-1.5 h-8 px-3 text-xs font-semibold text-brand-800 bg-brand-50 hover:bg-brand-100 border border-brand-200 rounded-md transition-colors whitespace-nowrap"
                       >
                         <span>Upload missing form</span>
-                        <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+                        <ArrowRight
+                          className="w-3.5 h-3.5"
+                          aria-hidden="true"
+                        />
                       </button>
                     )}
                   </div>
@@ -228,9 +256,12 @@ export const DashboardView: React.FC = () => {
               <ShieldCheck className="w-5 h-5" aria-hidden="true" />
             </span>
             <div>
-              <h2 className="text-sm font-semibold text-slate-900">No active clinical or compliance alerts</h2>
+              <h2 className="text-sm font-semibold text-slate-900">
+                No active clinical or compliance alerts
+              </h2>
               <p className="text-xs text-slate-600 mt-0.5">
-                All scheduled procedures have signed consent forms, valid medical clearances, and recent radiographs.
+                All scheduled procedures have signed consent forms, valid
+                medical clearances, and recent radiographs.
               </p>
             </div>
           </div>
@@ -253,7 +284,9 @@ export const DashboardView: React.FC = () => {
               className="group text-left bg-white px-5 py-4 hover:bg-slate-50 transition-colors focus-visible:outline-offset-[-2px]"
             >
               <span className="flex items-center justify-between gap-2">
-                <span className="text-xs font-medium text-slate-600">{s.label}</span>
+                <span className="text-xs font-medium text-slate-600">
+                  {s.label}
+                </span>
                 <ChevronRight
                   className="w-4 h-4 text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all"
                   aria-hidden="true"
@@ -266,7 +299,9 @@ export const DashboardView: React.FC = () => {
               >
                 {s.value}
               </span>
-              <span className="block mt-1.5 text-xs text-slate-500">{s.hint}</span>
+              <span className="block mt-1.5 text-xs text-slate-500">
+                {s.hint}
+              </span>
             </button>
           ))}
         </div>
@@ -275,14 +310,24 @@ export const DashboardView: React.FC = () => {
       {/* Work queues */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
         {/* Flagged incomplete */}
-        <section aria-labelledby="incomplete-heading" className="lg:col-span-5 space-y-3">
+        <section
+          aria-labelledby="incomplete-heading"
+          className="lg:col-span-5 space-y-3"
+        >
           <div className="flex items-baseline justify-between gap-4">
             <div>
-              <h2 id="incomplete-heading" className="text-base font-semibold text-slate-900">
+              <h2
+                id="incomplete-heading"
+                className="text-base font-semibold text-slate-900"
+              >
                 Flagged incomplete
-                <span className="ml-1.5 tabular-nums text-slate-400 font-medium">{incompleteDocs.length}</span>
+                <span className="ml-1.5 tabular-nums text-slate-400 font-medium">
+                  {incompleteDocs.length}
+                </span>
               </h2>
-              <p className="text-xs text-slate-500">Action required before clinical or insurance sign-off</p>
+              <p className="text-xs text-slate-500">
+                Action required before clinical or insurance sign-off
+              </p>
             </div>
             {incompleteDocs.length > 0 && (
               <button
@@ -297,12 +342,21 @@ export const DashboardView: React.FC = () => {
 
           {incompleteDocs.length === 0 ? (
             <div className="bg-white border border-slate-200 rounded-xl px-6 py-8 text-center">
-              <CheckCircle className="w-7 h-7 text-emerald-500 mx-auto mb-2" aria-hidden="true" />
-              <p className="text-sm font-semibold text-slate-800">All documents complete</p>
-              <p className="text-xs text-slate-500 mt-1 mb-4">No missing signatures or fields detected.</p>
+              <CheckCircle
+                className="w-7 h-7 text-emerald-500 mx-auto mb-2"
+                aria-hidden="true"
+              />
+              <p className="text-sm font-semibold text-slate-800">
+                All documents complete
+              </p>
+              <p className="text-xs text-slate-500 mt-1 mb-4">
+                No missing signatures or fields detected.
+              </p>
               <button
                 type="button"
-                onClick={() => navigateTo('search', { filterStatus: 'complete' })}
+                onClick={() =>
+                  navigateTo('search', { filterStatus: 'complete' })
+                }
                 className="h-8 px-3.5 text-xs font-semibold text-brand-800 bg-brand-50 hover:bg-brand-100 border border-brand-200 rounded-md transition-colors"
               >
                 Browse completed records
@@ -322,11 +376,15 @@ export const DashboardView: React.FC = () => {
                           {doc.title}
                         </span>
                         <span className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5 min-w-0">
-                          <span className="truncate text-slate-700">{doc.patientName}</span>
+                          <span className="truncate text-slate-700">
+                            {doc.patientName}
+                          </span>
                           <span aria-hidden="true">·</span>
                           <span className="shrink-0">{doc.type}</span>
                           <span aria-hidden="true">·</span>
-                          <span className="shrink-0 tabular-nums">{doc.displayDate}</span>
+                          <span className="shrink-0 tabular-nums">
+                            {doc.displayDate}
+                          </span>
                         </span>
                       </span>
                       <ChevronRight
@@ -336,9 +394,14 @@ export const DashboardView: React.FC = () => {
                     </span>
                     {doc.missingFields.length > 0 && (
                       <span className="mt-2 flex items-start gap-1.5 text-xs text-amber-800">
-                        <AlertTriangle className="w-3.5 h-3.5 text-amber-600 mt-px shrink-0" aria-hidden="true" />
+                        <AlertTriangle
+                          className="w-3.5 h-3.5 text-amber-600 mt-px shrink-0"
+                          aria-hidden="true"
+                        />
                         <span className="min-w-0">
-                          <span className="line-clamp-1">{doc.missingFields[0]}</span>
+                          <span className="line-clamp-1">
+                            {doc.missingFields[0]}
+                          </span>
                           {doc.missingFields.length > 1 && (
                             <span className="text-amber-700/80">
                               +{doc.missingFields.length - 1} more missing item
@@ -356,20 +419,31 @@ export const DashboardView: React.FC = () => {
         </section>
 
         {/* Recently uploaded */}
-        <section aria-labelledby="recent-heading" className="lg:col-span-7 space-y-3">
+        <section
+          aria-labelledby="recent-heading"
+          className="lg:col-span-7 space-y-3"
+        >
           <div className="flex items-baseline justify-between gap-4">
             <div>
-              <h2 id="recent-heading" className="text-base font-semibold text-slate-900">
+              <h2
+                id="recent-heading"
+                className="text-base font-semibold text-slate-900"
+              >
                 Recently uploaded
               </h2>
-              <p className="text-xs text-slate-500">Latest processed dental scans, receipts, and clinical notes</p>
+              <p className="text-xs text-slate-500">
+                Latest processed dental scans, receipts, and clinical notes
+              </p>
             </div>
             <button
               onClick={() => navigateTo('search')}
               className="text-xs font-semibold text-brand-700 hover:text-brand-900 inline-flex items-center gap-1 shrink-0 rounded"
             >
               <span>
-                View all <span className="tabular-nums">({visibleDocuments.length})</span>
+                View all{' '}
+                <span className="tabular-nums">
+                  ({visibleDocuments.length})
+                </span>
               </span>
               <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
             </button>
@@ -377,10 +451,16 @@ export const DashboardView: React.FC = () => {
 
           {recentDocs.length === 0 ? (
             <div className="bg-white border border-slate-200 rounded-xl px-6 py-10 text-center">
-              <FileText className="w-7 h-7 text-slate-300 mx-auto mb-2" aria-hidden="true" />
-              <p className="text-sm font-semibold text-slate-800">No documents in the vault yet</p>
+              <FileText
+                className="w-7 h-7 text-slate-300 mx-auto mb-2"
+                aria-hidden="true"
+              />
+              <p className="text-sm font-semibold text-slate-800">
+                No documents in the vault yet
+              </p>
               <p className="text-xs text-slate-500 mt-1 mb-4">
-                Upload a dental record or receipt to begin building your clinical archive.
+                Upload a dental record or receipt to begin building your
+                clinical archive.
               </p>
               <button
                 type="button"
@@ -410,11 +490,19 @@ export const DashboardView: React.FC = () => {
                           {doc.title}
                         </span>
                         <span className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5 min-w-0">
-                          <span className="font-medium text-slate-700 truncate">{doc.patientName}</span>
+                          <span className="font-medium text-slate-700 truncate">
+                            {doc.patientName}
+                          </span>
                           <span aria-hidden="true">·</span>
-                          <span className="shrink-0 hidden sm:inline">{doc.type}</span>
-                          <span aria-hidden="true" className="hidden sm:inline">·</span>
-                          <span className="shrink-0 tabular-nums">{doc.displayDate}</span>
+                          <span className="shrink-0 hidden sm:inline">
+                            {doc.type}
+                          </span>
+                          <span aria-hidden="true" className="hidden sm:inline">
+                            ·
+                          </span>
+                          <span className="shrink-0 tabular-nums">
+                            {doc.displayDate}
+                          </span>
                         </span>
                       </span>
                     </span>
@@ -422,15 +510,23 @@ export const DashboardView: React.FC = () => {
                     <span className="text-right shrink-0">
                       {doc.completenessStatus === 'complete' ? (
                         <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700">
-                          <CheckCircle className="w-3.5 h-3.5" aria-hidden="true" /> Complete
+                          <CheckCircle
+                            className="w-3.5 h-3.5"
+                            aria-hidden="true"
+                          />{' '}
+                          Complete
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-700">
-                          <AlertTriangle className="w-3.5 h-3.5" aria-hidden="true" /> Incomplete
+                          <AlertTriangle
+                            className="w-3.5 h-3.5"
+                            aria-hidden="true"
+                          />{' '}
+                          Incomplete
                         </span>
                       )}
                       <span className="block text-[11px] text-slate-400 mt-0.5 tabular-nums">
-                        OCR {doc.confidenceScore}%
+                        {doc.handwritingSources?.length ? "Handwriting · review" : `OCR ${doc.confidenceScore}%`}
                       </span>
                     </span>
                   </button>

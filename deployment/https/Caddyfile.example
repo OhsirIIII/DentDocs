@@ -1,0 +1,7 @@
+# Preparation template only. Replace the reserved example hostname with the
+# clinic-approved DNS name and distribute the internal CA trust to staff devices.
+# Run Caddy on the same host as Docker, not inside an unrelated container.
+dentdocs.clinic.example {
+    tls internal
+    reverse_proxy 127.0.0.1:8080
+}

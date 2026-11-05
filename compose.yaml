@@ -1,0 +1,118 @@
+services:
+  db:
+    networks: [backend]
+    build: ./deployment/database
+    environment:
+      POSTGRES_DB: dentdocs_mock
+      POSTGRES_USER: dentdocs
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - database:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U dentdocs -d dentdocs_mock"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  migrate:
+    networks: [backend]
+    build: ./backend
+    command: ["python", "-m", "app.initialize"]
+    environment:
+      DENTDOCS_MODE: mock
+      DATABASE_URL: postgresql+psycopg://dentdocs:${POSTGRES_PASSWORD}@db:5432/dentdocs_mock
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?Run scripts/bootstrap-admin.py}
+      BOOTSTRAP_ADMIN_PASSWORD: ${BOOTSTRAP_ADMIN_PASSWORD:?Run scripts/bootstrap-admin.py}
+      FILE_ROOT: /data/files
+      FILE_ENCRYPTION_KEY: ${FILE_ENCRYPTION_KEY:?Set FILE_ENCRYPTION_KEY in .env}
+    volumes:
+      - files:/data/files
+    depends_on:
+      db:
+        condition: service_healthy
+  api:
+    networks: [backend, ocr_link]
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 2g
+    cpus: 2
+    pids_limit: 128
+    tmpfs:
+      - /tmp:size=256m,mode=1777,noexec,nosuid
+    build: ./backend
+    environment:
+      DENTDOCS_MODE: mock
+      DENTDOCS_MIGRATE: "false"
+      DATABASE_URL: postgresql+psycopg://dentdocs_app:${APP_DB_PASSWORD}@db:5432/dentdocs_mock
+      FILE_ROOT: /data/files
+      FILE_ENCRYPTION_KEY: ${FILE_ENCRYPTION_KEY}
+      APP_ORIGIN: ${APP_ORIGIN:-http://127.0.0.1:8080,http://localhost:8080}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      OCR_URL: http://ocr:8092
+      OCR_TOKEN: ${OCR_TOKEN:?Run scripts/configure-ocr.py}
+      HANDWRITING_URL: http://handwriting:8091
+      HANDWRITING_TOKEN: ${HANDWRITING_TOKEN:-}
+    volumes:
+      - files:/data/files
+    depends_on:
+      ocr:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+  ocr:
+    networks: [ocr_link]
+    build:
+      context: .
+      dockerfile: ocr/Dockerfile
+    environment:
+      OCR_TOKEN: ${OCR_TOKEN:?Run scripts/configure-ocr.py}
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 1g
+    cpus: 2
+    pids_limit: 64
+    tmpfs:
+      - /tmp:size=256m,mode=1777,noexec,nosuid
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8092/health',timeout=2).read()"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+  handwriting:
+    networks: [backend]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    profiles: [handwriting, semantic]
+    build: ./handwriting
+    environment:
+      HANDWRITING_TOKEN: ${HANDWRITING_TOKEN:-}
+    volumes:
+      - ./work/handwriting/amr-base-run-001/trained:/model:ro
+      - ./work/semantic/model:/embedding-model:ro
+    mem_limit: 3g
+    cpus: 2
+    pids_limit: 128
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777,noexec,nosuid
+    restart: unless-stopped
+  web:
+    networks: [default, backend]
+    build: .
+    ports:
+      - "127.0.0.1:8080:80"
+    depends_on:
+      - api
+volumes:
+  database:
+  files:
+
+networks:
+  default: {}
+  backend:
+    internal: true
+  ocr_link:
+    internal: true

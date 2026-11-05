@@ -1,3 +1,5 @@
+import { HandwritingInput } from '../components/HandwritingInput';
+import { uploadOriginal, request } from '../data/apiClient';
 import React, { useState, useEffect } from 'react';
 import { useClinic } from '../context/ClinicContext';
 import {
@@ -6,7 +8,6 @@ import {
   DentalDocument,
   CompletenessStatus,
 } from '../types/dental';
-import { DocumentVisualPreview } from '../components/DocumentVisualPreview';
 import {
   UploadCloud,
   FileCheck,
@@ -25,35 +26,7 @@ import {
   Layers,
 } from 'lucide-react';
 
-interface ExtractedFormData {
-  title: string;
-  type: DocumentType;
-  patientId: string;
-  patientRecordNo: string;
-  patientName: string;
-  date: string;
-  displayDate: string;
-  toothNumbers: number[];
-  procedureCategory: ProcedureCategory;
-  tags: string[];
-  confidenceScore: number;
-  fieldConfidence: {
-    documentType: number;
-    recordNo: number;
-    date: number;
-    toothNumbers: number;
-    procedureCategory: number;
-    tags: number;
-  };
-  completenessStatus: CompletenessStatus;
-  missingFields: string[];
-  extractedText: string;
-  fileType: 'PDF' | 'JPG' | 'PNG';
-  fileSize: string;
-  isBlurryWarning?: boolean;
-  isNameMismatch?: boolean;
-  mismatchedDetectedName?: string;
-}
+type ExtractedFormData = import('../data/clinicApi').LocalOcrResult;
 
 export const UploadView: React.FC = () => {
   const {
@@ -66,7 +39,19 @@ export const UploadView: React.FC = () => {
     setSelectedDocumentId,
   } = useClinic();
 
-  // Step state: 1. choose patient & drop file | 2. processing (3-4s) | 3. review & confirm
+  const [originalFile, setOriginalFile] = useState<File | null>(null);
+  const [stagedFileId, setStagedFileId] = useState('');
+  const [originalUrl, setOriginalUrl] = useState('');
+  useEffect(() => {
+    if (!originalFile) { setOriginalUrl(''); return; }
+    const url = URL.createObjectURL(originalFile); setOriginalUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [originalFile]);
+  const [handwritingBusy, setHandwritingBusy] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
+
+  // Step state: 1. choose patient & drop file | 2. local processing | 3. review & confirm
   const [currentStep, setCurrentStep] = useState<'input' | 'processing' | 'review'>('input');
   const [chosenPatientId, setChosenPatientId] = useState<string>(
     selectedPatientId || patients[0]?.id || 'pat-001'
@@ -80,10 +65,8 @@ export const UploadView: React.FC = () => {
   // Processing stage animation
   const [processingStage, setProcessingStage] = useState<number>(0);
   const processingStages = [
-    { title: 'Scanning text & layout artifacts...', percent: 25 },
-    { title: 'Detecting Philippine dental document type & clinic headers...', percent: 50 },
-    { title: 'Extracting FDI tooth numbers, dates, and doctor credentials...', percent: 75 },
-    { title: 'Checking completeness & Philippine compliance checklists...', percent: 100 },
+    { title: 'Retaining encrypted original…', percent: 25 },
+    { title: 'Reading printed text locally; this may take up to 90 seconds…', percent: 60 },
   ];
 
   // Editable extracted data in review step
@@ -94,157 +77,39 @@ export const UploadView: React.FC = () => {
   const handleFileChosen = (
     fileName: string,
     fileType: 'PDF' | 'JPG' | 'PNG' = 'PDF',
-    fileSize = '1.8 MB'
+    fileSize = '1.8 MB',
+    original?: File
   ) => {
     setUploadedFile({ name: fileName, type: fileType, size: fileSize });
+    setOriginalFile(original || null);
+    setStagedFileId(''); setExtractedData(null); setSaveError('');
   };
 
-  // Run the 3-4 second processing animation
-  const startProcessing = () => {
-    if (!uploadedFile) return;
-
-    setCurrentStep('processing');
-    setProcessingStage(0);
-
-    // Stage 1 -> Stage 2 -> Stage 3 -> Stage 4 -> Review
-    const timer1 = setTimeout(() => setProcessingStage(1), 900);
-    const timer2 = setTimeout(() => setProcessingStage(2), 1900);
-    const timer3 = setTimeout(() => setProcessingStage(3), 2900);
-    const timer4 = setTimeout(() => {
-      generateExtractedResult();
-      setCurrentStep('review');
-    }, 3800);
-
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
-      clearTimeout(timer4);
-    };
-  };
-
-  // Generate plausible mock OCR extraction based on filename and chosen patient
-  const generateExtractedResult = () => {
-    const patient = patients.find((p) => p.id === chosenPatientId) || patients[0];
-    const nameLower = uploadedFile?.name.toLowerCase() || '';
-
-    let type: DocumentType = 'Patient Record';
-    let procedureCategory: ProcedureCategory = 'Restorative';
-    let toothNumbers: number[] = [16, 26];
-    let tags = ['Clinical Chart', 'Exam Record'];
-    let completenessStatus: CompletenessStatus = 'complete';
-    let missingFields: string[] = [];
-    let isBlurry = false;
-    let isMismatch = false;
-    let mismatchedDetectedName = '';
-    let extractedText = '';
-
-    // Field-specific confidence default scores
-    let fieldConfidence = {
-      documentType: 96,
-      recordNo: 98,
-      date: 94,
-      toothNumbers: 92,
-      procedureCategory: 95,
-      tags: 90,
-    };
-
-    if (nameLower.includes('xray') || nameLower.includes('opg') || nameLower.includes('radiograph') || uploadedFile?.type === 'JPG') {
-      type = 'X-ray';
-      procedureCategory = 'Oral Surgery';
-      toothNumbers = [18, 28, 38, 48];
-      tags = ['Digital Radiograph', 'Panoramic OPG', 'Bone Assessment'];
-      extractedText = `DIGITAL PANORAMIC SYSTEM - SAN NICOLAS DENTAL CLINIC\nPatient: ${patient.fullName} [${patient.recordNo}]\nkVp: 68 | mA: 8 | Exposure Time: 14.2s\nReport: Alveolar bone crest levels within normal limits. Impacted third molars present.\nRadiologist: Dr. Maria Elena Santos (PRC 0074512)`;
-    } else if (nameLower.includes('consent')) {
-      type = 'Consent Form';
-      procedureCategory = patient.isMinor ? 'Orthodontics' : 'Oral Surgery';
-      toothNumbers = patient.isMinor ? [14, 24] : [38, 48];
-      tags = ['Informed Consent', 'Bilingual English-Tagalog'];
-      if (patient.isMinor) {
-        completenessStatus = 'incomplete';
-        missingFields = ['Legal Guardian Signature', 'Guardian Government ID Number'];
-        fieldConfidence.toothNumbers = 72; // low confidence highlight
-        extractedText = `INFORMED CONSENT FOR PEDIATRIC ORTHODONTIC APPLIANCE\nPatient: ${patient.fullName} (Age: ${patient.age}) | Record: ${patient.recordNo}\nParent/Guardian declared: ${patient.guardianName || 'Guardian'}\n[ALERT: Guardian signature space empty - requires physical or digital signing]`;
-      } else {
-        tags.push('Signed & Verified');
-        extractedText = `INFORMED CONSENT FOR DENTAL SURGERY\nPatient: ${patient.fullName} | Record: ${patient.recordNo}\nStipulations explained and accepted.\nSigned: ${patient.fullName}\nWitness: Carla Mendoza, RDA`;
-      }
-    } else if (nameLower.includes('prescription') || nameLower.includes('reseta') || nameLower.includes('rx')) {
-      type = 'Prescription';
-      procedureCategory = 'Restorative';
-      toothNumbers = [47];
-      tags = ['Prescription Rx', 'Analgesic', 'Antibiotic'];
-      extractedText = `SAN NICOLAS DENTAL CLINIC - PRESCRIPTION Rx\nDoctor: Dr. Jose Paolo Reyes, DDM | PRC: 0089123 | PTR: 2026-904123\nPatient: ${patient.fullName} | Date: ${new Date().toISOString().split('T')[0]}\n\nRx: Amoxicillin 500mg capsules #21\nSig: 1 capsule every 8 hours for 7 days.`;
-    } else if (nameLower.includes('bill') || nameLower.includes('receipt') || nameLower.includes('or_')) {
-      type = 'Billing/Receipt';
-      procedureCategory = 'Billing & Administrative';
-      toothNumbers = [];
-      tags = ['Official Receipt', 'BIR Registered', 'Cash Settlement'];
-      extractedText = `SAN NICOLAS DENTAL CLINIC - OFFICIAL RECEIPT\nOR No: 2026-${Math.floor(8000 + Math.random() * 900)}\nReceived from: ${patient.fullName} [${patient.recordNo}]\nAmount: ₱3,500.00 (VAT Inclusive)\nCashier: Mark Vincent Bautista`;
-    } else if (nameLower.includes('lab') || nameLower.includes('zirconia')) {
-      type = 'Laboratory Report';
-      procedureCategory = 'Prosthodontics';
-      toothNumbers = [11, 21];
-      tags = ['Dental Laboratory', 'Zirconia Monolithic', 'Shade A2'];
-      extractedText = `CERAMIC MASTERS LAB PHILIPPINES\nCase: Full Contour Zirconia Crown\nPatient: ${patient.fullName} [${patient.recordNo}]\nShade: A2 | Margin check: 100% PASS`;
-    } else if (nameLower.includes('plan')) {
-      type = 'Treatment Plan';
-      procedureCategory = 'Restorative';
-      toothNumbers = [36, 46];
-      tags = ['Treatment Roadmap', 'Phased Plan'];
-      extractedText = `TREATMENT ESTIMATE & PROPOSAL\nPatient: ${patient.fullName} [${patient.recordNo}]\nPhase 1: Prophylaxis & Caries Excavation\nPhase 2: Composite Resin Bonding\nEstimated: ₱5,500.00`;
+  const startProcessing = async (manual = false, handwritingText?: string) => {
+    const patient = patients.find(p => p.id === chosenPatientId);
+    if (!originalFile || !patient) return;
+    setSaveError(''); setCurrentStep('processing'); setProcessingStage(0);
+    try {
+      const fileId = stagedFileId || await uploadOriginal(originalFile);
+      setStagedFileId(fileId); setProcessingStage(1);
+      const result = manual || currentUser.role === 'front_desk'
+        ? {
+            title: `${patient.fullName} - Uploaded document`, type: currentUser.role === 'front_desk' ? 'Billing/Receipt' : 'Patient Record',
+            patientId: patient.id, patientName: patient.fullName, patientRecordNo: patient.recordNo,
+            date: '', displayDate: '', toothNumbers: [], procedureCategory: currentUser.role === 'front_desk' ? 'Billing & Administrative' : 'Restorative',
+            tags: [], confidenceScore: 0,
+            fieldConfidence: { documentType: 0, recordNo: 0, date: 0, toothNumbers: 0, procedureCategory: 0, tags: 0 },
+            completenessStatus: 'needs_review', missingFields: ['Staff completeness verification'], extractedText: handwritingText || '', handwritingDraft: handwritingText !== undefined,
+            fileType: uploadedFile!.type, fileSize: uploadedFile!.size,
+          } as ExtractedFormData
+        : await request<ExtractedFormData>(`/files/${encodeURIComponent(fileId)}/extract`, {
+            method: 'POST', body: JSON.stringify({ patientId: patient.id }),
+          });
+      setExtractedData(result); setCurrentStep('review');
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : 'Local OCR failed. Retry or enter metadata manually.');
+      setCurrentStep('input');
     }
-
-    // Check edge case triggers
-    if (nameLower.includes('blurry')) {
-      isBlurry = true;
-      fieldConfidence.date = 64; // amber highlight
-      fieldConfidence.toothNumbers = 58; // amber highlight
-    }
-
-    if (nameLower.includes('mismatch')) {
-      isMismatch = true;
-      mismatchedDetectedName = 'Juan Miguel Dela Cruz';
-      fieldConfidence.recordNo = 62; // amber highlight
-    }
-
-    const todayStr = new Date().toISOString().split('T')[0];
-    const initialTitle = `${patient.fullName} - ${type} (${uploadedFile?.name || 'Scanned Document'})`;
-
-    setExtractedData({
-      title: initialTitle,
-      type,
-      patientId: patient.id,
-      patientRecordNo: patient.recordNo,
-      patientName: patient.fullName,
-      date: todayStr,
-      displayDate: new Date().toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-      }),
-      toothNumbers,
-      procedureCategory,
-      tags,
-      confidenceScore: Math.round(
-        (fieldConfidence.documentType +
-          fieldConfidence.recordNo +
-          fieldConfidence.date +
-          fieldConfidence.toothNumbers +
-          fieldConfidence.procedureCategory +
-          fieldConfidence.tags) /
-          6
-      ),
-      fieldConfidence,
-      completenessStatus,
-      missingFields,
-      extractedText,
-      fileType: uploadedFile?.type || 'PDF',
-      fileSize: uploadedFile?.size || '1.8 MB',
-      isBlurryWarning: isBlurry,
-      isNameMismatch: isMismatch,
-      mismatchedDetectedName,
-    });
   };
 
   const handleAddTag = () => {
@@ -266,12 +131,17 @@ export const UploadView: React.FC = () => {
     });
   };
 
-  const handleSaveToPatientRecord = (sendToReview = false) => {
-    if (!extractedData) return;
-
+  const handleSaveToPatientRecord = async (sendToReview = false) => {
+    if (!extractedData || isSaving) return;
+    if (!originalFile) { setSaveError('Choose an original PDF, JPG, or PNG file before saving.'); return; }
+    if (!extractedData.date) { setSaveError('Enter the document date from the original before saving.'); return; }
+    setIsSaving(true); setSaveError('');
+    try {
+    const fileId = stagedFileId || await uploadOriginal(originalFile);
     const newDocId = `doc-${Date.now().toString().slice(-4)}`;
     const finalDoc: DentalDocument = {
       id: newDocId,
+      fileId,
       patientId: extractedData.patientId,
       patientRecordNo: extractedData.patientRecordNo,
       patientName: extractedData.patientName,
@@ -296,7 +166,7 @@ export const UploadView: React.FC = () => {
       }),
       isBlurryWarning: extractedData.isBlurryWarning,
       isNameMismatch: extractedData.isNameMismatch,
-      reviewNotes: sendToReview
+      reviewNotes: extractedData.handwritingDraft ? 'Selected handwriting regions only; verify the full original and patient linkage.' : sendToReview
         ? 'Sent to review queue by staff for further doctor validation.'
         : undefined,
       version: 1,
@@ -304,22 +174,30 @@ export const UploadView: React.FC = () => {
       versionHistory: [],
     };
 
-    addDocument(finalDoc);
-    setSelectedDocumentId(newDocId);
+    const saved = await addDocument(finalDoc);
+    setSelectedDocumentId(saved.id);
     setSelectedPatientId(extractedData.patientId);
-    navigateTo('viewer', { documentId: newDocId });
+    if (sendToReview) {
+      navigateTo('review');
+    } else {
+      navigateTo('viewer', { documentId: saved.id });
+    }
+    } catch (error) { setSaveError(error instanceof Error ? error.message : 'Unable to save'); }
+    finally { setIsSaving(false); }
   };
 
   return (
     <div className="space-y-6 pb-12">
+      {saveError && <p role="alert" className="bg-rose-50 p-3 text-rose-900">{saveError}</p>}
+      {isSaving && <p role="status">Saving original file and reviewed record…</p>}
       {/* Header */}
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">
           Upload & Inspect Clinical Document
         </h1>
         <p className="text-sm text-slate-500 mt-0.5">
-          Drop any scan or radiograph. San Nicolas Dental Clinic extracts text, auto-classifies the document, checks
-          completeness, and requires staff confirmation before saving.
+          Upload a PDF or image. Local OCR suggests printed text and document fields for staff review. Staff check
+          completeness before saving. For handwriting in JPG/PNG images, use the experimental region selector below. Radiograph interpretation is unsupported.
         </p>
 
         {/* 5-step visual roadmap indicator */}
@@ -405,8 +283,9 @@ export const UploadView: React.FC = () => {
                 Select Patient Record:
               </label>
               <select
+                disabled={handwritingBusy}
                 value={chosenPatientId}
-                onChange={(e) => setChosenPatientId(e.target.value)}
+                onChange={(e) => { setChosenPatientId(e.target.value); setStagedFileId(''); }}
                 className="w-full text-xs font-medium text-slate-800 bg-slate-50 border border-slate-200 rounded-xl p-2.5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500"
               >
                 {patients.map((p) => (
@@ -450,7 +329,7 @@ export const UploadView: React.FC = () => {
               <div className="space-y-1">
                 <button
                   type="button"
-                  onClick={() => setChosenPatientId('pat-006')}
+                  disabled={handwritingBusy} onClick={() => { setChosenPatientId('pat-006'); setStagedFileId(''); } }
                   className="w-full text-left text-xs p-1.5 rounded hover:bg-slate-100 text-slate-700 flex justify-between"
                 >
                   <span>Chloe Danielle Lim</span>
@@ -458,7 +337,7 @@ export const UploadView: React.FC = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setChosenPatientId('pat-001')}
+                  disabled={handwritingBusy} onClick={() => { setChosenPatientId('pat-001'); setStagedFileId(''); } }
                   className="w-full text-left text-xs p-1.5 rounded hover:bg-slate-100 text-slate-700 flex justify-between"
                 >
                   <span>Juan Miguel Dela Cruz</span>
@@ -466,7 +345,7 @@ export const UploadView: React.FC = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setChosenPatientId('pat-005')}
+                  disabled={handwritingBusy} onClick={() => { setChosenPatientId('pat-005'); setStagedFileId(''); } }
                   className="w-full text-left text-xs p-1.5 rounded hover:bg-slate-100 text-slate-700 flex justify-between"
                 >
                   <span>Gabriel Dizon</span>
@@ -487,15 +366,24 @@ export const UploadView: React.FC = () => {
               </h2>
             </div>
 
+            <label className="block text-sm font-semibold mb-3">
+              Choose original file (required to save)
+              <input disabled={handwritingBusy} className="block mt-2" type="file" accept="application/pdf,image/jpeg,image/png" onChange={e => {
+                const file = e.target.files?.[0];
+                setOriginalFile(file || null);
+                if (file) handleFileChosen(file.name, file.type === 'image/png' ? 'PNG' : file.type === 'image/jpeg' ? 'JPG' : 'PDF', `${file.size.toLocaleString()} bytes`, file);
+              }} />
+            </label>
             {/* Interactive Drag & Drop Area */}
             <div
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => {
                 e.preventDefault();
                 const file = e.dataTransfer.files[0];
-                if (file) {
+                if (file && !handwritingBusy) {
+                  setOriginalFile(file);
                   const ext = file.name.split('.').pop()?.toUpperCase() as any;
-                  handleFileChosen(file.name, ['PDF', 'JPG', 'PNG'].includes(ext) ? ext : 'PDF');
+                  handleFileChosen(file.name, ['PDF', 'JPG', 'PNG'].includes(ext) ? ext : 'PDF', `${file.size.toLocaleString()} bytes`, file);
                 }
               }}
               className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all ${
@@ -510,13 +398,14 @@ export const UploadView: React.FC = () => {
 
               {uploadedFile ? (
                 <div className="space-y-1">
-                  <p className="text-sm font-bold text-slate-900">{uploadedFile.name}</p>
+                  <p className="text-sm font-bold text-slate-900 break-all">{uploadedFile.name}</p>
                   <p className="text-xs text-slate-500">
                     Format: {uploadedFile.type} · Size: {uploadedFile.size} · Ready for OCR
                   </p>
                   <button
                     type="button"
-                    onClick={() => setUploadedFile(null)}
+                    disabled={handwritingBusy}
+                    onClick={() => { setUploadedFile(null); setOriginalFile(null); setStagedFileId(''); }}
                     className="text-xs text-rose-600 hover:underline mt-2 inline-block"
                   >
                     Remove file
@@ -525,109 +414,35 @@ export const UploadView: React.FC = () => {
               ) : (
                 <div className="space-y-1">
                   <p className="text-sm font-semibold text-slate-800">
-                    Drag and drop file here, or click to choose
+                    Drag and drop a file here, or choose the original above
                   </p>
                   <p className="text-xs text-slate-500">
                     Supported: Scanned Dental PDFs, Panoramic JPGs, Bitewing PNGs
                   </p>
-                  <input
-                    type="file"
-                    id="fileUploadInput"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      if (f) {
-                        const ext = f.name.split('.').pop()?.toUpperCase() as any;
-                        handleFileChosen(f.name, ['PDF', 'JPG', 'PNG'].includes(ext) ? ext : 'PDF');
-                      }
-                    }}
-                    className="hidden"
-                  />
-                  <label
-                    htmlFor="fileUploadInput"
-                    className="mt-3 inline-block px-4 py-2 text-xs font-semibold text-teal-800 bg-teal-100 hover:bg-teal-200 rounded-lg cursor-pointer transition-colors"
-                  >
-                    Browse Local Files
-                  </label>
+
                 </div>
               )}
             </div>
 
-            {/* Quick Philippine Sample Files (One-Click Selection) */}
-            <div>
-              <p className="text-xs font-semibold text-slate-700 mb-2">
-                Or select a realistic Philippine clinic test scan:
-              </p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-                <button
-                  type="button"
-                  onClick={() => handleFileChosen('panoramic_opg_fullmouth_xray.jpg', 'JPG', '3.8 MB')}
-                  className="text-left p-2.5 rounded-lg border border-slate-200 hover:border-teal-400 bg-slate-50 hover:bg-white transition-all"
-                >
-                  <p className="font-semibold text-slate-900 truncate">panoramic_opg.jpg</p>
-                  <p className="text-[11px] text-slate-500">X-ray Radiograph</p>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleFileChosen('orthodontic_consent_minor_patient.pdf', 'PDF', '1.2 MB')}
-                  className="text-left p-2.5 rounded-lg border border-slate-200 hover:border-teal-400 bg-slate-50 hover:bg-white transition-all"
-                >
-                  <p className="font-semibold text-slate-900 truncate">ortho_consent.pdf</p>
-                  <p className="text-[11px] text-amber-700 font-medium">Minor Consent Alert</p>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleFileChosen('reseta_mefenamic_amoxicillin.pdf', 'PDF', '820 KB')}
-                  className="text-left p-2.5 rounded-lg border border-slate-200 hover:border-teal-400 bg-slate-50 hover:bg-white transition-all"
-                >
-                  <p className="font-semibold text-slate-900 truncate">reseta_amox.pdf</p>
-                  <p className="text-[11px] text-slate-500">Prescription Slip</p>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleFileChosen('official_receipt_prophylaxis_bir.pdf', 'PDF', '640 KB')}
-                  className="text-left p-2.5 rounded-lg border border-slate-200 hover:border-teal-400 bg-slate-50 hover:bg-white transition-all"
-                >
-                  <p className="font-semibold text-slate-900 truncate">official_receipt.pdf</p>
-                  <p className="text-[11px] text-slate-500">Billing / BIR VAT</p>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleFileChosen('blurry_emergency_scan_tooth47.jpg', 'JPG', '2.1 MB')}
-                  className="text-left p-2.5 rounded-lg border border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-white transition-all"
-                >
-                  <p className="font-semibold text-slate-900 truncate">blurry_emergency.jpg</p>
-                  <p className="text-[11px] text-amber-700 font-medium">Blur Warning Test</p>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleFileChosen('mismatched_patient_name_doc.pdf', 'PDF', '950 KB')}
-                  className="text-left p-2.5 rounded-lg border border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-white transition-all"
-                >
-                  <p className="font-semibold text-slate-900 truncate">mismatch_test.pdf</p>
-                  <p className="text-[11px] text-amber-700 font-medium">Name Mismatch Test</p>
-                </button>
-              </div>
-            </div>
-
+            {originalFile && uploadedFile?.type !== 'PDF' && currentUser.role !== 'front_desk' && <HandwritingInput
+              key={`${originalFile.name}-${chosenPatientId}`} file={originalFile} patientId={chosenPatientId} onBusy={setHandwritingBusy}
+              ensureUpload={async () => { const id = stagedFileId || await uploadOriginal(originalFile); setStagedFileId(id); return id; }}
+              onUse={text => startProcessing(true, text)} />}
+            <button type="button" disabled={!originalFile || handwritingBusy} onClick={() => startProcessing(true)}
+              className="text-xs underline text-slate-700 disabled:opacity-50">Enter metadata manually and send for review</button>
             {/* Launch OCR Button */}
             <div className="pt-2 flex justify-end">
               <button
                 type="button"
-                disabled={!uploadedFile}
-                onClick={startProcessing}
+                disabled={!originalFile || handwritingBusy}
+                onClick={() => startProcessing()}
                 className={`flex items-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl transition-all shadow-xs ${
                   uploadedFile
                     ? 'text-white bg-teal-700 hover:bg-teal-800 cursor-pointer'
                     : 'text-slate-400 bg-slate-100 cursor-not-allowed'
                 }`}
               >
-                <span>Process Document (Simulated OCR)</span>
+                <span>{currentUser.role === 'front_desk' ? 'Enter Administrative Metadata' : 'Read Document Locally'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -635,7 +450,7 @@ export const UploadView: React.FC = () => {
         </div>
       )}
 
-      {/* STEP 3: PROCESSING STAGE ANIMATION (3-4s with named stages) */}
+      {/* STEP 3: LOCAL PROCESSING STATUS */}
       {currentStep === 'processing' && (
         <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center max-w-xl mx-auto shadow-sm space-y-6">
           <div className="w-16 h-16 rounded-2xl bg-teal-50 border border-teal-200 text-teal-700 mx-auto flex items-center justify-center animate-pulse">
@@ -651,7 +466,7 @@ export const UploadView: React.FC = () => {
             </p>
           </div>
 
-          {/* Progress bar */}
+          {/* Request-stage indicator; not an OCR percentage */}
           <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
             <div
               className="bg-teal-700 h-2.5 rounded-full transition-all duration-700"
@@ -689,7 +504,7 @@ export const UploadView: React.FC = () => {
           </div>
 
           <p className="text-[11px] text-slate-400 italic">
-            Simulating clinic-grade optical character recognition & dental entity extraction
+            Printed-text OCR only. Staff verify classification, patient linkage and completeness.
           </p>
         </div>
       )}
@@ -697,16 +512,23 @@ export const UploadView: React.FC = () => {
       {/* STEP 4: STAFF REVIEW & VERIFICATION SCREEN */}
       {currentStep === 'review' && extractedData && (
         <div className="space-y-6">
-          {/* Top Banner: AI suggestion, staff must verify */}
+          <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-xs space-y-2">
+            <p className="font-semibold">Staff verification required · OCR scores are estimates, not guarantees</p>
+            {(extractedData.extraction?.warnings || [extractedData.handwritingDraft ? 'Experimental handwriting suggestion: verify every word and all metadata against the original. Signatures and completeness were not assessed.' : 'Manual entry: verify all metadata and completeness against the original.']).map(warning => <p key={warning}>{warning}</p>)}
+            <label className="block font-semibold" htmlFor="ocrText">Transcription text (editable)</label>
+            <textarea id="ocrText" value={extractedData.extractedText} onChange={e => setExtractedData({ ...extractedData, extractedText: e.target.value })}
+              className="w-full min-h-36 border border-slate-300 rounded-lg p-3 bg-white text-slate-900" />
+          </div>
+          {/* Top Banner: Check the retained original */}
           <div className="bg-teal-50 border border-teal-200/90 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-2.5 text-teal-950">
               <ShieldCheck className="w-5 h-5 text-teal-700 shrink-0" />
               <div>
                 <p className="font-bold">
-                  AI Extraction Complete · Staff Verification Required
+                  Document Ready for Staff Verification
                 </p>
                 <p className="text-[11px] text-teal-800">
-                  Nothing has been saved yet. Review the extracted fields, verify the completeness
+                  The encrypted original is staged. The patient record has not been saved yet. Review the extracted fields, verify the completeness
                   checklist, and edit any values before confirming.
                 </p>
               </div>
@@ -714,7 +536,7 @@ export const UploadView: React.FC = () => {
 
             <div className="flex items-center gap-2 shrink-0">
               <span className="font-mono px-2.5 py-1 rounded-lg bg-white border border-teal-200 text-teal-900 font-bold">
-                Overall Confidence: {extractedData.confidenceScore}%
+                {extractedData.handwritingDraft ? 'Handwriting draft · unscored' : `Overall Confidence: ${extractedData.confidenceScore}%`}
               </span>
             </div>
           </div>
@@ -751,35 +573,11 @@ export const UploadView: React.FC = () => {
                 <span className="font-semibold text-slate-800">Document Scan Preview</span>
                 <span>Type: {extractedData.type}</span>
               </div>
-              <DocumentVisualPreview
-                heightClass="min-h-[580px]"
-                document={{
-                  id: 'temp-preview',
-                  patientId: extractedData.patientId,
-                  patientRecordNo: extractedData.patientRecordNo,
-                  patientName: extractedData.patientName,
-                  title: extractedData.title,
-                  type: extractedData.type,
-                  date: extractedData.date,
-                  displayDate: extractedData.displayDate,
-                  toothNumbers: extractedData.toothNumbers,
-                  procedureCategory: extractedData.procedureCategory,
-                  tags: extractedData.tags,
-                  confidenceScore: extractedData.confidenceScore,
-                  fieldConfidence: extractedData.fieldConfidence,
-                  completenessStatus: extractedData.completenessStatus,
-                  missingFields: extractedData.missingFields,
-                  extractedText: extractedData.extractedText,
-                  fileType: extractedData.fileType,
-                  fileSize: extractedData.fileSize,
-                  uploadedBy: currentUser.name,
-                  uploadedAt: 'Just now',
-                  isBlurryWarning: extractedData.isBlurryWarning,
-                  version: 1,
-                  versionStatus: 'active',
-                  versionHistory: [],
-                }}
-              />
+              {originalUrl && (uploadedFile?.type === 'PDF'
+                  ? <iframe title="Uploaded original" src={`${originalUrl}#zoom=page-width`} className="w-full h-[480px] border-0" />
+                  : <img alt="Uploaded original" src={originalUrl} className="w-full max-h-[480px] object-contain" />)}
+              {originalUrl && <a href={originalUrl} target="_blank" rel="noreferrer" className="inline-block mt-2 text-xs underline text-slate-700">Open original separately to inspect every page</a>}
+
             </div>
 
             {/* Right Pane: Editable Fields & Confidence Indicators (6 cols) */}
@@ -806,7 +604,7 @@ export const UploadView: React.FC = () => {
                         : 'bg-amber-100 text-amber-900'
                     }`}
                   >
-                    {extractedData.fieldConfidence.documentType}% conf
+                    {extractedData.handwritingDraft ? "Staff check" : `${extractedData.fieldConfidence.documentType}% conf`}
                   </span>
                 </div>
                 <select
@@ -857,7 +655,7 @@ export const UploadView: React.FC = () => {
                           : 'bg-amber-100 text-amber-900'
                       }`}
                     >
-                      {extractedData.fieldConfidence.date}% conf
+                      {extractedData.handwritingDraft ? "Staff check" : `${extractedData.fieldConfidence.date}% conf`}
                     </span>
                   </div>
                   <input
@@ -888,7 +686,7 @@ export const UploadView: React.FC = () => {
                           : 'bg-amber-100 text-amber-900'
                       }`}
                     >
-                      {extractedData.fieldConfidence.procedureCategory}% conf
+                      {extractedData.handwritingDraft ? "Staff check" : `${extractedData.fieldConfidence.procedureCategory}% conf`}
                     </span>
                   </div>
                   <select
@@ -926,7 +724,7 @@ export const UploadView: React.FC = () => {
                         : 'bg-amber-100 text-amber-900'
                     }`}
                   >
-                    {extractedData.fieldConfidence.toothNumbers}% conf
+                    {extractedData.handwritingDraft ? "Staff check" : `${extractedData.fieldConfidence.toothNumbers}% conf`}
                   </span>
                 </div>
                 <input
@@ -951,31 +749,31 @@ export const UploadView: React.FC = () => {
                 />
               </div>
 
-              {/* 5. Completeness Checklist: Found vs Missing (AI suggestion, staff must verify) */}
+              {/* 5. Completeness Checklist: Found vs Missing (Check the retained original) */}
               <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-900">
-                    Completeness Checklist (Staff Verified)
+                    Completeness Requires Staff Review
                   </span>
                   <span className="text-[10px] text-slate-500 italic">
-                    AI suggestion, staff must verify
+                    Check the retained original
                   </span>
                 </div>
 
                 <div className="space-y-1.5 text-xs pt-1">
-                  <div className="flex items-center gap-2 text-emerald-800">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Patient Record No. ({extractedData.patientRecordNo}) identified</span>
+                  <div className="flex items-center gap-2 text-slate-700">
+                    <HelpCircle className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Selected patient record: {extractedData.patientRecordNo} — verify against original</span>
                   </div>
-                  <div className="flex items-center gap-2 text-emerald-800">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Clinic Facility & Accreditation header verified</span>
+                  <div className="flex items-center gap-2 text-slate-700">
+                    <HelpCircle className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Clinic headers and credentials have not been verified automatically</span>
                   </div>
 
                   {extractedData.missingFields.length === 0 ? (
                     <div className="flex items-center gap-2 text-emerald-800 font-medium">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>All required clinical signatures & license stamps present</span>
+                      <HelpCircle className="w-3.5 h-3.5 text-slate-500" />
+                      <span>Staff marked checklist items found; completeness still requires review</span>
                     </div>
                   ) : (
                     extractedData.missingFields.map((missing, idx) => (
@@ -999,7 +797,7 @@ export const UploadView: React.FC = () => {
                           }}
                           className="text-[10px] text-teal-800 font-semibold hover:underline"
                         >
-                          Mark Found
+                          Staff checked
                         </button>
                       </div>
                     ))
@@ -1052,7 +850,7 @@ export const UploadView: React.FC = () => {
               <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <button
                   type="button"
-                  onClick={() => setCurrentStep('input')}
+                  onClick={() => { setCurrentStep('input'); setStagedFileId(''); setExtractedData(null); }}
                   className="w-full sm:w-auto px-4 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 rounded-xl"
                 >
                   Discard & Re-upload
@@ -1061,6 +859,7 @@ export const UploadView: React.FC = () => {
                 <div className="flex items-center gap-2.5 w-full sm:w-auto">
                   <button
                     type="button"
+                    disabled={isSaving}
                     onClick={() => handleSaveToPatientRecord(true)}
                     className="flex-1 sm:flex-initial px-4 py-2.5 text-xs font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-xl transition-colors"
                   >
@@ -1069,6 +868,7 @@ export const UploadView: React.FC = () => {
 
                   <button
                     type="button"
+                    disabled={isSaving}
                     onClick={() => handleSaveToPatientRecord(false)}
                     className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-5 py-2.5 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-xl transition-colors shadow-xs"
                   >

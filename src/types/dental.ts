@@ -8,6 +8,9 @@ export interface StaffUser {
   license?: string;
   email: string;
   avatarInitials: string;
+  enabled?: boolean;
+  mustChangePassword?: boolean;
+  revision?: number;
 }
 
 export type DocumentType =
@@ -87,7 +90,38 @@ export interface PrescriptionDetails {
   s2No?: string;
 }
 
+export interface ExtractionProvenance {
+  engine: string;
+  rulesVersion: number;
+  status: 'extracted' | 'no_text';
+  pages: number;
+  warnings: string[];
+  pageResults: { page: number; confidence: number; characters: number }[];
+}
+
+export interface HandwritingSource {
+  id: string;
+  text: string;
+  engine: string;
+  modelSha256: string;
+  sourceSha256: string;
+  rotation: number;
+  box: [number, number, number, number];
+  createdAt: string;
+  suggestedBy: string;
+  confidence: null;
+  status: 'draft';
+  requiresStaffVerification: true;
+}
+
 export interface DentalDocument {
+  searchMatch?: { method: 'keyword' | 'semantic' | 'hybrid'; field: string; snippet: string; start: number; end: number; version: number; revision: number; similarity?: number; model?: string };
+  handwritingSources?: HandwritingSource[];
+  extraction?: ExtractionProvenance;
+  review?: import('./workflows').ReviewSummary | null;
+  validity?: import('./workflows').ValidityState;
+  revision?: number;
+  fileId?: string | null;
   id: string;
   patientId: string;
   patientRecordNo: string;
@@ -150,6 +184,10 @@ export interface DocumentVersion {
 
 export type AlertSeverity = 'critical' | 'warning' | 'info';
 export type AlertType =
+  | 'DOCUMENT_EXPIRED'
+  | 'DOCUMENT_EXPIRING'
+  | 'MISSING_PRESCRIPTION_CREDENTIALS'
+  | 'MISSING_TOOTH_ANNOTATION'
   | 'MISSING_CONSENT'
   | 'EXPIRED_CLEARANCE'
   | 'EXPIRING_PRESCRIPTION'
@@ -189,10 +227,18 @@ export interface AuditEntry {
   timestamp: string;
   userId: string;
   userName: string;
-  userRole: UserRole;
+  userRole: UserRole | 'system';
   action:
     | 'UPLOAD'
     | 'UPLOAD_VERSION'
+    | 'OCR_EXTRACTED'
+    | 'OCR_FAILED'
+    | 'HANDWRITING_DRAFT'
+    | 'HANDWRITING_FAILED'
+    | 'SUMMARY_VIEW'
+    | 'SUMMARY_DRAFT'
+    | 'SUMMARY_APPROVED'
+    | 'SUMMARY_REJECTED'
     | 'RESTORE_VERSION'
     | 'EDIT_METADATA'
     | 'MARK_COMPLETE'
@@ -202,7 +248,27 @@ export interface AuditEntry {
     | 'USER_LOGIN'
     | 'ARCHIVE'
     | 'RESTORE_ARCHIVE'
-    | 'PRIVACY_ACK';
+    | 'PRIVACY_ACK'
+    | 'DOWNLOAD'
+    | 'PRINT_REQUEST'
+    | 'USER_LOGOUT'
+    | 'SESSION_TIMEOUT'
+    | 'LOGIN_FAILED'
+    | 'USER_CREATE'
+    | 'USER_UPDATE'
+    | 'PASSWORD_CHANGE'
+    | 'PASSWORD_RESET'
+    | 'ACCESS_DENIED'
+    | 'REVIEW_QUEUED'
+    | 'REVIEW_REOPENED'
+    | 'REVIEW_SUPERSEDED'
+    | 'REVIEW_ASSIGNED'
+    | 'REVIEW_APPROVED'
+    | 'REVIEW_CHANGES_REQUESTED'
+    | 'VALIDITY_RULE_DRAFT'
+    | 'VALIDITY_RULE_APPROVED'
+    | 'VALIDITY_RULE_RETIRED'
+    | 'VALIDITY_CONFIRMED';
   targetType: 'DOCUMENT' | 'PATIENT' | 'SYSTEM';
   targetId: string;
   targetTitle: string;

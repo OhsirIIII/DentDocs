@@ -1,0 +1,330 @@
+{
+  "date_local": "2026-11-06",
+  "timezone": "Asia/Shanghai",
+  "research_only": true,
+  "promoted": false,
+  "new_training": false,
+  "base_lines": 15,
+  "validation_writers": 1,
+  "total_inference_measurements": 225,
+  "independent_test": false,
+  "cpu_repeat_predictions_identical": true,
+  "cpu_gpu_original_predictions_identical": true,
+  "cpu_image": "sha256:f6e00a06b5033d14fd479e9c0c8a23469f84cf32d587b5cf9b16ba7f44e3dae9",
+  "script_sha256": "f8b16de1377c0eb3a8397294df479617af688b592cefcd7a73f051eae7113ea4",
+  "gpu": {
+    "scope": "Previously inspected AMR validation, not independent dental accuracy",
+    "labels": "Assistant-checked research references, not staff-confirmed",
+    "device": "cuda",
+    "versions": {
+      "torch": "2.7.1+cu128",
+      "transformers": "4.57.1",
+      "Pillow": "12.3.0"
+    },
+    "model_sha256": "974eb43ef17d0417359933722b596726112333f1d552c1658c5d6a25dd9b148b",
+    "validation_manifest_sha256": "05f7233de13549e6fab68c0a1df390597ea7ba4c54e6b67d2b54dff08deeb454",
+    "base_lines": 15,
+    "writers": 1,
+    "repeats": 1,
+    "conditions": [
+      "original",
+      "dim-low-contrast",
+      "soft-blur"
+    ],
+    "results": {
+      "original": {
+        "baseline": {
+          "measurements": 15,
+          "underlying_lines": 15,
+          "cer": 0.24125874125874125,
+          "wer": 0.6956521739130435,
+          "exact_lines": 2,
+          "numeric_lines": 6,
+          "numeric_correct": 0,
+          "invented_number_lines": 0,
+          "incomplete": 0,
+          "median_seconds": 0.11000000000058208,
+          "p95_seconds": 0.17199999999866122
+        },
+        "contrast-greedy": {
+          "measurements": 15,
+          "underlying_lines": 15,
+          "cer": 0.2097902097902098,
+          "wer": 0.6521739130434783,
+          "exact_lines": 2,
+          "numeric_lines": 6,
+          "numeric_correct": 0,
+          "invented_number_lines": 0,
+          "incomplete": 0,
+          "median_seconds": 0.0940000000045984,
+          "p95_seconds": 0.17200000000593718
+        },
+        "contrast-beam": {
+          "measurements": 15,
+          "underlying_lines": 15,
+          "cer": 0.1993006993006993,
+          "wer": 0.6086956521739131,
+          "exact_lines": 2,
+          "numeric_lines": 6,
+          "numeric_correct": 1,
+          "invented_number_lines": 0,
+          "incomplete": 0,
+          "median_seconds": 0.21899999999732245,
+          "p95_seconds": 0.31199999999807915
+        }
+      },
+      "dim-low-contrast": {
+        "baseline": {
+          "measurements": 15,
+          "underlying_lines": 15,
+          "cer": 0.24125874125874125,
+          "wer": 0.6956521739130435,
+          "exact_lines": 2,
+          "numeric_lines": 6,
+          "numeric_correct": 1,
+          "invented_number_lines": 0,
+          "incomplete": 0,
+          "median_seconds": 0.10899999999674037,
+          "p95_seconds": 0.14100000000325963
+        },
+        "contrast-greedy": {
+          "measurements": 15,
+          "underlying_lines": 15,
+          "cer": 0.20279720279720279,
+          "wer": 0.6521739130434783,
+          "exact_lines": 2,
+          "numeric_lines": 6,
+          "numeric_correct": 0,
+          "invented_number_lines": 0,
+          "incomplete": 0,
+          "median_seconds": 0.10899999999674037,
+          "p95_seconds": 0.14100000000325963
+        },
+        "contrast-beam": {
+          "measurements": 15,
+          "underlying_lines": 15,
+          "cer": 0.1993006993006993,
+          "wer": 0.6086956521739131,
+          "exact_lines": 2,
+          "numeric_lines": 6,
+          "numeric_correct": 1,
+          "invented_number_lines": 0,
+          "incomplete": 0,
+          "median_seconds": 0.23500000000058208,
+          "p95_seconds": 0.2969999999986612
+        }
+      },
+      "soft-blur": {
+        "baseline": {
+          "measurements": 15,
+          "underlying_lines": 15,
+          "cer": 0.23426573426573427,
+          "wer": 0.717391304347826,
+          "exact_lines": 2,
+          "numeric_lines": 6,
+          "numeric_correct": 0,
+          "invented_number_lines": 0,
+          "incomplete": 0,
+          "median_seconds": 0.10899999999674037,
+          "p95_seconds": 0.14100000000325963
+        },
+        "contrast-greedy": {
+          "measurements": 15,
+          "underlying_lines": 15,
+          "cer": 0.21328671328671328,
+          "wer": 0.6739130434782609,
+          "exact_lines": 2,
+          "numeric_lines": 6,
+          "numeric_correct": 0,
+          "invented_number_lines": 0,
+          "incomplete": 0,
+          "median_seconds": 0.10899999999674037,
+          "p95_seconds": 0.15600000000267755
+        },
+        "contrast-beam": {
+          "measurements": 15,
+          "underlying_lines": 15,
+          "cer": 0.1958041958041958,
+          "wer": 0.6086956521739131,
+          "exact_lines": 3,
+          "numeric_lines": 6,
+          "numeric_correct": 0,
+          "invented_number_lines": 0,
+          "incomplete": 0,
+          "median_seconds": 0.21899999999732245,
+          "p95_seconds": 0.3279999999940628
+        }
+      }
+    },
+    "paired": {
+      "original": {
+        "contrast-greedy": {
+          "improved": 6,
+          "unchanged": 8,
+          "worsened": 1,
+          "lost_exact": 0,
+          "gained_exact": 0,
+          "numeric_regressions": 0,
+          "numeric_improvements": 0
+        },
+        "contrast-beam": {
+          "improved": 7,
+          "unchanged": 5,
+          "worsened": 3,
+          "lost_exact": 0,
+          "gained_exact": 0,
+          "numeric_regressions": 0,
+          "numeric_improvements": 1
+        }
+      },
+      "dim-low-contrast": {
+        "contrast-greedy": {
+          "improved": 6,
+          "unchanged": 8,
+          "worsened": 1,
+          "lost_exact": 0,
+          "gained_exact": 0,
+          "numeric_regressions": 1,
+          "numeric_improvements": 0
+        },
+        "contrast-beam": {
+          "improved": 6,
+          "unchanged": 8,
+          "worsened": 1,
+          "lost_exact": 0,
+          "gained_exact": 0,
+          "numeric_regressions": 0,
+          "numeric_improvements": 0
+        }
+      },
+      "soft-blur": {
+        "contrast-greedy": {
+          "improved": 8,
+          "unchanged": 5,
+          "worsened": 2,
+          "lost_exact": 0,
+          "gained_exact": 0,
+          "numeric_regressions": 0,
+          "numeric_improvements": 0
+        },
+        "contrast-beam": {
+          "improved": 9,
+          "unchanged": 4,
+          "worsened": 2,
+          "lost_exact": 0,
+          "gained_exact": 1,
+          "numeric_regressions": 0,
+          "numeric_improvements": 0
+        }
+      }
+    },
+    "promoted": false,
+    "limits": {
+      "max_new_tokens": 64,
+      "max_time": 40,
+      "threads": 2
+    },
+    "numeric_scope": "Exact ordered digit strings including false insertions, not clinical field correctness"
+  },
+  "cpu": {
+    "scope": "Previously inspected AMR validation, not independent dental accuracy",
+    "labels": "Assistant-checked research references, not staff-confirmed",
+    "device": "cpu",
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "transformers": "5.10.0",
+      "Pillow": "13.0.0"
+    },
+    "model_sha256": "974eb43ef17d0417359933722b596726112333f1d552c1658c5d6a25dd9b148b",
+    "validation_manifest_sha256": "05f7233de13549e6fab68c0a1df390597ea7ba4c54e6b67d2b54dff08deeb454",
+    "base_lines": 15,
+    "writers": 1,
+    "repeats": 2,
+    "conditions": [
+      "original"
+    ],
+    "results": {
+      "original": {
+        "baseline": {
+          "measurements": 30,
+          "underlying_lines": 15,
+          "cer": 0.24125874125874125,
+          "wer": 0.6956521739130435,
+          "exact_lines": 4,
+          "numeric_lines": 12,
+          "numeric_correct": 0,
+          "invented_number_lines": 0,
+          "incomplete": 0,
+          "median_seconds": 1.2713227059999959,
+          "p95_seconds": 1.8799177260000022
+        },
+        "contrast-greedy": {
+          "measurements": 30,
+          "underlying_lines": 15,
+          "cer": 0.2097902097902098,
+          "wer": 0.6521739130434783,
+          "exact_lines": 4,
+          "numeric_lines": 12,
+          "numeric_correct": 0,
+          "invented_number_lines": 0,
+          "incomplete": 0,
+          "median_seconds": 1.266752637499998,
+          "p95_seconds": 2.039934173000006
+        },
+        "contrast-beam": {
+          "measurements": 30,
+          "underlying_lines": 15,
+          "cer": 0.1993006993006993,
+          "wer": 0.6086956521739131,
+          "exact_lines": 4,
+          "numeric_lines": 12,
+          "numeric_correct": 2,
+          "invented_number_lines": 0,
+          "incomplete": 0,
+          "median_seconds": 3.591836067999992,
+          "p95_seconds": 5.177662814000001
+        }
+      }
+    },
+    "paired": {
+      "original": {
+        "contrast-greedy": {
+          "improved": 12,
+          "unchanged": 16,
+          "worsened": 2,
+          "lost_exact": 0,
+          "gained_exact": 0,
+          "numeric_regressions": 0,
+          "numeric_improvements": 0
+        },
+        "contrast-beam": {
+          "improved": 14,
+          "unchanged": 10,
+          "worsened": 6,
+          "lost_exact": 0,
+          "gained_exact": 0,
+          "numeric_regressions": 0,
+          "numeric_improvements": 2
+        }
+      }
+    },
+    "promoted": false,
+    "limits": {
+      "max_new_tokens": 64,
+      "max_time": 40,
+      "threads": 2
+    },
+    "numeric_scope": "Exact ordered digit strings including false insertions, not clinical field correctness"
+  },
+  "evidence_sha256": {
+    "gpu": {
+      "report.json": "474d5d1476699c10e2641987926fd73bf6cb6fb11ab8572262979899f4d91cbd",
+      "predictions.json": "65a0cc15d0df5f7a1e49c1acc903ab3381ff010f460522c79f8392ddd83a9f83"
+    },
+    "cpu": {
+      "report.json": "5adb2e7912ddeb7802df9d82683d8324ffa06f1ce93c7aa934dc50512c58a7ed",
+      "predictions.json": "080c798f4b2ce248209b0596a0caf7627d73d13c58b193388925850c2eded5fb"
+    }
+  },
+  "decision": "Keep application default; candidate remains research only; new data/labels/fine-tuning deferred"
+}

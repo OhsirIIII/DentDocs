@@ -1,11 +1,11 @@
 /**
  * PrivacyNoticeModal
  *
- * Shown once per browser session when the user first activates a role.
+ * Shown until the authenticated user acknowledges the current notice version.
  * Requires explicit checkbox acknowledgement before dismissal.
  * On accept, fires onAccept() so the caller can write an audit log entry.
  *
- * Per-session persistence is handled by the caller (sessionStorage key).
+ * User, timestamp and notice version are persisted by the server.
  * This component is stateless — it only renders and fires callbacks.
  */
 
@@ -48,11 +48,15 @@ export const PrivacyNoticeModal: React.FC<PrivacyNoticeModalProps> = ({
             <Shield className="w-6 h-6" />
           </div>
           <div>
-            <h1 id="privacy-notice-title" className="text-xl font-bold text-slate-900">
+            <h1
+              id="privacy-notice-title"
+              className="text-xl font-bold text-slate-900"
+            >
               Patient Record Confidentiality Notice
             </h1>
             <p className="text-xs text-slate-500 mt-1">
-              Required before accessing San Nicolas Dental Clinic — Republic Act 10173 (Data Privacy Act of 2012)
+              Review before accessing clinic records. Draft wording pending
+              clinic DPO approval.
             </p>
           </div>
         </div>
@@ -63,26 +67,34 @@ export const PrivacyNoticeModal: React.FC<PrivacyNoticeModalProps> = ({
             <div className="flex items-start gap-3">
               <Lock className="w-4 h-4 text-teal-700 shrink-0 mt-0.5" />
               <p>
-                <strong className="text-slate-900">Records are strictly confidential.</strong>{' '}
-                All patient data accessed through this system is protected under RA 10173. Unauthorized
-                disclosure, copying, or sharing of patient information is a criminal offence.
+                <strong className="text-slate-900">
+                  Records are strictly confidential.
+                </strong>{' '}
+                Use patient information only for your assigned clinic duties. Do
+                not disclose, copy, or share records without authorization.
               </p>
             </div>
             <div className="flex items-start gap-3">
               <FileText className="w-4 h-4 text-teal-700 shrink-0 mt-0.5" />
               <p>
-                <strong className="text-slate-900">Every action is logged.</strong>{' '}
-                Your access to documents, uploads, edits, and downloads is recorded in an append-only
-                audit trail that cannot be altered. Logs may be submitted to the National Privacy
-                Commission upon lawful request.
+                <strong className="text-slate-900">
+                  Record access is logged.
+                </strong>{' '}
+                Document views, uploads, edits, downloads, and application print
+                requests are recorded in an append-only audit trail protected
+                against changes by application accounts. Logs may be submitted
+                to the National Privacy Commission upon lawful request.
               </p>
             </div>
             <div className="flex items-start gap-3">
               <Shield className="w-4 h-4 text-teal-700 shrink-0 mt-0.5" />
               <p>
-                <strong className="text-slate-900">Access is role-limited.</strong>{' '}
-                You may only view, edit, and download records within the scope of your assigned role
-                ({staffTitle}). Accessing records outside your role is prohibited.
+                <strong className="text-slate-900">
+                  Access is role-limited.
+                </strong>{' '}
+                You may only view, edit, and download records within the scope
+                of your assigned role ({staffTitle}). Accessing records outside
+                your role is prohibited.
               </p>
             </div>
           </div>
@@ -94,10 +106,16 @@ export const PrivacyNoticeModal: React.FC<PrivacyNoticeModalProps> = ({
                 Acknowledging Staff
               </span>
               <span className="font-bold">{staffName}</span>
-              <span className="block text-[11px] text-teal-800">{staffTitle}</span>
+              <span className="block text-[11px] text-teal-800">
+                {staffTitle}
+              </span>
             </div>
             <span className="text-[10px] font-mono text-teal-700">
-              Timestamp: {new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}
+              Timestamp:{' '}
+              {new Date().toLocaleString('en-US', {
+                dateStyle: 'medium',
+                timeStyle: 'short',
+              })}
             </span>
           </div>
 
@@ -113,9 +131,10 @@ export const PrivacyNoticeModal: React.FC<PrivacyNoticeModalProps> = ({
               />
             </div>
             <span className="text-xs text-slate-700 leading-relaxed group-hover:text-slate-900 transition-colors">
-              I have read and understood the above. I acknowledge that my access to patient records
-              is governed by RA 10173, is strictly role-limited, and is permanently logged. I will
-              not disclose confidential information to unauthorized persons.
+              I have read and understood the above. I acknowledge that my access
+              to patient records is governed by RA 10173, is strictly
+              role-limited, and is permanently logged. I will not disclose
+              confidential information to unauthorized persons.
             </span>
           </label>
         </div>
@@ -123,7 +142,8 @@ export const PrivacyNoticeModal: React.FC<PrivacyNoticeModalProps> = ({
         {/* Footer */}
         <div className="flex items-center justify-between gap-4">
           <p className="text-[11px] text-slate-400 leading-relaxed max-w-xs">
-            Your acknowledgement is recorded in the clinic's tamper-evident audit log.
+            Your acknowledgement is recorded in the clinic's tamper-evident
+            audit log.
           </p>
           <button
             type="button"

@@ -33,7 +33,9 @@ export const PatientsView: React.FC = () => {
   } = useClinic();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedToothFilter, setSelectedToothFilter] = useState<number | null>(null);
+  const [selectedToothFilter, setSelectedToothFilter] = useState<number | null>(
+    null,
+  );
 
   // Active patient object if selected
   const activePatient = patients.find((p) => p.id === selectedPatientId);
@@ -110,9 +112,11 @@ export const PatientsView: React.FC = () => {
                   <div className="flex items-center gap-2 text-xs text-slate-500 mt-1 flex-wrap">
                     <span>{activePatient.gender}</span>
                     <span aria-hidden="true">·</span>
-                    <span>
-                      {activePatient.age} yrs old (DOB: {activePatient.dob})
-                    </span>
+                    {canAccessClinicalDocs && (
+                      <span>
+                        {activePatient.age} yrs old (DOB: {activePatient.dob})
+                      </span>
+                    )}
                     <span aria-hidden="true">·</span>
                     <span>Last visit: {activePatient.lastVisit}</span>
                   </div>
@@ -138,7 +142,8 @@ export const PatientsView: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
                   <span className="font-bold text-rose-950">
-                    Active Clinical & Missing Document Alerts ({patientAlerts.length})
+                    Active Clinical & Missing Document Alerts (
+                    {patientAlerts.length})
                   </span>
                 </div>
                 <span className="text-[11px] font-mono text-rose-700 bg-rose-100 px-2 py-0.5 rounded font-semibold">
@@ -161,7 +166,13 @@ export const PatientsView: React.FC = () => {
                               : 'bg-amber-100 text-amber-800'
                           }`}
                         >
-                          {pa.severity === 'critical' ? 'Urgent Missing' : 'Expiring'}
+                          {pa.type === 'DOCUMENT_EXPIRED'
+                            ? 'Expired'
+                            : pa.type === 'DOCUMENT_EXPIRING'
+                              ? 'Expiring'
+                              : pa.severity === 'critical'
+                                ? 'Urgent Missing'
+                                : 'Needs attention'}
                         </span>
                         {pa.scheduledDate && (
                           <span className="text-[10px] text-slate-500 font-medium">
@@ -201,11 +212,14 @@ export const PatientsView: React.FC = () => {
           )}
 
           {/* Medical Alerts & Guardian Warning */}
-          {(activePatient.medicalAlerts.length > 0 || activePatient.isMinor) && (
+          {(activePatient.medicalAlerts.length > 0 ||
+            activePatient.isMinor) && (
             <div className="bg-amber-50/80 border border-amber-200 rounded-xl p-4 text-xs text-amber-900 flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
               <div className="space-y-1">
-                <p className="font-bold text-amber-950">Clinical & Administrative Alerts:</p>
+                <p className="font-bold text-amber-950">
+                  Clinical & Administrative Alerts:
+                </p>
                 <div className="flex flex-wrap gap-2 pt-0.5">
                   {activePatient.medicalAlerts.map((alert, idx) => (
                     <span
@@ -217,7 +231,8 @@ export const PatientsView: React.FC = () => {
                   ))}
                   {activePatient.isMinor && (
                     <span className="px-2.5 py-1 rounded-md bg-white border border-rose-300 text-rose-800 font-medium">
-                      Minor Patient · Guardian: {activePatient.guardianName} ({activePatient.guardianPhone})
+                      Minor Patient · Guardian: {activePatient.guardianName} (
+                      {activePatient.guardianPhone})
                     </span>
                   )}
                 </div>
@@ -252,7 +267,8 @@ export const PatientsView: React.FC = () => {
 
                 <div>
                   <span className="text-slate-500 block mb-0.5 flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-slate-400" /> Residential Address
+                    <MapPin className="w-3.5 h-3.5 text-slate-400" />{' '}
+                    Residential Address
                   </span>
                   <span className="text-slate-700 leading-relaxed">
                     {activePatient.address}
@@ -260,7 +276,9 @@ export const PatientsView: React.FC = () => {
                 </div>
 
                 <div className="pt-2 border-t border-slate-100">
-                  <span className="text-slate-500 block mb-0.5">Emergency Contact</span>
+                  <span className="text-slate-500 block mb-0.5">
+                    Emergency Contact
+                  </span>
                   <p className="font-semibold text-slate-800">
                     {activePatient.emergencyContact.name}{' '}
                     <span className="text-slate-500 font-normal">
@@ -275,20 +293,32 @@ export const PatientsView: React.FC = () => {
             </div>
 
             {/* FDI Interactive Charting (8 cols) */}
-            <div className="lg:col-span-8">
-              <FdiDentalChart
-                treatedTeeth={activePatient.fdiTreatedTeeth}
-                missingTeeth={activePatient.fdiMissingTeeth}
-                watchTeeth={activePatient.fdiWatchTeeth}
-                selectedTeeth={selectedToothFilter ? [selectedToothFilter] : []}
-                onToothClick={(tooth) => {
-                  setSelectedToothFilter(selectedToothFilter === tooth ? null : tooth);
-                }}
-              />
-              <p className="text-[11px] text-slate-500 mt-2 text-right">
-                Click any tooth number to filter documents linked to that tooth
+            {canAccessClinicalDocs ? (
+              <div className="lg:col-span-8">
+                <FdiDentalChart
+                  treatedTeeth={activePatient.fdiTreatedTeeth}
+                  missingTeeth={activePatient.fdiMissingTeeth}
+                  watchTeeth={activePatient.fdiWatchTeeth}
+                  selectedTeeth={
+                    selectedToothFilter ? [selectedToothFilter] : []
+                  }
+                  onToothClick={(tooth) => {
+                    setSelectedToothFilter(
+                      selectedToothFilter === tooth ? null : tooth,
+                    );
+                  }}
+                />
+                <p className="text-[11px] text-slate-500 mt-2 text-right">
+                  Click any tooth number to filter documents linked to that
+                  tooth
+                </p>
+              </div>
+            ) : (
+              <p className="lg:col-span-8 text-sm text-slate-600 p-5">
+                Clinical chart and medical information are restricted to
+                clinical staff.
               </p>
-            </div>
+            )}
           </div>
 
           {/* Linked Documents Section */}
@@ -302,7 +332,8 @@ export const PatientsView: React.FC = () => {
                   {currentUser.role === 'front_desk'
                     ? 'Showing Billing & Appointment records authorized for Front Desk'
                     : 'All clinical and administrative documents for this patient record'}
-                  {selectedToothFilter && ` · Filtered by Tooth FDI ${selectedToothFilter}`}
+                  {selectedToothFilter &&
+                    ` · Filtered by Tooth FDI ${selectedToothFilter}`}
                 </p>
               </div>
 
@@ -318,7 +349,9 @@ export const PatientsView: React.FC = () => {
 
             {(() => {
               const displayedDocs = linkedDocs.filter((d) =>
-                selectedToothFilter ? d.toothNumbers.includes(selectedToothFilter) : true
+                selectedToothFilter
+                  ? d.toothNumbers.includes(selectedToothFilter)
+                  : true,
               );
 
               if (displayedDocs.length === 0) {
@@ -334,8 +367,8 @@ export const PatientsView: React.FC = () => {
                       {selectedToothFilter
                         ? `There are no radiograph scans, clinical notes, or treatments specifically tagged for tooth #${selectedToothFilter}.`
                         : currentUser.role === 'front_desk'
-                        ? 'No billing receipts or appointment slips are currently available for this patient.'
-                        : 'Upload the first clinical chart, consent form, or radiograph for this patient.'}
+                          ? 'No billing receipts or appointment slips are currently available for this patient.'
+                          : 'Upload the first clinical chart, consent form, or radiograph for this patient.'}
                     </p>
                     {selectedToothFilter ? (
                       <button
@@ -352,7 +385,9 @@ export const PatientsView: React.FC = () => {
                         className="px-4 py-2 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1.5"
                       >
                         <Upload className="w-3.5 h-3.5" />
-                        <span>Upload Document for {activePatient.fullName}</span>
+                        <span>
+                          Upload Document for {activePatient.fullName}
+                        </span>
                       </button>
                     )}
                   </div>
@@ -368,43 +403,48 @@ export const PatientsView: React.FC = () => {
                         onClick={() => handleOpenDoc(doc.id)}
                         className="w-full text-left p-4 hover:bg-slate-50 transition-colors group flex items-center justify-between gap-4 focus-visible:outline-offset-[-2px]"
                       >
-                      <div className="flex items-start gap-3.5 min-w-0">
-                        <div className="w-9 h-9 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center shrink-0">
-                          <FileText className="w-4 h-4" />
-                        </div>
-                        <div className="min-w-0">
-                          <h3 className="text-sm font-semibold text-slate-900 group-hover:text-teal-800 transition-colors truncate">
-                            {doc.title}
-                          </h3>
-                          <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5 flex-wrap">
-                            <span>{doc.type}</span>
-                            <span aria-hidden="true">·</span>
-                            <span>{doc.procedureCategory}</span>
-                            <span aria-hidden="true">·</span>
-                            <span className="font-mono tabular-nums">{doc.displayDate}</span>
-                            {doc.toothNumbers.length > 0 && (
-                              <>
-                                <span aria-hidden="true">·</span>
-                                <span className="font-mono text-teal-800 font-medium">
-                                  Teeth: {doc.toothNumbers.join(', ')}
-                                </span>
-                              </>
-                            )}
+                        <div className="flex items-start gap-3.5 min-w-0">
+                          <div className="w-9 h-9 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center shrink-0">
+                            <FileText className="w-4 h-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <h3 className="text-sm font-semibold text-slate-900 group-hover:text-teal-800 transition-colors truncate">
+                              {doc.title}
+                            </h3>
+                            <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5 flex-wrap">
+                              <span>{doc.type}</span>
+                              <span aria-hidden="true">·</span>
+                              <span>{doc.procedureCategory}</span>
+                              <span aria-hidden="true">·</span>
+                              <span className="font-mono tabular-nums">
+                                {doc.displayDate}
+                              </span>
+                              {doc.toothNumbers.length > 0 && (
+                                <>
+                                  <span aria-hidden="true">·</span>
+                                  <span className="font-mono text-teal-800 font-medium">
+                                    Teeth: {doc.toothNumbers.join(', ')}
+                                  </span>
+                                </>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="flex items-center gap-3 shrink-0">
-                        {doc.completenessStatus === 'incomplete' ? (
-                          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-800 font-semibold border border-amber-200">
-                            Incomplete ({doc.missingFields.length})
-                          </span>
-                        ) : (
-                          <span className="text-[11px] text-emerald-700 font-medium flex items-center gap-1">
-                            <CheckCircle className="w-3 h-3" /> Complete
-                          </span>
-                        )}
-                        <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-teal-700 group-hover:translate-x-0.5 transition-all" aria-hidden="true" />
+                        <div className="flex items-center gap-3 shrink-0">
+                          {doc.completenessStatus === 'incomplete' ? (
+                            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-800 font-semibold border border-amber-200">
+                              Incomplete ({doc.missingFields.length})
+                            </span>
+                          ) : (
+                            <span className="text-[11px] text-emerald-700 font-medium flex items-center gap-1">
+                              <CheckCircle className="w-3 h-3" /> Complete
+                            </span>
+                          )}
+                          <ChevronRight
+                            className="w-4 h-4 text-slate-400 group-hover:text-teal-700 group-hover:translate-x-0.5 transition-all"
+                            aria-hidden="true"
+                          />
                         </div>
                       </button>
                     </li>
@@ -423,7 +463,8 @@ export const PatientsView: React.FC = () => {
                 Patient Directory
               </h1>
               <p className="text-sm text-slate-500 mt-0.5">
-                Search 12 registered patients by name, record number (PT-2026-XXXX), or mobile
+                Search 12 registered patients by name, record number
+                (PT-2026-XXXX), or mobile
               </p>
             </div>
 
@@ -433,7 +474,8 @@ export const PatientsView: React.FC = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                aria-label="Search patients by record number, name, or mobile" placeholder="Search PT-2026-0001 or name..."
+                aria-label="Search patients by record number, name, or mobile"
+                placeholder="Search PT-2026-0001 or name..."
                 className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
@@ -443,9 +485,12 @@ export const PatientsView: React.FC = () => {
           {filteredPatients.length === 0 ? (
             <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center text-sm text-slate-500 max-w-lg mx-auto shadow-xs">
               <User className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-              <p className="font-bold text-slate-800 text-base">No patient records found</p>
+              <p className="font-bold text-slate-800 text-base">
+                No patient records found
+              </p>
               <p className="text-xs text-slate-500 mt-1 mb-4">
-                No registered patient matches "{searchQuery}". Check the spelling or search by patient record number (e.g. PT-2026-0001).
+                No registered patient matches "{searchQuery}". Check the
+                spelling or search by patient record number (e.g. PT-2026-0001).
               </p>
               <button
                 type="button"
@@ -458,11 +503,17 @@ export const PatientsView: React.FC = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredPatients.map((patient) => {
-                const docCount = visibleDocuments.filter((d) => d.patientId === patient.id).length;
+                const docCount = visibleDocuments.filter(
+                  (d) => d.patientId === patient.id,
+                ).length;
                 const hasIncomplete = visibleDocuments.some(
-                  (d) => d.patientId === patient.id && d.completenessStatus === 'incomplete'
+                  (d) =>
+                    d.patientId === patient.id &&
+                    d.completenessStatus === 'incomplete',
                 );
-                const activeAlerts = alerts.filter((a) => a.patientId === patient.id);
+                const activeAlerts = alerts.filter(
+                  (a) => a.patientId === patient.id,
+                );
 
                 return (
                   <button
@@ -484,7 +535,9 @@ export const PatientsView: React.FC = () => {
                           <h3 className="font-semibold text-slate-900 group-hover:text-teal-800 transition-colors">
                             {patient.fullName}
                           </h3>
-                          <p className="text-xs font-mono text-slate-500">{patient.recordNo}</p>
+                          <p className="text-xs font-mono text-slate-500">
+                            {patient.recordNo}
+                          </p>
                         </div>
                       </div>
 
@@ -538,10 +591,17 @@ export const PatientsView: React.FC = () => {
                     {/* Footer Stats */}
                     <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                       <span>
-                        <strong className="text-slate-800 font-semibold">{docCount}</strong> linked docs
+                        <strong className="text-slate-800 font-semibold">
+                          {docCount}
+                        </strong>{' '}
+                        linked docs
                       </span>
                       <span className="text-teal-700 font-medium group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
-                        Open Record <ChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
+                        Open Record{' '}
+                        <ChevronRight
+                          className="w-3.5 h-3.5"
+                          aria-hidden="true"
+                        />
                       </span>
                     </div>
                   </button>

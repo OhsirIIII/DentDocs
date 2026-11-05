@@ -1,0 +1,707 @@
+[
+  {
+    "image": "AMR_016-00.png",
+    "text": "LAB REQUEST FORM",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      400,
+      155,
+      1100,
+      220
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-01.png",
+    "text": "Date: 12/03/2026",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      300,
+      240,
+      900,
+      305
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-02.png",
+    "text": "PATIENT INFORMATION",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      425,
+      320,
+      1180,
+      395
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-03.png",
+    "text": "Name: F. O",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      300,
+      420,
+      650,
+      475
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-04.png",
+    "text": "Age: 19 years",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      300,
+      495,
+      750,
+      570
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-05.png",
+    "text": "Sex: Male",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      300,
+      580,
+      680,
+      640
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-06.png",
+    "text": "Hospital number: 2026/SC/015",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      300,
+      655,
+      1300,
+      730
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-07.png",
+    "text": "Ward/Clinic: Male Medical Ward",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      300,
+      740,
+      1400,
+      810
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-08.png",
+    "text": "INVESTIGATIONS REQUIRED",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      440,
+      820,
+      1360,
+      890
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-09.png",
+    "text": "Full Blood Count",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      305,
+      905,
+      830,
+      970
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-10.png",
+    "text": "Reticulocyte count",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      305,
+      990,
+      970,
+      1065
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-11.png",
+    "text": "Peripheral blood film.",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      305,
+      1070,
+      1040,
+      1140
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-12.png",
+    "text": "Malaria parasite test.",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      305,
+      1150,
+      1090,
+      1225
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-13.png",
+    "text": "Serum electrolytes, Urea and Creatinine",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      305,
+      1230,
+      1500,
+      1305
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-14.png",
+    "text": "CLINICAL DETAILS",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      440,
+      1320,
+      1100,
+      1385
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-15.png",
+    "text": "Known HbSS patient presenting with:",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      300,
+      1395,
+      1510,
+      1470
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-16.png",
+    "text": "Generalized body pain",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      305,
+      1480,
+      1020,
+      1555
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-17.png",
+    "text": "Fever",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      305,
+      1565,
+      650,
+      1630
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-18.png",
+    "text": "Weakness",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      305,
+      1640,
+      800,
+      1710
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-19.png",
+    "text": "? Vaso-occlusive crisis",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      300,
+      1720,
+      1100,
+      1795
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_016-20.png",
+    "text": "? Underlying infection",
+    "record": "AMR_016",
+    "writer": "Fatukasi Sarah",
+    "split": "train",
+    "bbox": [
+      300,
+      1800,
+      1100,
+      1870
+    ],
+    "source": "htr/AMR_016_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_028-00.png",
+    "text": "Patient Information",
+    "record": "AMR_028",
+    "writer": "Marvellous Uyaboerigha",
+    "split": "validation",
+    "bbox": [
+      210,
+      105,
+      710,
+      193
+    ],
+    "source": "htr/AMR_028_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_028-01.png",
+    "text": "Name: Aisha Mohammed",
+    "record": "AMR_028",
+    "writer": "Marvellous Uyaboerigha",
+    "split": "validation",
+    "bbox": [
+      220,
+      195,
+      850,
+      270
+    ],
+    "source": "htr/AMR_028_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_028-02.png",
+    "text": "Age: 22 years",
+    "record": "AMR_028",
+    "writer": "Marvellous Uyaboerigha",
+    "split": "validation",
+    "bbox": [
+      220,
+      274,
+      600,
+      345
+    ],
+    "source": "htr/AMR_028_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_028-03.png",
+    "text": "Sex: Female",
+    "record": "AMR_028",
+    "writer": "Marvellous Uyaboerigha",
+    "split": "validation",
+    "bbox": [
+      220,
+      350,
+      650,
+      410
+    ],
+    "source": "htr/AMR_028_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_028-04.png",
+    "text": "Hospital No: 2026/MAL/042",
+    "record": "AMR_028",
+    "writer": "Marvellous Uyaboerigha",
+    "split": "validation",
+    "bbox": [
+      210,
+      410,
+      930,
+      495
+    ],
+    "source": "htr/AMR_028_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_028-05.png",
+    "text": "Marital Status: Single.",
+    "record": "AMR_028",
+    "writer": "Marvellous Uyaboerigha",
+    "split": "validation",
+    "bbox": [
+      210,
+      490,
+      780,
+      560
+    ],
+    "source": "htr/AMR_028_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_028-06.png",
+    "text": "Occupation: Student",
+    "record": "AMR_028",
+    "writer": "Marvellous Uyaboerigha",
+    "split": "validation",
+    "bbox": [
+      210,
+      555,
+      750,
+      630
+    ],
+    "source": "htr/AMR_028_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_028-07.png",
+    "text": "Address: Benin City, Edo State",
+    "record": "AMR_028",
+    "writer": "Marvellous Uyaboerigha",
+    "split": "validation",
+    "bbox": [
+      210,
+      630,
+      1030,
+      710
+    ],
+    "source": "htr/AMR_028_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_028-08.png",
+    "text": "Informant",
+    "record": "AMR_028",
+    "writer": "Marvellous Uyaboerigha",
+    "split": "validation",
+    "bbox": [
+      210,
+      765,
+      610,
+      830
+    ],
+    "source": "htr/AMR_028_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_028-09.png",
+    "text": "Patient [reliable]",
+    "record": "AMR_028",
+    "writer": "Marvellous Uyaboerigha",
+    "split": "validation",
+    "bbox": [
+      210,
+      830,
+      700,
+      915
+    ],
+    "source": "htr/AMR_028_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_028-10.png",
+    "text": "Presenting Complaints",
+    "record": "AMR_028",
+    "writer": "Marvellous Uyaboerigha",
+    "split": "validation",
+    "bbox": [
+      185,
+      975,
+      800,
+      1055
+    ],
+    "source": "htr/AMR_028_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_028-11.png",
+    "text": "Fever - 3 days",
+    "record": "AMR_028",
+    "writer": "Marvellous Uyaboerigha",
+    "split": "validation",
+    "bbox": [
+      190,
+      1055,
+      650,
+      1135
+    ],
+    "source": "htr/AMR_028_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_028-12.png",
+    "text": "Headache - 3 days",
+    "record": "AMR_028",
+    "writer": "Marvellous Uyaboerigha",
+    "split": "validation",
+    "bbox": [
+      190,
+      1140,
+      750,
+      1215
+    ],
+    "source": "htr/AMR_028_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_028-13.png",
+    "text": "General body weakness - 2 days",
+    "record": "AMR_028",
+    "writer": "Marvellous Uyaboerigha",
+    "split": "validation",
+    "bbox": [
+      190,
+      1210,
+      1080,
+      1290
+    ],
+    "source": "htr/AMR_028_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_028-14.png",
+    "text": "Vomiting - 1 days",
+    "record": "AMR_028",
+    "writer": "Marvellous Uyaboerigha",
+    "split": "validation",
+    "bbox": [
+      190,
+      1290,
+      790,
+      1370
+    ],
+    "source": "htr/AMR_028_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_037-00.png",
+    "text": "Clinical Summary",
+    "record": "AMR_037",
+    "writer": "Okechukwu Ezeani",
+    "split": "test",
+    "bbox": [
+      750,
+      120,
+      1350,
+      245
+    ],
+    "source": "htr/AMR_037_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_037-01.png",
+    "text": "23/03/26",
+    "record": "AMR_037",
+    "writer": "Okechukwu Ezeani",
+    "split": "test",
+    "bbox": [
+      40,
+      130,
+      400,
+      230
+    ],
+    "source": "htr/AMR_037_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_037-02.png",
+    "text": "10:51am",
+    "record": "AMR_037",
+    "writer": "Okechukwu Ezeani",
+    "split": "test",
+    "bbox": [
+      45,
+      230,
+      345,
+      295
+    ],
+    "source": "htr/AMR_037_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_037-03.png",
+    "text": "There was good fetomaternal outcome.",
+    "record": "AMR_037",
+    "writer": "Okechukwu Ezeani",
+    "split": "test",
+    "bbox": [
+      170,
+      630,
+      1300,
+      735
+    ],
+    "source": "htr/AMR_037_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_037-04.png",
+    "text": "Baby was commenced on breastfeeding yesterday.",
+    "record": "AMR_037",
+    "writer": "Okechukwu Ezeani",
+    "split": "test",
+    "bbox": [
+      60,
+      735,
+      1550,
+      830
+    ],
+    "source": "htr/AMR_037_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_037-05.png",
+    "text": "Vitals are stable as seen on nurses chart.",
+    "record": "AMR_037",
+    "writer": "Okechukwu Ezeani",
+    "split": "test",
+    "bbox": [
+      80,
+      975,
+      1450,
+      1065
+    ],
+    "source": "htr/AMR_037_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_037-06.png",
+    "text": "C/O = Nil Fresh Complaint.",
+    "record": "AMR_037",
+    "writer": "Okechukwu Ezeani",
+    "split": "test",
+    "bbox": [
+      30,
+      1200,
+      1000,
+      1320
+    ],
+    "source": "htr/AMR_037_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_037-07.png",
+    "text": "Nil area of tenderness",
+    "record": "AMR_037",
+    "writer": "Okechukwu Ezeani",
+    "split": "test",
+    "bbox": [
+      270,
+      1800,
+      1050,
+      1910
+    ],
+    "source": "htr/AMR_037_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_037-08.png",
+    "text": "Assessment: Stable post partum",
+    "record": "AMR_037",
+    "writer": "Okechukwu Ezeani",
+    "split": "test",
+    "bbox": [
+      50,
+      2270,
+      1150,
+      2370
+    ],
+    "source": "htr/AMR_037_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_037-09.png",
+    "text": "PLAN",
+    "record": "AMR_037",
+    "writer": "Okechukwu Ezeani",
+    "split": "test",
+    "bbox": [
+      65,
+      2390,
+      450,
+      2470
+    ],
+    "source": "htr/AMR_037_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  },
+  {
+    "image": "AMR_037-10.png",
+    "text": "Do post partum PCV",
+    "record": "AMR_037",
+    "writer": "Okechukwu Ezeani",
+    "split": "test",
+    "bbox": [
+      175,
+      2490,
+      1120,
+      2605
+    ],
+    "source": "htr/AMR_037_HTR.png",
+    "label_origin": "Manually read crop; source transcription checked. Preserve visible wording rather than expanding abbreviations."
+  }
+]

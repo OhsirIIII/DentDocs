@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useClinic } from '../context/ClinicContext';
 import { AccessRestricted } from '../components/AccessRestricted';
-import { STAFF_USERS } from '../data/mockUsersAndAudit';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { DentalDocument } from '../types/dental';
 import {
@@ -36,7 +35,7 @@ export const AuditLogView: React.FC = () => {
     return (
       <AccessRestricted
         requiredRole="Admin (Clinic Director)"
-        reason="The Philippine Dental Clinic Compliance & Audit Trail is restricted strictly to Administrator level (Dr. Maria Elena Santos). Please switch your role to Admin to view audit logs."
+        reason="The Philippine Dental Clinic Compliance & Audit Trail is restricted strictly to Administrator level (Dr. Maria Elena Santos). Ask your administrator about access to audit logs."
       />
     );
   }
@@ -52,40 +51,12 @@ export const AuditLogView: React.FC = () => {
       {/* Header */}
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-          Clinic Audit Trail & Staff Directory
+          Clinic Audit Trail
         </h1>
         <p className="text-sm text-slate-500 mt-0.5">
-          Tamper-evident activity logs for Philippine dental board compliance, record alterations, and
+          Append-only activity records for document access, record alterations, and
           staff actions.
         </p>
-      </div>
-
-      {/* Staff User Management Card */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-4">
-        <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-          <User className="w-4 h-4 text-teal-700" />
-          <span>Active Clinic Staff & License Registry</span>
-        </h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {Object.values(STAFF_USERS).map((user) => (
-            <div
-              key={user.id}
-              className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-900">{user.name}</span>
-                <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-teal-100 text-teal-800 font-semibold">
-                  {user.role}
-                </span>
-              </div>
-              <p className="text-xs text-slate-600">{user.title}</p>
-              <div className="text-[11px] font-mono text-slate-500 pt-1 border-t border-slate-200/60">
-                {user.license ? <span>Lic: {user.license}</span> : <span>Non-clinical</span>}
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Admin Soft-Deleted Records Vault */}
@@ -189,7 +160,7 @@ export const AuditLogView: React.FC = () => {
               className="text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800"
             >
               <option value="ALL">All Staff Members</option>
-              {Object.values(STAFF_USERS).map((u) => (
+              {Array.from(new Map(auditLogs.map(log => [log.userId, { id: log.userId, name: log.userName }])).values()).map((u) => (
                 <option key={u.id} value={u.id}>
                   {u.name}
                 </option>
@@ -206,12 +177,41 @@ export const AuditLogView: React.FC = () => {
               <option value="FLAG_INCOMPLETE">Flag Incomplete</option>
               <option value="EDIT_METADATA">Edit Metadata</option>
               <option value="MARK_COMPLETE">Mark Complete</option>
+              <option value="HANDWRITING_DRAFT">Handwriting Suggestion</option>
+              <option value="SUMMARY_VIEW">Summary Viewed</option>
+              <option value="SUMMARY_DRAFT">Summary Draft</option>
+              <option value="SUMMARY_APPROVED">Summary Approved</option>
+              <option value="SUMMARY_REJECTED">Summary Rejected</option>
+              <option value="HANDWRITING_FAILED">Handwriting Failed</option>
+              <option value="OCR_EXTRACTED">Local OCR Extracted</option>
+              <option value="OCR_FAILED">Local OCR Failed</option>
               <option value="UPLOAD_VERSION">Upload Version</option>
               <option value="RESTORE_VERSION">Restore Version</option>
               <option value="ARCHIVE">Archive (Soft Delete)</option>
               <option value="RESTORE_ARCHIVE">Restore Archive</option>
               <option value="PRIVACY_ACK">Privacy Notice Ack</option>
               <option value="USER_LOGIN">User Login</option>
+              <option value="VIEW_DOCUMENT">Document View</option>
+              <option value="DOWNLOAD">Download</option>
+              <option value="PRINT_REQUEST">Print Request</option>
+              <option value="USER_LOGOUT">Sign Out</option>
+              <option value="SESSION_TIMEOUT">Session Timeout</option>
+              <option value="LOGIN_FAILED">Failed Sign In</option>
+              <option value="USER_CREATE">Account Created</option>
+              <option value="USER_UPDATE">Account Changed</option>
+              <option value="PASSWORD_CHANGE">Password Changed</option>
+              <option value="PASSWORD_RESET">Password Reset</option>
+              <option value="ACCESS_DENIED">Access Denied</option>
+              <option value="REVIEW_QUEUED">Review Queued</option>
+              <option value="REVIEW_REOPENED">Review Reopened</option>
+              <option value="REVIEW_ASSIGNED">Reviewer Assigned</option>
+              <option value="REVIEW_APPROVED">Extraction Approved</option>
+              <option value="REVIEW_CHANGES_REQUESTED">Corrections Requested</option>
+              <option value="REVIEW_SUPERSEDED">Review Superseded</option>
+              <option value="VALIDITY_CONFIRMED">Validity Confirmed</option>
+              <option value="VALIDITY_RULE_DRAFT">Policy Draft Created</option>
+              <option value="VALIDITY_RULE_APPROVED">Policy Approved</option>
+              <option value="VALIDITY_RULE_RETIRED">Policy Retired</option>
             </select>
           </div>
         </div>
@@ -305,9 +305,9 @@ export const AuditLogView: React.FC = () => {
         consequenceNote="Reversible: An audit log entry will be created attributing this restoration to your Admin account."
         confirmLabel="Restore Document"
         variant="default"
-        onConfirm={() => {
+        onConfirm={async () => {
           if (docToRestore) {
-            restoreArchivedDocument(docToRestore.id);
+            await restoreArchivedDocument(docToRestore.id);
             setDocToRestore(null);
           }
         }}

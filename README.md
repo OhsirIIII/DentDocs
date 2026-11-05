@@ -1,204 +1,265 @@
 # DentDocs — San Nicolas Dental Clinic Document Management System
 
-<div align="center">
-  <img src="public/logo.png" alt="San Nicolas Dental Clinic Logo" width="160" />
-  <p><strong>Secure, Local-First Dental Record Management & Clinical Completeness System</strong></p>
-  <p>Tailored for private dental practices in the Philippines, strictly compliant with Republic Act 10173 (Data Privacy Act of 2012).</p>
-</div>
+DentDocs organizes dental records, retains encrypted originals, and supports
+staff-reviewed transcription, search, completeness and validity workflows.
 
----
+**Current status:** Phases 2–7 and Phase 8 engineering/recovery work are implemented
+for a **fictional-data, loopback-only installation**. Native PDF/OCR processing is
+isolated from the API. Real-patient/LAN release remains blocked by outstanding
+security assessment, off-device recovery, clinic policies and release sign-off.
+This project does not certify legal compliance or clinical transcription accuracy.
 
-## 1. What This Project Is All About
+Resume from [SESSION_RECAP.md](SESSION_RECAP.md) and the
+[dated recall](DENTDOCS_RECALL_2026-11-03.md). The implementation branch is
+`codex/phase4-review-validity`; `main` has not received these changes through a merge.
 
-**DentDocs** is a specialized document management and clinical completeness system designed for **San Nicolas Dental Clinic**, a community dental practice in the Philippines.
+## System documentation
 
-In typical dental clinics, paper records, printed X-rays, handwritten prescriptions, laboratory slips, and official receipts are easily misplaced, filed inconsistently, or stored with missing signatures and required fields. DentDocs solves this by providing a unified digital workspace that organizes, searches, and verifies the completeness of every clinical and administrative document.
+[SYSTEM_DOCUMENTATION.md](SYSTEM_DOCUMENTATION.md) provides the seven-chapter
+system report, requirements, architecture/DFD/ER/UML diagrams, complete database
+dictionary, implementation evidence, recorded test results and staff/operator guide.
+Academic details, approvals, screenshots and unperformed evaluations are clearly
+marked for completion.
 
-### Core Principles
+## Current engineering continuation
 
-1. **Advisory AI ("Staff Must Verify")**  
-   OCR text extraction, document classification, tooth identification, and completeness checks are strictly advisory. The system assists dental staff by highlighting missing signatures, expired clearances, and omitted PRC/PTR numbers, but licensed dental personnel retain ultimate clinical and legal responsibility.
-2. **Philippine Data Privacy Act (RA 10173) Compliance**  
-   Patient privacy and medical confidentiality are built into the workflow:
-   - Mandatory session privacy notice and acknowledgement.
-   - Strict role-based access control ensuring front desk staff cannot view clinical treatment notes or medical histories.
-   - Tamper-evident, chronological audit logging for every document access, edit, and deletion.
-   - Automatic 10-minute inactivity session timeout.
-3. **Local-First & Offline Resilience**  
-   Engineered to operate reliably across the clinic's local area network (LAN) without requiring an active internet connection, ensuring patient data remains on-premises.
-4. **FDI Two-Digit Dental Charting**  
-   Built-in support for the standard FDI two-digit tooth numbering system (Quadrants 1–4, Teeth 11–48) familiar to Filipino dentists.
+[November 6 branch review](PR_REVIEW_2026-11-06.md) fixes nested history growth and
+two front-desk access gaps involving older clinical versions/review notes. Local
+regression and isolated PostgreSQL checks passed; merge approval remains pending.
 
----
+[November 6 recovery checkpoint](RECOVERY_CHECKPOINT_2026-11-06.md) records a fresh
+encrypted backup and isolated restore matching 19 tables and 40 originals, with
+source, model, configuration and actual OCR/model checks. The app is stopped.
 
-## 2. Key Features & Workflows
+[Handwriting candidate evaluation](HANDWRITING_EVALUATION_2026-11-06.md) extends
+the existing contrast/beam experiment with robustness, numeric and timing checks.
+It does not change the application reader or claim independently validated dental accuracy.
 
-### 📂 Clinical Document Organization
-Supports 8 core document types categorized across dental procedures (Restorative, Endodontics, Oral Surgery, Orthodontics, Prosthodontics, Periodontics, Preventive, and Billing):
-- **Patient Records & Charts**: Medical histories, clinical charting, allergies, and alerts.
-- **Digital X-rays**: Periapical, panoramic, and bitewing radiograph records with tooth-tagging.
-- **Treatment Plans**: Phased procedure roadmaps with cost estimates and consent linkage.
-- **Prescriptions (Reseta)**: Rx records requiring generic names, sig/directions, dentist PRC No., and PTR No.
-- **Consent Forms**: Procedure-specific consent with minor/guardian verification.
-- **Laboratory Reports**: Fabrication slips for crowns, bridges, dentures, and retainers.
-- **Billing / Receipts**: Official receipts, treatment payments, and balance tracking in Philippine Pesos (PHP ₱).
-- **Appointment Records**: Follow-up schedules and recall logs.
+[November 6 security refresh](SECURITY_REFRESH_2026-11-06.md) records successful
+advisory refresh, supported OS updates, minimum-version build checks, fresh scans
+and isolated verification. Open native/OS findings still require independent review.
 
-### 🔍 Guided Upload & Simulated OCR Extraction
-When staff drop a scanned file or photo (PDF, PNG, JPG):
-1. **Scanning text**: Simulated local OCR analyzes document contents (including Taglish phrases and local date formats).
-2. **Detecting type**: Auto-classifies into one of the 8 document categories with confidence scoring.
-3. **Extracting clinical metadata**: Detects FDI tooth numbers, patient record IDs (`PT-2026-XXXX`), procedure types, and dates.
-4. **Completeness check**: Verifies required fields against legal and practice checklists before saving.
-5. **Review & verify screen**: Staff review side-by-side extracted data, edit low-confidence fields (<85%), and confirm save with audit logging.
+[November 5 results](CONTINUATION_2026-11-05.md) cover bounded handwriting/embedding
+transport, validation-only recognition experiments and outstanding security work.
+The promising contrast/beam candidate is not enabled in the application.
+[Release preparation](RELEASE_PREPARATION.md) provides the proposed HTTPS setup and
+review conditions; it is not an activated LAN deployment or release approval.
 
-### 🛡️ Role-Based Access Control (RBAC)
-Four distinct user roles mirror the real-world staffing of the clinic:
+## Implemented workflows
 
-| Role | Default User | Permissions & Scope |
-| :--- | :--- | :--- |
-| **Admin** | Dr. Santos | Full system administration, audit log inspection, soft-delete archiving & restoration, user management. |
-| **Dentist** | Dr. Reyes | Access to all clinical records, diagnostic reviews, treatment plans, tag/tooth editing, and clinical verification. |
-| **Dental Assistant** | Maria Ramos | Guided upload processing, viewing active records, tagging assistance. Cannot archive documents or edit treatment plans. |
-| **Front Desk** | Joy Cruz | Billing/receipts and appointment records **ONLY**. Strict "Access Restricted" guard blocks clinical charts and medical history. |
+- **Records and originals:** eight document categories, patient folders, FDI tooth
+  tags (permanent teeth), editable metadata, source versions, encrypted original downloads with hash
+  checks, reversible archiving and restoration. X-rays are stored/tagged; no
+  diagnostic image interpretation is claimed.
+- **Printed OCR:** actual local Tesseract/Poppler processing of PDF, PNG and JPEG,
+  conservative field suggestions, original preview and explicit failure/manual
+  entry. Up to 20 MiB per upload and ten PDF pages; complex/unreadable inputs may
+  still require manual transcription. Encrypted PDFs are rejected for processing.
+- **Handwriting assistance:** optional experimental TrOCR suggestions for selected
+  image lines, rotation/cropping, editable text and retained source/model evidence.
+  Suggestions require staff verification and have no calibrated confidence score.
+- **Named review:** extraction review, completeness verification and validity are
+  separate decisions. Expiry requires explicit dates or an approved rule; unknown
+  validity is retained when no basis is confirmed. Checklist definitions and clinic
+  policies still require clinic approval; OCR does not verify signatures.
+- **Search:** keyword filters plus optional local semantic/hybrid retrieval using
+  pgvector and pinned embeddings. Matches identify their source passage/version.
+  Hybrid reports keyword-only fallback if the reader is unavailable; semantic-only
+  requests report failure. Summaries are not separately indexed as source evidence.
+- **Administrative summaries:** local extractive drafts with source quotations,
+  editable text and named dentist/admin approval. Drafts are separate from accepted
+  summaries; source changes invalidate prior acceptance. These are administrative
+  overviews, not clinical assessments or complete transcriptions.
+- **Accounts and audit:** named staff accounts, server-enforced access rules,
+  temporary-password changes, versioned notice acknowledgement, CSRF/origin checks,
+  session revocation and append-only database histories. Server sessions expire
+  after ten idle minutes or eight hours overall. Host/database administrators remain
+  privileged; append-only controls are not a cryptographic tamper-proof guarantee.
 
-### 📋 Completeness Engine & Clinical Alerts
-- **Missing Field Validation**: Instant calculation of complete vs. missing fields (e.g. Missing Dentist Signature, Missing PTR No., Missing Guardian Consent for minors).
-- **Proactive Alerts Banner**: Warns of scheduled surgeries without signed consent, expiring medical clearances, and pending approvals.
-- **Action Queue**: Dedicated *Incomplete Documents* view with filterable queues and audit-logged resolutions.
+| Role | Main scope |
+| --- | --- |
+| Administrator | Staff management, audit console, records, verification, archive/recovery and summary decisions |
+| Dentist | Active clinical/administrative records, review, completeness/validity and summary decisions |
+| Dental assistant | Active records, upload, transcription and tagging; treatment-plan edits and verification are restricted |
+| Front desk | Billing/appointment records and manual administrative uploads; clinical records and unclassified OCR/handwriting processing are restricted |
 
-### 🔒 Security, Audit & Session Controls
-- **Soft-Delete with Reversibility**: Documents are archived rather than permanently purged, restorable only by Administrators.
-- **Audit Trail**: Every view, download, upload, status change, and archive action generates an immutable audit record.
-- **Session Privacy Modal**: Requires staff to acknowledge RA 10173 legal obligations before accessing records in a new session.
-- **Inactivity Timeout**: 10-minute timer with a 60-second warning countdown toast to prevent unauthorized access at unattended terminals.
+The initial installation creates a single administrator account, not selectable
+demo personas. See [PHASE3.md](PHASE3.md) for the detailed permission matrix.
 
----
+## Architecture
 
-## 3. Technology Stack
+| Service | Responsibility |
+| --- | --- |
+| `web` | React/TypeScript UI served by Nginx; only published port is `127.0.0.1:8080` |
+| `api` | FastAPI, staff permissions, patient matching, encrypted files, provenance and workflow persistence |
+| `db` | PostgreSQL 17 with pgvector 0.8.7; schema version 7 |
+| `ocr` | Dedicated native printed-text worker; no database credentials, data/model mounts or host port |
+| `handwriting` | Optional private CPU service for handwriting and embeddings, with local models mounted read-only |
+| `migrate` | One-shot initialization/migration and database grant setup |
 
-- **Framework**: [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
-- **Bundler & Dev Server**: [Vite 8](https://vitejs.dev/)
-- **Styling & Tokens**: [Tailwind CSS v4](https://tailwindcss.com/) with custom San Nicolas Clinic brand palette (Deep Navy `#0f2942`, Warm Gold `#d4a373`, Medical Teal)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Animations**: [Motion](https://motion.dev/)
-- **State & Data Layer**: React Context API (`ClinicContext`), simulated async API layer (`clinicApi.ts`) with realistic latency and mock data persistence.
+Five services run with the full semantic profile; `migrate` exits after completing.
+API and worker execution are bounded and use read-only root filesystems. OCR's
+private network is shared only with API. The worker-to-database connection is
+explicitly denied and checked. Parser-library vulnerabilities remain tracked;
+isolation limits access and does not waive those findings.
 
----
+Model inference and processing run locally after preparation. Initial image/package/
+public-model downloads require network access. A Git clone includes source and
+fictional seed data; it does **not** include the existing database, originals,
+private configuration, model weights or training environment.
 
-## 4. Project Structure
+See [PARSER_ISOLATION.md](PARSER_ISOLATION.md),
+[SECURITY_FOLLOWUP.md](SECURITY_FOLLOWUP.md) and
+[SECURITY_REVIEW.md](SECURITY_REVIEW.md) for boundaries and outstanding findings.
 
-```
-DentDocs/
-├── .agents/                    # Agent skills and design system guidelines
-├── Assets/                     # Brand logo and visual assets
-├── public/                     # Static assets (favicons, logos)
-├── src/
-│   ├── assets/                 # App icons and logo marks
-│   ├── components/             # Reusable UI components
-│   │   ├── AccessRestricted.tsx      # Guard screen for unauthorized roles
-│   │   ├── ConfirmDialog.tsx         # Accessible action confirmation modal
-│   │   ├── DocumentVisualPreview.tsx # Clinical document renderer & preview
-│   │   ├── FdiDentalChart.tsx        # FDI 2-digit dental chart component
-│   │   ├── InactivityWarningBanner.tsx# 1-minute countdown warning toast
-│   │   ├── LoginModal.tsx            # Role selection & authentication modal
-│   │   ├── Navbar.tsx                # Brand header, navigation, and role badge
-│   │   ├── PrivacyNoticeModal.tsx    # RA 10173 session compliance modal
-│   │   └── Skeletons.tsx             # Pulse loading skeleton placeholders
-│   ├── context/
-│   │   └── ClinicContext.tsx         # Global clinic store, actions, and audit log
-│   ├── data/
-│   │   ├── clinicApi.ts              # Simulated async API client
-│   │   ├── clinicalAlerts.ts         # Clinical rules and alert generators
-│   │   ├── completenessRequirements.ts# Required field checklists per doc type
-│   │   ├── mockDocuments.ts          # Mock clinical documents (including edge cases)
-│   │   ├── mockPatients.ts           # Mock patient directory
-│   │   └── mockUsersAndAudit.ts      # Demo users and seed audit log
-│   ├── hooks/
-│   │   └── useInactivityTimer.ts     # User activity tracking & timeout hook
-│   ├── types/
-│   │   └── dental.ts                 # TypeScript interfaces and data models
-│   ├── views/
-│   │   ├── AuditLogView.tsx          # Administrator audit log inspector
-│   │   ├── DashboardView.tsx         # KPI overview, alert banner, urgent queue
-│   │   ├── DocumentViewerView.tsx    # Dual-pane document viewer & metadata editor
-│   │   ├── IncompleteDocumentsView.tsx# Completeness action queue
-│   │   ├── PatientsView.tsx          # Patient directory & profile view
-│   │   ├── SearchView.tsx            # Multi-parameter search & query filter
-│   │   └── UploadView.tsx            # Multi-stage guided upload & OCR review
-│   ├── App.tsx                       # Main application shell & router
-│   ├── index.css                     # Global styles, OKLCH colors & fonts
-│   └── main.tsx                      # Application entry point
-├── dentdocs_recall.md          # Architectural plan & context recall
-├── dentdocs_polish_changes.md  # Detailed front-end polish changelog
-├── package.json
-├── tsconfig.json
-└── vite.config.ts
+## Start an existing prepared installation
+
+Run from the repository folder with Docker Desktop running:
+
+```powershell
+git status --short --branch
+docker compose --profile semantic up --build -d
+docker compose --profile semantic ps
 ```
 
----
+Open [DentDocs](http://127.0.0.1:8080). Preserve `.env`, all keys, the database/files
+volumes and local model folders. Do not rerun first-install steps, reseed, regenerate
+keys, use live `down -v`, or run a blanket Docker prune merely to resume.
 
-## 5. Getting Started
+For an older installation missing the private OCR setting, run
+`.venv/Scripts/python.exe scripts/configure-ocr.py` first. It adds only OCR_TOKEN and
+preserves existing secrets. The current development installation is already configured.
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) (version 18 or higher recommended)
-- `npm`
+## New fictional-data installation
 
-### Installation & Launch
+Prerequisites: Docker Desktop with Linux containers and Compose, Git and Python
+3.12. Host Node.js 22.12+ (22.x)/npm are needed for frontend development checks; Docker builds
+provide their own Node environment. The examples below use Windows PowerShell.
+These steps are for a **new** checkout with no existing `.env` or clinic data.
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/OhsirIIII/DentDocs.git
-   cd DentDocs
-   ```
+```powershell
+git clone --branch codex/phase4-review-validity https://github.com/OhsirIIII/DentDocs.git
+cd DentDocs
+python -m venv .venv
+.venv/Scripts/python.exe -m pip install -r backend/requirements.lock
+.venv/Scripts/python.exe scripts/create-env.py
+.venv/Scripts/python.exe scripts/bootstrap-admin.py
+docker compose up --build -d
+```
 
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+This starts the base app with isolated printed OCR and manual transcription.
+Handwriting and embeddings require separately prepared local artifacts.
 
-3. **Start the development server**:
-   ```bash
-   npm run dev
-   ```
-   Open [http://localhost:3000](http://localhost:3000) in your browser.
+Initial sign-in: `admin@dentdocs.local`. Read its generated temporary password
+privately from `work/initial-admin.txt`, change it at first sign-in, then acknowledge
+the current draft confidentiality notice. Use **Staff** to create named accounts.
+Never publish `.env`, initial/reset passwords or recovery keys. The bootstrap script
+does not reset an existing account; deleting `.env` is not account recovery.
 
-4. **Run static analysis & typecheck**:
-   ```bash
-   npm run lint
-   ```
+### Enable the optional model reader
 
-5. **Build for production**:
-   ```bash
-   npm run build
-   ```
+First provision the prepared handwriting checkpoint at
+`work/handwriting/amr-base-run-001/trained/`. Source-only clones do not contain it;
+see [training/README.md](training/README.md) for the experiment and limitations.
+With those weights present:
 
----
+```powershell
+.venv/Scripts/python.exe scripts/configure-semantic.py
+.venv/Scripts/python.exe scripts/configure-handwriting.py
+docker compose --profile semantic up --build -d
+```
 
-## 6. Target Production Architecture
+`configure-semantic.py` downloads/hash-checks the pinned public embedding artifact
+into `work/semantic/model/`. `configure-handwriting.py` requires existing local
+handwriting weights and adds the separate private reader credential. Both the
+`semantic` and `handwriting` profiles start the same CPU reader, which serves both
+models. [PHASE6.md](PHASE6.md) and
+[PHASE5_HANDWRITING.md](PHASE5_HANDWRITING.md) contain the operating details.
 
-The current repository provides a polished, interactive front-end prototype. The planned transition to production includes:
+## Development and verification
 
-- **Backend**: FastAPI (Python) or Node.js with strict server-side RBAC on every endpoint.
-- **Database**: PostgreSQL with `pgvector` for natural-language semantic document search.
-- **Local OCR**: On-premises Tesseract or PaddleOCR containerized with Docker.
-- **Storage**: Local encrypted file storage outside web roots with hash validation.
-- **Deployment**: Single-command Docker Compose running entirely offline on the clinic's local server.
+```powershell
+npm ci
+npm run lint
+npm run build
 
----
+# Complete API suite, including real OCR via the running private worker:
+docker compose run --rm --no-deps -e DENTDOCS_MIGRATE=true -v "${PWD}/backend/tests:/app/tests:ro" api python -m pytest tests -q -p no:cacheprovider
 
-## 7. Project Documentation & Deliverables Checklist
+# Native/service tests in the isolated OCR image:
+docker compose run --rm --no-deps -T -v "${PWD}/ocr/test_server.py:/service/test_server.py:ro" -v "${PWD}/ocr/test_native.py:/service/test_native.py:ro" ocr python -m unittest test_server test_native -q
 
-- [ ] Project Proposal
-- [ ] Software Requirements Specification (SRS)
-- [ ] Use Case Diagram and User Stories
-- [ ] System Architecture Diagram
-- [ ] Entity Relationship Diagram (ERD)
-- [ ] UI/UX Wireframes and Design Guidelines
-- [ ] Software Design Document (SDD)
-- [ ] API Documentation
-- [x] README and Installation Guide
-- [ ] Test Plan and Test Cases
-- [ ] Deployment and Backup Guide
-- [ ] User Manual
+# Operator/recovery tests; use a fresh temporary test directory:
+.venv/Scripts/python.exe -m pytest scripts/tests -q --basetemp work/readme-verification -p no:cacheprovider
 
+# Read-only live deployment boundary check:
+.venv/Scripts/python.exe scripts/verify-security.py --output work/runtime-security.json
+```
+
+Run the API/service commands after starting Compose; `--no-deps` does not start the
+worker. The API test suite uses disposable SQLite fixtures while real OCR calls the
+private worker; it does not use the running clinic database as its test database.
+Latest implementation verification: 99 API, seven worker and 25 operator/recovery
+tests passed, plus browser/type/build checks. See PARSER_ISOLATION.md for evidence.
+
+`npm run dev` serves only the frontend at `127.0.0.1:3000`. Its current Vite proxy
+expects a development API at `127.0.0.1:8000`; Compose deliberately does not publish
+that API port. A separate development backend/origin configuration is required.
+Use the Compose app on port 8080 for the documented full working installation.
+
+## Backup and recovery
+
+Follow [PHASE8.md](PHASE8.md) for keygen, backup, isolated drill, verification and
+cleanup commands. Current bundles encrypt the database dump, originals, `.env`,
+tracked/staged source, both models and all five runtime images. Stage reviewed new
+source explicitly before snapshotting. Untracked files are excluded from the source
+component; unrelated `output/` and `tmp/` are also excluded from build contexts.
+
+Keep an encrypted off-device copy and a separately custodied recovery key. GitHub
+source is not a backup of the running installation. Do not put the key in the bundle
+or share both together. A same-disk trial copy is not disaster recovery.
+
+The [November 6 isolated restore](RECOVERY_CHECKPOINT_2026-11-06.md) matched 19
+persisted tables and 40 registered originals, exercised recovered OCR and both
+models, and retained data-store isolation. Database readiness uses the final TCP
+listener and imports are transactional. This was a fresh-volume test on the same
+Docker host. A physical second-machine/operator drill is still outstanding.
+
+## Project map and documentation
+
+| Path | Contents |
+| --- | --- |
+| `src/` | React UI, API client, routes and staff workflows |
+| `backend/` | API, migrations, permissions, workflow logic, protocol and tests |
+| `ocr/` | Minimal private printed-OCR service image and native/service tests |
+| `handwriting/` | Offline CPU handwriting/embedding service and dependency lock |
+| `training/` | Separate research/preparation scripts and documented experimental results |
+| `scripts/` | Private setup, encrypted recovery and deployment checks |
+| `deployment/` | Database image and Nginx configuration |
+| `work/` | Ignored local data, weights, credentials and verification artifacts |
+
+- [SESSION_RECAP.md](SESSION_RECAP.md): current commit, service state and next tasks.
+- [PARSER_ISOLATION.md](PARSER_ISOLATION.md): current OCR architecture/setup and recovery evidence.
+- [PHASE2.md](PHASE2.md), [PHASE3.md](PHASE3.md), [PHASE4.md](PHASE4.md): storage, accounts, review and validity foundations.
+- [PHASE5.md](PHASE5.md), [PHASE5_HANDWRITING.md](PHASE5_HANDWRITING.md): OCR and experimental draft workflows.
+- [PHASE6.md](PHASE6.md), [PHASE7.md](PHASE7.md): search and administrative summaries.
+- [PHASE8.md](PHASE8.md), [SECURITY_REVIEW.md](SECURITY_REVIEW.md), [SECURITY_FOLLOWUP.md](SECURITY_FOLLOWUP.md): recovery and release/security status.
+- [DESIGN.md](DESIGN.md): current interface conventions.
+
+Older phase documents describe their implementation stage; current code, recap and
+parser-isolation documentation take precedence over historical pending-feature notes.
+
+## Remaining release work
+
+1. Independently assess/remediate remaining parser/OS findings and document any
+   applicability or risk decisions; isolation is not a clean security scan.
+2. Complete off-device/second-machine recovery, key custody, approved backup
+   schedule/retention, recovery targets and monitoring.
+3. Approve clinic privacy/retention, roles and completeness/validity policies;
+   configure approved LAN HTTPS/secure cookies and obtain explicit release sign-off.
+4. Finish staff/installation guides and final requirements, design, API/ERD and
+   acceptance deliverables. Validate coverage against the actual implementation.
+5. Obtain verified dental labels and independent writer-disjoint evaluation before
+   claiming handwriting reliability. Supplied clinic transcriptions remain drafts.
+
+No PR merge or real-patient release is implied by a source push or this README.

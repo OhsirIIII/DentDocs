@@ -1,20 +1,38 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import {
-  StaffUser,
-  UserRole,
-  Patient,
-  DentalDocument,
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import type {
   AuditEntry,
-  DocumentType,
   ClinicalAlert,
-  ProcedureCategory,
-  CompletenessStatus,
+  DentalDocument,
+  DocumentType,
+  UserRole,
 } from '../types/dental';
-import { MOCK_PATIENTS } from '../data/mockPatients';
-import { MOCK_DOCUMENTS } from '../data/mockDocuments';
-import { STAFF_USERS, INITIAL_AUDIT_LOGS } from '../data/mockUsersAndAudit';
+import {
+  request,
+  clearCredentials,
+  type AuthState,
+  type Bootstrap,
+} from '../data/apiClient';
 import { generateClinicAlerts } from '../data/clinicalAlerts';
 
+type Screen =
+  | 'dashboard'
+  | 'patients'
+  | 'upload'
+  | 'viewer'
+  | 'search'
+  | 'audit'
+  | 'incomplete'
+  | 'users'
+  | 'review'
+  | 'validity-rules';
 interface NavigationOptions {
   patientId?: string;
   documentId?: string;
@@ -22,574 +40,326 @@ interface NavigationOptions {
   filterType?: DocumentType | 'ALL';
   filterStatus?: string;
 }
+type RevisionInput = Pick<
+  DentalDocument,
+  | 'title'
+  | 'fileType'
+  | 'fileSize'
+  | 'extractedText'
+  | 'toothNumbers'
+  | 'procedureCategory'
+  | 'tags'
+> & {
+  changeSummary: string;
+  completenessStatus?: DentalDocument['completenessStatus'];
+  fileId?: string;
+};
 
-interface ClinicContextType {
-  currentUser: StaffUser;
-  switchRole: (role: UserRole) => void;
-  currentScreen: 'dashboard' | 'patients' | 'upload' | 'viewer' | 'search' | 'audit' | 'incomplete';
-  navigateTo: (
-    screen: 'dashboard' | 'patients' | 'upload' | 'viewer' | 'search' | 'audit' | 'incomplete',
-    options?: NavigationOptions
-  ) => void;
-  selectedPatientId: string | null;
-  setSelectedPatientId: (id: string | null) => void;
-  selectedDocumentId: string | null;
-  setSelectedDocumentId: (id: string | null) => void;
-  patients: Patient[];
-  documents: DentalDocument[];
-  auditLogs: AuditEntry[];
-  visibleDocuments: DentalDocument[];
-  alerts: ClinicalAlert[];
-  addDocument: (doc: DentalDocument) => void;
-  updateDocument: (id: string, updates: Partial<DentalDocument>) => void;
-  deleteDocument: (id: string) => { success: boolean; reason?: string };
-  archiveDocument: (id: string) => { success: boolean; reason?: string };
-  restoreArchivedDocument: (id: string) => { success: boolean; reason?: string };
-  archivedDocuments: DentalDocument[];
-  resolveIncompleteDocument: (docId: string, resolutionNote: string) => void;
-  uploadNewVersion: (
-    docId: string,
-    newVersionData: {
-      title: string;
-      fileType: 'PDF' | 'JPG' | 'PNG';
-      fileSize: string;
-      extractedText: string;
-      toothNumbers: number[];
-      procedureCategory: ProcedureCategory;
-      tags: string[];
-      changeSummary: string;
-      completenessStatus?: CompletenessStatus;
-    }
-  ) => void;
-  restoreVersion: (docId: string, targetVersionNumber: number, restoreNote: string) => void;
-  addAuditLog: (
-    action: AuditEntry['action'],
-    targetType: AuditEntry['targetType'],
-    targetId: string,
-    targetTitle: string,
-    details: string
-  ) => void;
-  resetDemoData: () => void;
-  canAccessClinicalDocs: boolean;
-  canUploadDocs: boolean;
-  canDeleteDocs: boolean;
-  canManageUsersAndAudit: boolean;
-  searchFilterInitial: {
-    query?: string;
-    type?: DocumentType | 'ALL';
-    status?: string;
-  };
-}
-
-const STORAGE_KEY_DOCS = 'dentdocs_mock_documents_v1';
-const STORAGE_KEY_PATIENTS = 'dentdocs_mock_patients_v1';
-const STORAGE_KEY_AUDIT = 'dentdocs_mock_audit_v1';
-const STORAGE_KEY_ROLE = 'dentdocs_mock_role_v1';
-
-const ClinicContext = createContext<ClinicContextType | undefined>(undefined);
-
-export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentUserRole, setCurrentUserRole] = useState<UserRole>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY_ROLE) as UserRole | null;
-    return saved && STAFF_USERS[saved] ? saved : 'dentist';
-  });
-
-  const [patients, setPatients] = useState<Patient[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY_PATIENTS);
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error('Failed to parse cached patients', e);
-      }
-    }
-    return MOCK_PATIENTS;
-  });
-
-  const [documents, setDocuments] = useState<DentalDocument[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY_DOCS);
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error('Failed to parse cached documents', e);
-      }
-    }
-    return MOCK_DOCUMENTS;
-  });
-
-  const [auditLogs, setAuditLogs] = useState<AuditEntry[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY_AUDIT);
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error('Failed to parse cached audit', e);
-      }
-    }
-    return INITIAL_AUDIT_LOGS;
-  });
-
-  const [currentScreen, setCurrentScreen] = useState<
-    'dashboard' | 'patients' | 'upload' | 'viewer' | 'search' | 'audit' | 'incomplete'
-  >('dashboard');
-  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
-  const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>('doc-004'); // default to minor consent for demo
+function useClinicState() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [data, setData] = useState<Bootstrap | null>(null);
+  const latest = useRef(data);
+  const authGeneration = useRef(0);
+  const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState('');
+  const [pending, setPending] = useState(false);
+  const [auth, setAuth] = useState<AuthState | null>(null);
+  const role = auth?.user.role || 'front_desk';
+  const [uploadPatientId, setUploadPatientId] = useState<string | null>(null);
   const [searchFilterInitial, setSearchFilterInitial] = useState<{
     query?: string;
     type?: DocumentType | 'ALL';
     status?: string;
   }>({});
-
-  // Sync state to LocalStorage
+  const queue = useRef(Promise.resolve());
+  const parts = location.pathname
+    .split('/')
+    .filter(Boolean)
+    .map(decodeURIComponent);
+  const currentScreen: Screen =
+    parts[0] === 'documents'
+      ? 'viewer'
+      : parts[0] === 'admin'
+        ? parts[1] === 'users'
+          ? 'users'
+          : 'audit'
+        : ((parts[0] || 'dashboard') as Screen);
+  const selectedPatientId =
+    parts[0] === 'patients' ? parts[1] || null : uploadPatientId;
+  const selectedDocumentId = parts[0] === 'documents' ? parts[1] || null : null;
+  async function reload() {
+    const generation = authGeneration.current;
+    const snapshot = await request<Bootstrap>('/bootstrap');
+    if (generation !== authGeneration.current) return;
+    latest.current = snapshot;
+    setData(snapshot);
+  }
+  function clearAuth() {
+    authGeneration.current += 1;
+    clearCredentials();
+    setAuth(null);
+    setData(null);
+    latest.current = null;
+  }
+  async function acceptAuth(next: AuthState) {
+    setAuth(next);
+    if (!next.user.mustChangePassword && next.privacyAcknowledged)
+      await reload();
+  }
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY_DOCS, JSON.stringify(documents));
-  }, [documents]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY_PATIENTS, JSON.stringify(patients));
-  }, [patients]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY_AUDIT, JSON.stringify(auditLogs));
-  }, [auditLogs]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY_ROLE, currentUserRole);
-  }, [currentUserRole]);
-
-  const currentUser = STAFF_USERS[currentUserRole];
-
-  // Role permissions
-  // Front Desk: only billing documents and appointment records
-  // Dental Assistant: can upload and view but NOT delete
-  // Dentist: can view and edit clinical documents
-  // Admin: full access + user management + audit log
-  const canAccessClinicalDocs = currentUserRole !== 'front_desk';
-  const canUploadDocs = true; // all staff can upload files
-  // Only Admins may archive (soft-delete) documents. Dentist role does NOT have delete.
-  const canDeleteDocs = currentUserRole === 'admin';
-  const canManageUsersAndAudit = currentUserRole === 'admin';
-
-  // Archived (soft-deleted) documents — Admin-only view
-  const archivedDocuments = documents.filter((doc) => doc.archived === true);
-
-  // Filter documents visible to the current role (archived docs are hidden from all normal lists)
-  const visibleDocuments = documents.filter((doc) => {
-    if (doc.archived) return false; // soft-deleted; hide from all normal views
-    if (currentUserRole === 'front_desk') {
-      return doc.type === 'Billing/Receipt' || doc.type === 'Appointment Record';
-    }
-    return true;
-  });
-
-  const switchRole = (newRole: UserRole) => {
-    setCurrentUserRole(newRole);
-    const user = STAFF_USERS[newRole];
-    // Record login/switch audit
-    const newEntry: AuditEntry = {
-      id: `aud-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-      timestamp: new Date().toLocaleString('en-US', {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-      }),
-      userId: user.id,
-      userName: user.name,
-      userRole: user.role,
-      action: 'USER_LOGIN',
-      targetType: 'SYSTEM',
-      targetId: user.id,
-      targetTitle: `Active Role: ${user.title}`,
-      details: `Switched session view to ${user.name} (${user.title}).`,
-    };
-    setAuditLogs((prev) => [newEntry, ...prev]);
-  };
-
-  const addAuditLog = (
-    action: AuditEntry['action'],
-    targetType: AuditEntry['targetType'],
-    targetId: string,
-    targetTitle: string,
-    details: string
-  ) => {
-    const newEntry: AuditEntry = {
-      id: `aud-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-      timestamp: new Date().toLocaleString('en-US', {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-      }),
-      userId: currentUser.id,
-      userName: currentUser.name,
-      userRole: currentUser.role,
-      action,
-      targetType,
-      targetId,
-      targetTitle,
-      details,
-    };
-    setAuditLogs((prev) => [newEntry, ...prev]);
-  };
-
-  const addDocument = (doc: DentalDocument) => {
-    setDocuments((prev) => [doc, ...prev]);
-    addAuditLog(
-      'UPLOAD',
-      'DOCUMENT',
-      doc.id,
-      doc.title,
-      `Uploaded and saved "${doc.title}" for patient ${doc.patientName} (${doc.patientRecordNo}). Confidence: ${doc.confidenceScore}%.`
-    );
-  };
-
-  const updateDocument = (id: string, updates: Partial<DentalDocument>) => {
-    setDocuments((prev) =>
-      prev.map((doc) => {
-        if (doc.id === id) {
-          const updated = { ...doc, ...updates };
-          return updated;
-        }
-        return doc;
+    const generation = authGeneration.current;
+    request<AuthState>('/auth/me')
+      .then((next) => {
+        if (generation === authGeneration.current) return acceptAuth(next);
       })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+    window.addEventListener('dentdocs:unauthorized', clearAuth);
+    return () => window.removeEventListener('dentdocs:unauthorized', clearAuth);
+  }, []);
+  useEffect(() => {
+    if (!auth) return;
+    const timer = window.setInterval(() => {
+      const generation = authGeneration.current;
+      request<AuthState>('/auth/me')
+        .then((next) => {
+          if (generation === authGeneration.current) setAuth(next);
+        })
+        .catch(() => {});
+    }, 30000);
+    return () => window.clearInterval(timer);
+  }, [auth?.user.id]);
+  async function login(email: string, password: string) {
+    clearAuth();
+    setApiError('');
+    await acceptAuth(
+      await request<AuthState>('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      }),
     );
-
-    const doc = documents.find((d) => d.id === id);
-    if (doc) {
-      const detailsList = Object.keys(updates)
-        .map((k) => `${k}: updated`)
-        .join(', ');
-      addAuditLog(
-        'EDIT_METADATA',
-        'DOCUMENT',
-        id,
-        doc.title,
-        `Staff ${currentUser.name} updated fields [${detailsList}] on document ${id}.`
+  }
+  async function logout() {
+    try {
+      await request('/auth/logout', { method: 'POST' });
+    } finally {
+      clearAuth();
+    }
+  }
+  async function changePassword(currentPassword: string, newPassword: string) {
+    await acceptAuth(
+      await request<AuthState>('/auth/change-password', {
+        method: 'POST',
+        body: JSON.stringify({ currentPassword, newPassword }),
+      }),
+    );
+  }
+  async function acknowledgePrivacy() {
+    try {
+      await request('/privacy-acknowledgements', {
+        method: 'POST',
+        body: JSON.stringify({ noticeVersion: auth?.noticeVersion }),
+      });
+      await acceptAuth(await request<AuthState>('/auth/me'));
+    } catch (error) {
+      setApiError(
+        error instanceof Error
+          ? error.message
+          : 'Unable to save acknowledgement',
       );
+      throw error;
     }
-  };
-
-  const deleteDocument = (id: string) => {
-    if (!canDeleteDocs) {
-      return {
-        success: false,
-        reason: 'Permission Denied: Only Admins can archive documents.',
-      };
-    }
-    // Legacy hard-delete kept for context API compatibility; forwards to soft-delete
-    return archiveDocument(id);
-  };
-
-  /**
-   * archiveDocument — Admin-only soft delete.
-   * Sets doc.archived = true and adds an audit entry.
-   * Document is hidden from all normal lists but remains in state and is
-   * restorable by Admin via restoreArchivedDocument.
-   */
-  const archiveDocument = (id: string): { success: boolean; reason?: string } => {
-    if (currentUserRole !== 'admin') {
-      return {
-        success: false,
-        reason: 'Permission Denied: Only Admins can archive documents.',
-      };
-    }
-    const targetDoc = documents.find((d) => d.id === id);
-    if (!targetDoc) return { success: false, reason: 'Document not found' };
-    if (targetDoc.archived) return { success: false, reason: 'Document is already archived.' };
-
-    const timestamp = new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
-    setDocuments((prev) =>
-      prev.map((doc) =>
-        doc.id === id
-          ? { ...doc, archived: true, archivedBy: `${currentUser.name} (${currentUser.title})`, archivedAt: timestamp }
-          : doc
-      )
-    );
-    addAuditLog(
-      'ARCHIVE',
-      'DOCUMENT',
-      id,
-      targetDoc.title,
-      `Document "${targetDoc.title}" archived (soft-deleted) by ${currentUser.name} (${currentUser.title}). Document is hidden from normal lists and can be restored by Admin.`
-    );
-    return { success: true };
-  };
-
-  /**
-   * restoreArchivedDocument — Admin-only; reverses an archive action.
-   * Clears doc.archived flag and records an audit entry.
-   */
-  const restoreArchivedDocument = (id: string): { success: boolean; reason?: string } => {
-    if (currentUserRole !== 'admin') {
-      return { success: false, reason: 'Permission Denied: Only Admins can restore archived documents.' };
-    }
-    const targetDoc = documents.find((d) => d.id === id);
-    if (!targetDoc) return { success: false, reason: 'Document not found' };
-    if (!targetDoc.archived) return { success: false, reason: 'Document is not archived.' };
-
-    setDocuments((prev) =>
-      prev.map((doc) =>
-        doc.id === id
-          ? { ...doc, archived: false, archivedBy: undefined, archivedAt: undefined }
-          : doc
-      )
-    );
-    addAuditLog(
-      'RESTORE_ARCHIVE',
-      'DOCUMENT',
-      id,
-      targetDoc.title,
-      `Archived document "${targetDoc.title}" restored to active records by ${currentUser.name} (${currentUser.title}).`
-    );
-    return { success: true };
-  };
-
-  const resolveIncompleteDocument = (docId: string, resolutionNote: string) => {
-    const timestamp = new Date().toLocaleString('en-US', {
-      dateStyle: 'medium',
-      timeStyle: 'short',
+  }
+  useEffect(() => {
+    const onRejected = (event: PromiseRejectionEvent) => {
+      event.preventDefault();
+      setApiError(
+        event.reason instanceof Error
+          ? event.reason.message
+          : 'The operation failed. Please retry.',
+      );
+    };
+    window.addEventListener('unhandledrejection', onRejected);
+    return () => window.removeEventListener('unhandledrejection', onRejected);
+  }, []);
+  function mutate<T>(operation: () => Promise<T>): Promise<T> {
+    const task = queue.current.then(async () => {
+      setPending(true);
+      setApiError('');
+      try {
+        const result = await operation();
+        await reload();
+        return result;
+      } catch (error) {
+        setApiError(
+          error instanceof Error ? error.message : 'Unable to save changes',
+        );
+        await reload().catch(() => {});
+        throw error;
+      } finally {
+        setPending(false);
+      }
     });
-
-    setDocuments((prev) =>
-      prev.map((doc) => {
-        if (doc.id === docId) {
-          return {
-            ...doc,
-            completenessStatus: 'complete',
-            missingFields: [],
-            resolvedBy: `${currentUser.name} (${currentUser.title})`,
-            resolvedAt: timestamp,
-            resolutionNote,
-          };
-        }
-        return doc;
-      })
+    queue.current = task.then(
+      () => {},
+      () => {},
     );
-
-    const targetDoc = documents.find((d) => d.id === docId);
-    const title = targetDoc ? targetDoc.title : docId;
-
-    addAuditLog(
-      'MARK_COMPLETE',
-      'DOCUMENT',
-      docId,
-      title,
-      `Completeness flag resolved by ${currentUser.name} (${currentUser.title}). Staff note: "${resolutionNote}"`
-    );
-  };
-
-  const alerts = generateClinicAlerts(patients, visibleDocuments);
-
-  const uploadNewVersion = (
-    docId: string,
-    newVersionData: {
-      title: string;
-      fileType: 'PDF' | 'JPG' | 'PNG';
-      fileSize: string;
-      extractedText: string;
-      toothNumbers: number[];
-      procedureCategory: ProcedureCategory;
-      tags: string[];
-      changeSummary: string;
-      completenessStatus?: CompletenessStatus;
-    }
-  ) => {
-    const timestamp = new Date().toLocaleString('en-US', {
-      dateStyle: 'medium',
-      timeStyle: 'short',
+    return task;
+  }
+  function change(
+    id: string,
+    operation: string,
+    extra: Record<string, unknown> = {},
+    method = 'POST',
+  ) {
+    return mutate(async () => {
+      const doc = latest.current?.documents.find((d) => d.id === id);
+      if (!doc) throw new Error('Document not found. Reload the page.');
+      return request<DentalDocument>(
+        `/documents/${encodeURIComponent(id)}${operation}`,
+        {
+          method,
+          body: JSON.stringify({ expectedRevision: doc.revision, ...extra }),
+        },
+      );
     });
-
-    setDocuments((prev) =>
-      prev.map((doc) => {
-        if (doc.id === docId) {
-          const archivedVersion = {
-            versionNumber: doc.version,
-            uploadedAt: doc.uploadedAt,
-            uploadedBy: doc.uploadedBy,
-            fileType: doc.fileType,
-            fileSize: doc.fileSize,
-            title: doc.title,
-            extractedText: doc.extractedText,
-            toothNumbers: doc.toothNumbers,
-            procedureCategory: doc.procedureCategory,
-            tags: doc.tags,
-            completenessStatus: doc.completenessStatus,
-            status: 'superseded' as const,
-            changeSummary: newVersionData.changeSummary,
-            supersededAt: timestamp,
-            supersededBy: currentUser.name,
-          };
-
-          const newVersionNum = doc.version + 1;
-
-          return {
-            ...doc,
-            version: newVersionNum,
-            versionStatus: 'active' as const,
-            versionHistory: [archivedVersion, ...(doc.versionHistory || [])],
-            title: newVersionData.title,
-            fileType: newVersionData.fileType,
-            fileSize: newVersionData.fileSize,
-            extractedText: newVersionData.extractedText,
-            toothNumbers: newVersionData.toothNumbers,
-            procedureCategory: newVersionData.procedureCategory,
-            tags: newVersionData.tags,
-            completenessStatus: newVersionData.completenessStatus || 'complete',
-            uploadedBy: `${currentUser.name} (${currentUser.title})`,
-            uploadedAt: timestamp,
-          };
-        }
-        return doc;
-      })
-    );
-
-    const targetDoc = documents.find((d) => d.id === docId);
-    const title = targetDoc ? targetDoc.title : docId;
-
-    addAuditLog(
-      'UPLOAD_VERSION',
-      'DOCUMENT',
-      docId,
-      title,
-      `Uploaded new version v${(targetDoc?.version || 1) + 1} of "${newVersionData.title}". Previous version marked Superseded. Change note: "${newVersionData.changeSummary}"`
-    );
-  };
-
-  const restoreVersion = (docId: string, targetVersionNumber: number, restoreNote: string) => {
-    const timestamp = new Date().toLocaleString('en-US', {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    });
-
-    setDocuments((prev) =>
-      prev.map((doc) => {
-        if (doc.id === docId) {
-          const target = doc.versionHistory?.find((v) => v.versionNumber === targetVersionNumber);
-          if (!target) return doc;
-
-          const archivedCurrent = {
-            versionNumber: doc.version,
-            uploadedAt: doc.uploadedAt,
-            uploadedBy: doc.uploadedBy,
-            fileType: doc.fileType,
-            fileSize: doc.fileSize,
-            title: doc.title,
-            extractedText: doc.extractedText,
-            toothNumbers: doc.toothNumbers,
-            procedureCategory: doc.procedureCategory,
-            tags: doc.tags,
-            completenessStatus: doc.completenessStatus,
-            status: 'superseded' as const,
-            changeSummary: `Superseded by rollback to version v${targetVersionNumber}. Note: ${restoreNote}`,
-            supersededAt: timestamp,
-            supersededBy: currentUser.name,
-          };
-
-          const nextVersionNumber = doc.version + 1;
-
-          return {
-            ...doc,
-            version: nextVersionNumber,
-            versionStatus: 'active' as const,
-            versionHistory: [archivedCurrent, ...(doc.versionHistory || [])],
-            title: target.title,
-            fileType: target.fileType,
-            fileSize: target.fileSize,
-            extractedText: target.extractedText,
-            toothNumbers: target.toothNumbers,
-            procedureCategory: target.procedureCategory,
-            tags: target.tags,
-            completenessStatus: target.completenessStatus,
-            uploadedBy: `${currentUser.name} (${currentUser.title})`,
-            uploadedAt: timestamp,
-          };
-        }
-        return doc;
-      })
-    );
-
-    const targetDoc = documents.find((d) => d.id === docId);
-    const title = targetDoc ? targetDoc.title : docId;
-
-    addAuditLog(
-      'RESTORE_VERSION',
-      'DOCUMENT',
-      docId,
-      title,
-      `Restored archived version v${targetVersionNumber} as active version v${(targetDoc?.version || 1) + 1}. Staff note: "${restoreNote}"`
-    );
-  };
-
-  const navigateTo = (
-    screen: 'dashboard' | 'patients' | 'upload' | 'viewer' | 'search' | 'audit' | 'incomplete',
-    options?: NavigationOptions
-  ) => {
-    if (options?.patientId) setSelectedPatientId(options.patientId);
-    if (options?.documentId) setSelectedDocumentId(options.documentId);
-    if (options?.searchQuery || options?.filterType || options?.filterStatus) {
+  }
+  function navigateTo(screen: Screen, options: NavigationOptions = {}) {
+    if (options.patientId) setUploadPatientId(options.patientId);
+    if (screen === 'search')
       setSearchFilterInitial({
         query: options.searchQuery,
         type: options.filterType,
         status: options.filterStatus,
       });
-    }
-    setCurrentScreen(screen);
+    const path =
+      screen === 'viewer'
+        ? `/documents/${encodeURIComponent(options.documentId || selectedDocumentId || '')}`
+        : screen === 'patients'
+          ? `/patients${options.patientId ? `/${encodeURIComponent(options.patientId)}` : ''}`
+          : screen === 'users'
+            ? '/admin/users'
+            : screen === 'audit'
+              ? '/admin/audit'
+              : `/${screen}`;
+    navigate(path);
+  }
+  const documents = data?.documents || [];
+  const patients = data?.patients || [];
+  const visibleDocuments = useMemo(
+    () =>
+      documents.filter(
+        (d) =>
+          !d.archived &&
+          (role !== 'front_desk' ||
+            ['Billing/Receipt', 'Appointment Record'].includes(d.type)),
+      ),
+    [documents, role],
+  );
+  const archiveDocument = async (id: string) => {
+    await change(id, '/archive');
+    return { success: true };
   };
-
-  const resetDemoData = () => {
-    setPatients(MOCK_PATIENTS);
-    setDocuments(MOCK_DOCUMENTS);
-    setAuditLogs(INITIAL_AUDIT_LOGS);
-    setCurrentUserRole('dentist');
-    setSelectedDocumentId('doc-004');
-    setSelectedPatientId(null);
-    localStorage.removeItem(STORAGE_KEY_DOCS);
-    localStorage.removeItem(STORAGE_KEY_PATIENTS);
-    localStorage.removeItem(STORAGE_KEY_AUDIT);
-    localStorage.removeItem(STORAGE_KEY_ROLE);
+  const restoreArchivedDocument = async (id: string) => {
+    await change(id, '/restore-archive');
+    return { success: true };
   };
-
+  return {
+    auth,
+    login,
+    logout,
+    changePassword,
+    acknowledgePrivacy,
+    data,
+    loading,
+    apiError,
+    pending,
+    reload,
+    clearApiError: () => setApiError(''),
+    // DataBoundary mounts all user-facing views only after bootstrap succeeds.
+    currentUser: auth?.user!,
+    currentScreen,
+    selectedPatientId,
+    selectedDocumentId,
+    setSelectedPatientId: (id: string | null) => {
+      setUploadPatientId(id);
+      if (parts[0] === 'patients')
+        navigate(`/patients${id ? `/${encodeURIComponent(id)}` : ''}`);
+    },
+    setSelectedDocumentId: (_id: string | null) => {},
+    navigateTo,
+    patients,
+    documents,
+    visibleDocuments,
+    archivedDocuments:
+      role === 'admin' ? documents.filter((d) => d.archived) : [],
+    auditLogs: data?.auditLogs || [],
+    reviewPendingCount: data?.reviewPendingCount || 0,
+    alerts: [
+      ...(role === 'front_desk'
+        ? []
+        : generateClinicAlerts(patients, visibleDocuments)),
+      ...visibleDocuments
+        .filter((d) =>
+          ['expired', 'expiring'].includes(d.validity?.status || ''),
+        )
+        .map<ClinicalAlert>((d) => ({
+          id: `validity-${d.id}`,
+          patientId: d.patientId,
+          patientRecordNo: d.patientRecordNo,
+          patientName: d.patientName,
+          type:
+            d.validity?.status === 'expired'
+              ? ('DOCUMENT_EXPIRED' as const)
+              : ('DOCUMENT_EXPIRING' as const),
+          severity: 'warning' as const,
+          title: `${d.validity?.status === 'expired' ? 'Expired document' : 'Document expiring'} (${d.patientName})`,
+          description: `${d.title}: verified expiry ${d.validity?.expiresOn}. Staff must review renewal or replacement.`,
+          linkedDocId: d.id,
+          actionLabel: 'Review validity',
+        })),
+    ],
+    canAccessClinicalDocs: role !== 'front_desk',
+    canUploadDocs: true,
+    canDeleteDocs: role === 'admin',
+    canManageUsersAndAudit: role === 'admin',
+    searchFilterInitial,
+    addDocument: (document: DentalDocument) =>
+      mutate(() =>
+        request<DentalDocument>('/documents', {
+          method: 'POST',
+          body: JSON.stringify({ document, fileId: document.fileId }),
+        }),
+      ),
+    updateDocument: (id: string, updates: Partial<DentalDocument>) =>
+      change(id, '', { updates }, 'PATCH'),
+    archiveDocument,
+    deleteDocument: archiveDocument,
+    restoreArchivedDocument,
+    resolveIncompleteDocument: (id: string, note: string) =>
+      change(id, '/completeness-resolution', { note }),
+    uploadNewVersion: (id: string, input: RevisionInput) => {
+      const { changeSummary, fileId, ...updates } = input;
+      return change(id, '/versions', { note: changeSummary, fileId, updates });
+    },
+    restoreVersion: (id: string, version: number, note: string) =>
+      change(id, `/versions/${version}/restore`, { note }),
+  };
+}
+const ClinicContext = createContext<ReturnType<typeof useClinicState> | null>(
+  null,
+);
+export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const value = useClinicState();
   return (
-    <ClinicContext.Provider
-      value={{
-        currentUser,
-        switchRole,
-        currentScreen,
-        navigateTo,
-        selectedPatientId,
-        setSelectedPatientId,
-        selectedDocumentId,
-        setSelectedDocumentId,
-        patients,
-        documents,
-        auditLogs,
-        visibleDocuments,
-        alerts,
-        addDocument,
-        updateDocument,
-        deleteDocument,
-        archiveDocument,
-        restoreArchivedDocument,
-        archivedDocuments,
-        resolveIncompleteDocument,
-        uploadNewVersion,
-        restoreVersion,
-        addAuditLog,
-        resetDemoData,
-        canAccessClinicalDocs,
-        canUploadDocs,
-        canDeleteDocs,
-        canManageUsersAndAudit,
-        searchFilterInitial,
-      }}
-    >
-      {children}
-    </ClinicContext.Provider>
+    <ClinicContext.Provider value={value}>{children}</ClinicContext.Provider>
   );
 };
-
-export const useClinic = () => {
+export function useClinic() {
   const context = useContext(ClinicContext);
-  if (!context) {
-    throw new Error('useClinic must be used within a ClinicProvider');
-  }
+  if (!context) throw new Error('useClinic requires ClinicProvider');
   return context;
-};
+}

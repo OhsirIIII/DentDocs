@@ -11,7 +11,7 @@ export const AccessRestricted: React.FC<AccessRestrictedProps> = ({
   requiredRole = 'Dentist or Admin',
   reason,
 }) => {
-  const { currentUser, switchRole, navigateTo } = useClinic();
+  const { currentUser, navigateTo } = useClinic();
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center p-6">
@@ -58,13 +58,7 @@ export const AccessRestricted: React.FC<AccessRestrictedProps> = ({
         </div>
 
         <div className="space-y-2.5">
-          <button
-            onClick={() => switchRole('dentist')}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-teal-700 hover:bg-teal-800 rounded-xl transition-colors shadow-sm"
-          >
-            <UserCheck className="w-4 h-4" />
-            <span>Switch Role to Dentist (Dr. Reyes)</span>
-          </button>
+<p className="text-sm text-slate-600">Ask your administrator if your account needs different access.</p>
 
           <button
             onClick={() => navigateTo('search', { filterType: 'Billing/Receipt' })}

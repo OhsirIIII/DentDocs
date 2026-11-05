@@ -38,6 +38,11 @@ export const SearchView: React.FC = () => {
 
   const [results, setResults] = useState<DentalDocument[]>(visibleDocuments);
   const [isSearching, setIsSearching] = useState(false);
+  const [mode, setMode] = useState<'hybrid' | 'semantic' | 'keyword'>('hybrid');
+  const [notice, setNotice] = useState<string | null>(null);
+  const [modeUsed, setModeUsed] = useState('keyword');
+  const [retry, setRetry] = useState(0);
+  const [searchError, setSearchError] = useState('');
 
   // Sync if context passes initial filters
   useEffect(() => {
@@ -50,7 +55,8 @@ export const SearchView: React.FC = () => {
   useEffect(() => {
     let active = true;
     setIsSearching(true);
-    searchDocumentsAsync(
+    setSearchError(''); setResults([]); setNotice(null);
+    const timer = window.setTimeout(() => searchDocumentsAsync(
       visibleDocuments,
       query,
       {
@@ -60,16 +66,16 @@ export const SearchView: React.FC = () => {
         tooth: selectedTooth,
         date: selectedDateFilter,
       },
-      200
+      mode
     ).then((res) => {
       if (active) {
-        setResults(res);
+        setResults(res.results); setNotice(res.notice); setModeUsed(res.modeUsed);
         setIsSearching(false);
       }
-    });
+    }).catch(error => { if (active) { setSearchError(error instanceof Error ? error.message : 'Unable to search clinic records'); setIsSearching(false); } }), 300);
 
     return () => {
-      active = false;
+      active = false; window.clearTimeout(timer);
     };
   }, [
     visibleDocuments,
@@ -79,6 +85,8 @@ export const SearchView: React.FC = () => {
     selectedPatientId,
     selectedTooth,
     selectedDateFilter,
+    mode,
+    retry,
   ]);
 
   const handleOpenDoc = (docId: string, patientId: string) => {
@@ -97,14 +105,14 @@ export const SearchView: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-12">
+      {searchError && <p role="alert" className="bg-rose-50 text-rose-900 p-3">{searchError}</p>}
       {/* Header */}
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-          Intelligent Dental Search
+          Search documents
         </h1>
         <p className="text-sm text-slate-500 mt-0.5">
-          Search across 30 documents using natural language, Philippine clinical terms, patient names,
-          or FDI tooth numbers.
+          Find similar passages with local semantic search, or use keyword search for names, record numbers and exact wording. Filters apply to every search. Similarity is not proof of a clinical fact.
         </p>
 
         {/* Natural Language Search Input Bar */}
@@ -112,6 +120,7 @@ export const SearchView: React.FC = () => {
           <Search className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
           <input
             type="text"
+            maxLength={200}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             aria-label="Search clinical documents" placeholder="Try: 'incomplete consent', 'tooth 46 x-ray', 'Dela Cruz', 'amoxicillin reseta'..."
@@ -127,6 +136,16 @@ export const SearchView: React.FC = () => {
           )}
         </div>
 
+        <div className="mt-4 flex flex-col sm:flex-row sm:items-end gap-3">
+          <label className="text-xs font-semibold text-slate-800">Search method
+            <select aria-label="Search method" value={mode} onChange={e => setMode(e.target.value as typeof mode)} className="block mt-1 p-2 border border-slate-300 rounded-lg bg-white">
+              <option value="hybrid">Hybrid · keywords + meaning</option><option value="semantic">Semantic · similar meaning</option><option value="keyword">Keyword · exact wording</option>
+            </select>
+          </label>
+          <p className="text-xs text-slate-600">{isSearching ? 'Searching local records…' : `Results use ${modeUsed} search.`} First semantic searches may take longer while records are prepared.</p>
+          <button type="button" disabled={isSearching} onClick={() => setRetry(value => value + 1)} className="text-xs font-semibold px-3 py-2 rounded-lg border border-slate-300 text-slate-800 disabled:opacity-50">Search again</button>
+        </div>
+        {notice && <p role="status" className="mt-3 p-3 rounded-lg bg-amber-50 text-amber-950 text-sm">{notice}</p>}
         {/* Quick prompt suggestions */}
         <div className="flex items-center gap-2 mt-3 text-xs text-slate-500 flex-wrap">
           <span className="flex items-center gap-1 font-medium text-slate-700">
@@ -247,7 +266,7 @@ export const SearchView: React.FC = () => {
               className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
             >
               <option value="ALL">All Recorded Dates</option>
-              <option value="OCT_2026">October 2026 (Current Month)</option>
+              <option value="OCT_2026">October 2026</option>
             </select>
           </div>
 
@@ -335,9 +354,12 @@ export const SearchView: React.FC = () => {
 
                     {/* Snippet preview */}
                     <p className="text-xs text-slate-500 line-clamp-1">
-                      {doc.extractedText.slice(0, 160)}...
+                      {doc.searchMatch?.snippet || doc.extractedText.slice(0, 160)}
                     </p>
 
+                    {doc.searchMatch && <p className="text-xs text-slate-700">
+                      {doc.searchMatch.method} match · {doc.searchMatch.field === 'extractedText' ? 'transcription passage' : 'document metadata'} · version {doc.searchMatch.version}, revision {doc.searchMatch.revision}
+                    </p>}
                     {/* Unboxed tags */}
                     {doc.tags.length > 0 && (
                       <div className="flex items-center gap-1.5 text-[11px] text-slate-500 pt-0.5 flex-wrap">
@@ -357,13 +379,15 @@ export const SearchView: React.FC = () => {
                       <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-800 font-semibold border border-amber-200">
                         Incomplete ({doc.missingFields.length})
                       </span>
+                    ) : doc.completenessStatus === 'needs_review' ? (
+                      <span className="text-xs text-amber-900">Staff review needed</span>
                     ) : (
                       <span className="text-[11px] text-emerald-700 font-medium flex items-center gap-1">
                         <CheckCircle className="w-3 h-3" /> Complete
                       </span>
                     )}
                     <span className="text-[10px] font-mono text-slate-400 block mt-1">
-                      OCR: {doc.confidenceScore}% conf
+                      {doc.handwritingSources?.length ? "Handwriting · staff review" : `OCR: ${doc.confidenceScore}% conf`}
                     </span>
                   </div>
                   <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-teal-700 group-hover:translate-x-0.5 transition-all" aria-hidden="true" />

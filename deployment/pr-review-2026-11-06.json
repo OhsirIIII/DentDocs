@@ -1,0 +1,141 @@
+{
+  "date": "2026-11-06",
+  "reviewStartingHead": "283a106421cbacfd7e8d947343e35a65b2d66acc",
+  "baseCommit": "b5d26078745d072a699f25ab66f24101d934f808",
+  "resolvedFindings": {
+    "P1": 2,
+    "P2": 1
+  },
+  "sourceSha256": {
+    "backend/app/main.py": "f0d167649b1f50ebe1bd0ecdfb7a97bca90646311d1c492c3cdea7f0deecf2d0",
+    "backend/app/workflows.py": "b9bbbd87bc0ab935296018dbe302bab502c00ecfbcf73304c12be4c2b8c50a90",
+    "backend/app/versions.py": "19f1aa501e858034e6b44c643f63e21025e81c70baa750757a1ec65528773000",
+    "backend/tests/test_version_history.py": "9e75f9be37b03d3fc891c7cb1521a700704d94830ce31a07c17a344794f127f5"
+  },
+  "backendHostTests": {
+    "tests": 139,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 9
+  },
+  "operatorAndResearchTests": {
+    "tests": 29,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "nativeServiceTests": {
+    "passed": 7
+  },
+  "frontendTypecheckPassed": true,
+  "frontendBuildPassed": true,
+  "runtimeSmoke": {
+    "actualPostgresqlApiPassed": true,
+    "flatRepeatedVersionsPassed": true,
+    "frontDeskHistoryAndReviewIsolationPassed": true,
+    "clinicalHistoryRetained": true,
+    "originalBytesPreserved": true,
+    "concurrentConflictPassed": true,
+    "restoreAsNewVersionPassed": true,
+    "actualPrintedOcrPassed": true,
+    "restartPersistencePassed": true
+  },
+  "runtimeDatabaseAndSource": {
+    "restrictedRolePassed": true,
+    "schemaStillSeven": true,
+    "storedVersionSnapshotsFlat": true,
+    "historyPrivilegesProtected": true,
+    "sourceHashes": {
+      "main.py": "f0d167649b1f50ebe1bd0ecdfb7a97bca90646311d1c492c3cdea7f0deecf2d0",
+      "workflows.py": "b9bbbd87bc0ab935296018dbe302bab502c00ecfbcf73304c12be4c2b8c50a90",
+      "versions.py": "19f1aa501e858034e6b44c643f63e21025e81c70baa750757a1ec65528773000"
+    },
+    "sourceHashesMatch": true,
+    "apiImage": "sha256:91ff5ca013535dd0c869d625125176c80fbcf805c2e5cd8eade0314668586fb5"
+  },
+  "runtimeSecurity": {
+    "services": {
+      "api": {
+        "internalNetworkOnly": true,
+        "noPublishedPort": true,
+        "nonroot": true,
+        "noNewPrivileges": true,
+        "effectiveCapabilitiesZero": true,
+        "pipAbsent": true,
+        "temporaryMemoryFilesystemVerified": true,
+        "dependencyConsistencyVerified": true,
+        "readOnlyRoot": true
+      },
+      "handwriting": {
+        "internalNetworkOnly": true,
+        "noPublishedPort": true,
+        "nonroot": true,
+        "noNewPrivileges": true,
+        "effectiveCapabilitiesZero": true,
+        "pipAbsent": true,
+        "temporaryMemoryFilesystemVerified": true,
+        "dependencyConsistencyVerified": true,
+        "readOnlyRoot": true
+      },
+      "db": {
+        "internalNetworkOnly": true,
+        "noPublishedPort": true
+      },
+      "web": {
+        "internalNetworkOnly": false,
+        "noPublishedPort": false
+      },
+      "ocr": {
+        "internalNetworkOnly": true,
+        "noPublishedPort": true,
+        "nonroot": true,
+        "noNewPrivileges": true,
+        "effectiveCapabilitiesZero": true,
+        "noDataStoreLibrariesOrMounts": true,
+        "temporaryMemoryFilesystemVerified": true,
+        "readOnlyRoot": true
+      }
+    },
+    "port": 18082,
+    "parserHasNoDataStoreAccess": true,
+    "apiHasNoNativeParsers": true,
+    "mockModeAndBrowserHeadersVerified": true
+  },
+  "testedApiScan": {
+    "image": "sha256:91ff5ca013535dd0c869d625125176c80fbcf805c2e5cd8eade0314668586fb5",
+    "scanner": "0.121.1",
+    "databaseBuilt": "2026-11-05T06:21:06Z",
+    "scope": "squashed",
+    "suppressionsUsed": false,
+    "rawMatches": 233,
+    "severities": {
+      "High": 78,
+      "Critical": 2,
+      "Medium": 82,
+      "Negligible": 53,
+      "Low": 18
+    }
+  },
+  "cleanup": {
+    "testContainersVolumesNetworksRemoved": true,
+    "disposableCredentialsRemoved": true,
+    "originalVolumesRetained": true,
+    "savedInstallationStillStopped": true
+  },
+  "githubStartingHead": {
+    "submittedReviews": 0,
+    "reviewThreads": 0,
+    "statuses": 0,
+    "pullRequestWorkflowRuns": 0
+  },
+  "savedRuntimeUpdated": false,
+  "backupPredatesFixes": true,
+  "mergeAuthorized": false,
+  "releaseAuthorized": false,
+  "finalLegacyRegressionTests": {
+    "tests": 4,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

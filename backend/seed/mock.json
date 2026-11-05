@@ -1,0 +1,1924 @@
+{
+  "patients": [
+    {
+      "id": "pat-001",
+      "recordNo": "PT-2026-0001",
+      "fullName": "Juan Miguel Dela Cruz",
+      "preferredName": "JM",
+      "gender": "Male",
+      "dob": "1988-04-12",
+      "age": 38,
+      "phone": "+63 917 555 0114",
+      "email": "jm.delacruz@samplemail.ph",
+      "address": "Unit 402, Katipunan Residences, Quezon City, Metro Manila",
+      "emergencyContact": {
+        "name": "Corazon Dela Cruz",
+        "relation": "Spouse",
+        "phone": "+63 917 555 0115"
+      },
+      "medicalAlerts": [
+        "Penicillin Allergy"
+      ],
+      "isMinor": false,
+      "lastVisit": "2026-10-18",
+      "nextAppointment": "2026-11-04",
+      "fdiTreatedTeeth": [
+        16,
+        26,
+        36,
+        46
+      ],
+      "fdiMissingTeeth": [
+        18,
+        28,
+        38
+      ],
+      "fdiWatchTeeth": [
+        47
+      ]
+    },
+    {
+      "id": "pat-002",
+      "recordNo": "PT-2026-0002",
+      "fullName": "Maria Carmela Santos",
+      "preferredName": "Ella",
+      "gender": "Female",
+      "dob": "1995-08-23",
+      "age": 31,
+      "phone": "+63 917 555 0122",
+      "email": "carmela.santos@samplemail.ph",
+      "address": "14 San Agustin St., Salcedo Village, Makati City",
+      "emergencyContact": {
+        "name": "Danilo Santos",
+        "relation": "Father",
+        "phone": "+63 917 555 0123"
+      },
+      "medicalAlerts": [
+        "Hypertension Stage 1"
+      ],
+      "isMinor": false,
+      "lastVisit": "2026-10-22",
+      "nextAppointment": "2026-11-12",
+      "fdiTreatedTeeth": [
+        11,
+        21,
+        14,
+        24
+      ],
+      "fdiMissingTeeth": [],
+      "fdiWatchTeeth": [
+        37,
+        47
+      ]
+    },
+    {
+      "id": "pat-003",
+      "recordNo": "PT-2026-0003",
+      "fullName": "Rafael Emilio Tan",
+      "preferredName": "Raffy",
+      "gender": "Male",
+      "dob": "1982-11-05",
+      "age": 43,
+      "phone": "+63 917 555 0131",
+      "email": "raffy.tan@samplemail.ph",
+      "address": "88 Green Meadows Ave., Pasig City",
+      "emergencyContact": {
+        "name": "Michelle Tan",
+        "relation": "Spouse",
+        "phone": "+63 917 555 0132"
+      },
+      "medicalAlerts": [
+        "Type 2 Diabetes (Controlled)"
+      ],
+      "isMinor": false,
+      "lastVisit": "2026-10-14",
+      "nextAppointment": "2026-11-20",
+      "fdiTreatedTeeth": [
+        35,
+        36,
+        37,
+        45,
+        46
+      ],
+      "fdiMissingTeeth": [
+        18,
+        48
+      ],
+      "fdiWatchTeeth": [
+        26
+      ]
+    },
+    {
+      "id": "pat-004",
+      "recordNo": "PT-2026-0004",
+      "fullName": "Bea Sophia Aquino",
+      "preferredName": "Bea",
+      "gender": "Female",
+      "dob": "2001-02-17",
+      "age": 25,
+      "phone": "+63 917 555 0145",
+      "email": "bea.aquino@samplemail.ph",
+      "address": "Tower 2, Fort Victoria, BGC, Taguig City",
+      "emergencyContact": {
+        "name": "Grace Aquino",
+        "relation": "Mother",
+        "phone": "+63 917 555 0146"
+      },
+      "medicalAlerts": [
+        "Asthma (Carries Salbutamol)"
+      ],
+      "isMinor": false,
+      "lastVisit": "2026-10-20",
+      "nextAppointment": "2026-11-03",
+      "fdiTreatedTeeth": [
+        12,
+        13,
+        22,
+        23
+      ],
+      "fdiMissingTeeth": [],
+      "fdiWatchTeeth": [
+        16,
+        26
+      ]
+    },
+    {
+      "id": "pat-005",
+      "recordNo": "PT-2026-0005",
+      "fullName": "Gabriel Dizon",
+      "preferredName": "Gabby",
+      "gender": "Male",
+      "dob": "1976-06-30",
+      "age": 50,
+      "phone": "+63 917 555 0158",
+      "email": "g.dizon@samplemail.ph",
+      "address": "27 Scout Gandia, Diliman, Quezon City",
+      "emergencyContact": {
+        "name": "Maria Elena Dizon",
+        "relation": "Spouse",
+        "phone": "+63 917 555 0159"
+      },
+      "medicalAlerts": [
+        "Bleeding Tendency (Aspirin 81mg OD)"
+      ],
+      "isMinor": false,
+      "lastVisit": "2026-10-09",
+      "nextAppointment": "2026-11-15",
+      "fdiTreatedTeeth": [
+        16,
+        17,
+        26,
+        27,
+        46
+      ],
+      "fdiMissingTeeth": [
+        36,
+        38,
+        48
+      ],
+      "fdiWatchTeeth": [
+        35,
+        45
+      ]
+    },
+    {
+      "id": "pat-006",
+      "recordNo": "PT-2026-0006",
+      "fullName": "Chloe Danielle Lim",
+      "preferredName": "Chloe",
+      "gender": "Female",
+      "dob": "2012-07-19",
+      "age": 14,
+      "phone": "+63 917 555 0163",
+      "email": "teresa.lim@samplemail.ph",
+      "address": "15 Horseshoe Drive, New Manila, Quezon City",
+      "emergencyContact": {
+        "name": "Mrs. Teresa Lim",
+        "relation": "Mother / Legal Guardian",
+        "phone": "+63 917 555 0164"
+      },
+      "medicalAlerts": [
+        "Minor Patient (Requires Guardian Consent)"
+      ],
+      "isMinor": true,
+      "guardianName": "Mrs. Teresa Lim",
+      "guardianPhone": "+63 917 555 0164",
+      "lastVisit": "2026-10-24",
+      "nextAppointment": "2026-11-07",
+      "fdiTreatedTeeth": [
+        16,
+        26,
+        36,
+        46
+      ],
+      "fdiMissingTeeth": [],
+      "fdiWatchTeeth": [
+        14,
+        24
+      ]
+    },
+    {
+      "id": "pat-007",
+      "recordNo": "PT-2026-0007",
+      "fullName": "Mateo Jose Reyes",
+      "preferredName": "MJ",
+      "gender": "Male",
+      "dob": "1998-03-09",
+      "age": 28,
+      "phone": "+63 917 555 0177",
+      "email": "mj.reyes@samplemail.ph",
+      "address": "6B Cambridge Place, Kapitolyo, Pasig City",
+      "emergencyContact": {
+        "name": "Ramon Reyes",
+        "relation": "Brother",
+        "phone": "+63 917 555 0178"
+      },
+      "medicalAlerts": [],
+      "isMinor": false,
+      "lastVisit": "2026-10-12",
+      "nextAppointment": "2026-11-09",
+      "fdiTreatedTeeth": [
+        11,
+        21,
+        31,
+        41
+      ],
+      "fdiMissingTeeth": [
+        38,
+        48
+      ],
+      "fdiWatchTeeth": [
+        18,
+        28
+      ]
+    },
+    {
+      "id": "pat-008",
+      "recordNo": "PT-2026-0008",
+      "fullName": "Alyssa Marie Flores",
+      "preferredName": "Lyssa",
+      "gender": "Female",
+      "dob": "1992-12-03",
+      "age": 33,
+      "phone": "+63 917 555 0182",
+      "email": "alyssa.flores@samplemail.ph",
+      "address": "33 Pioneer St., Mandaluyong City",
+      "emergencyContact": {
+        "name": "Antonio Flores",
+        "relation": "Father",
+        "phone": "+63 917 555 0183"
+      },
+      "medicalAlerts": [
+        "G6PD Deficiency"
+      ],
+      "isMinor": false,
+      "lastVisit": "2026-10-15",
+      "nextAppointment": "2026-11-18",
+      "fdiTreatedTeeth": [
+        15,
+        25,
+        34,
+        44
+      ],
+      "fdiMissingTeeth": [],
+      "fdiWatchTeeth": [
+        37
+      ]
+    },
+    {
+      "id": "pat-009",
+      "recordNo": "PT-2026-0009",
+      "fullName": "Joshua Bautista",
+      "preferredName": "Josh",
+      "gender": "Male",
+      "dob": "1990-09-14",
+      "age": 36,
+      "phone": "+63 917 555 0190",
+      "email": "joshua.bautista@samplemail.ph",
+      "address": "8 Legaspi St., Legaspi Village, Makati City",
+      "emergencyContact": {
+        "name": "Claire Bautista",
+        "relation": "Spouse",
+        "phone": "+63 917 555 0191"
+      },
+      "medicalAlerts": [
+        "Latex Sensitivity"
+      ],
+      "isMinor": false,
+      "lastVisit": "2026-10-11",
+      "nextAppointment": "2026-11-05",
+      "fdiTreatedTeeth": [
+        16,
+        26,
+        36,
+        46,
+        47
+      ],
+      "fdiMissingTeeth": [
+        18,
+        28
+      ],
+      "fdiWatchTeeth": [
+        38
+      ]
+    },
+    {
+      "id": "pat-0010",
+      "recordNo": "PT-2026-0010",
+      "fullName": "Ramon Castillo",
+      "preferredName": "Mon",
+      "gender": "Male",
+      "dob": "1968-05-20",
+      "age": 58,
+      "phone": "+63 917 555 0205",
+      "email": "ramon.castillo@samplemail.ph",
+      "address": "102 P. Guevarra St., San Juan City",
+      "emergencyContact": {
+        "name": "Lourdes Castillo",
+        "relation": "Spouse",
+        "phone": "+63 917 555 0206"
+      },
+      "medicalAlerts": [
+        "Cardiovascular History (Stent placed 2021)"
+      ],
+      "isMinor": false,
+      "lastVisit": "2026-10-05",
+      "nextAppointment": "2026-11-25",
+      "fdiTreatedTeeth": [
+        13,
+        14,
+        15,
+        23,
+        24,
+        25
+      ],
+      "fdiMissingTeeth": [
+        16,
+        17,
+        26,
+        27,
+        36,
+        46
+      ],
+      "fdiWatchTeeth": [
+        33,
+        43
+      ]
+    },
+    {
+      "id": "pat-0011",
+      "recordNo": "PT-2026-0011",
+      "fullName": "Joaquin Lorenzo Perez",
+      "preferredName": "Enzo",
+      "gender": "Male",
+      "dob": "2004-10-10",
+      "age": 22,
+      "phone": "+63 917 555 0219",
+      "email": "enzo.perez@samplemail.ph",
+      "address": "19 Loyola Heights, Katipunan Ave., Quezon City",
+      "emergencyContact": {
+        "name": "Carla Perez",
+        "relation": "Mother",
+        "phone": "+63 917 555 0220"
+      },
+      "medicalAlerts": [],
+      "isMinor": false,
+      "lastVisit": "2026-10-17",
+      "nextAppointment": "2026-11-10",
+      "fdiTreatedTeeth": [
+        11,
+        21,
+        12,
+        22
+      ],
+      "fdiMissingTeeth": [],
+      "fdiWatchTeeth": [
+        38,
+        48
+      ]
+    },
+    {
+      "id": "pat-0012",
+      "recordNo": "PT-2026-0012",
+      "fullName": "Sofia Isabel Navarro",
+      "preferredName": "Sofia",
+      "gender": "Female",
+      "dob": "1999-01-28",
+      "age": 27,
+      "phone": "+63 917 555 0233",
+      "email": "sofia.navarro@samplemail.ph",
+      "address": "22 Acacia Avenue, Ayala Alabang, Muntinlupa City",
+      "emergencyContact": {
+        "name": "Eduardo Navarro",
+        "relation": "Father",
+        "phone": "+63 917 555 0234"
+      },
+      "medicalAlerts": [
+        "Mild Ibuprofen Gastritis"
+      ],
+      "isMinor": false,
+      "lastVisit": "2026-10-23",
+      "nextAppointment": "2026-11-08",
+      "fdiTreatedTeeth": [
+        16,
+        26,
+        36,
+        46
+      ],
+      "fdiMissingTeeth": [
+        38,
+        48
+      ],
+      "fdiWatchTeeth": [
+        17,
+        27
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "id": "doc-001",
+      "patientId": "pat-001",
+      "patientRecordNo": "PT-2026-0001",
+      "patientName": "Juan Miguel Dela Cruz",
+      "title": "Comprehensive Initial Dental Examination Chart",
+      "type": "Patient Record",
+      "date": "2026-10-18",
+      "displayDate": "18 Oct 2026",
+      "toothNumbers": [
+        16,
+        26,
+        36,
+        46,
+        47
+      ],
+      "procedureCategory": "Restorative",
+      "tags": [
+        "Initial Exam",
+        "FDI Charting",
+        "Caries Risk Moderate",
+        "Adult Patient"
+      ],
+      "confidenceScore": 97,
+      "fieldConfidence": {
+        "documentType": 98,
+        "recordNo": 99,
+        "date": 97,
+        "toothNumbers": 95,
+        "procedureCategory": 96,
+        "tags": 97
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "SAN NICOLAS DENTAL CLINIC\nMetro Manila, Philippines | PRC Accreditation: 0000000 | TIN: 000-000-000-000\nPATIENT CLINICAL RECORD & HARD TISSUE CHARTING\nPatient: Juan Miguel Dela Cruz (38 M) | Record No: PT-2026-0001\nDate of Examination: 18/10/2026 | Attending Dentist: Dr. Jose Paolo Reyes (PRC 0089123)\n\nCLINICAL FINDINGS:\n- Occlusal caries noted on tooth 47 (Class I). Tooth 36 with sound MOD amalgam restoration.\n- Teeth 18, 28, 38 clinically missing.\n- Periodontal screening score: PSR 2 in lower anteriors. Mild subgingival calculus.\nTaglish Note: \"Masakit daw minsan sa lower right upon cold drinks. Advised composite restoration on 47 next session.\"",
+      "fileType": "PDF",
+      "fileSize": "1.4 MB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-18 10:45 AM",
+      "reviewedBy": "Dr. Jose Paolo Reyes",
+      "reviewedAt": "2026-10-18 11:15 AM",
+      "reviewNotes": "Baseline charting verified. Treatment plan prepared for 47 restoration.",
+      "version": 2,
+      "versionStatus": "active",
+      "versionHistory": [
+        {
+          "versionNumber": 1,
+          "uploadedAt": "2026-10-18 09:30 AM",
+          "uploadedBy": "Carla Mendoza, RDA",
+          "fileType": "PDF",
+          "fileSize": "1.2 MB",
+          "title": "Comprehensive Initial Dental Examination Chart (Preliminary Draft)",
+          "extractedText": "SAN NICOLAS DENTAL CLINIC\nPRELIMINARY INTAKE RECORD\nPatient: Juan Miguel Dela Cruz (PT-2026-0001)\nDate of Examination: 18/10/2026\nTooth 47 occlusal caries. PSR scores and third molar impactions not yet fully annotated.",
+          "toothNumbers": [
+            47
+          ],
+          "procedureCategory": "Restorative",
+          "tags": [
+            "Initial Exam",
+            "Draft Intake"
+          ],
+          "completenessStatus": "incomplete",
+          "status": "superseded",
+          "changeSummary": "Updated with full FDI dental charting, periodontal screening PSR indices, and Dr. Reyes verification sign-off.",
+          "supersededAt": "2026-10-18 10:45 AM",
+          "supersededBy": "Dr. Jose Paolo Reyes"
+        }
+      ]
+    },
+    {
+      "id": "doc-002",
+      "patientId": "pat-001",
+      "patientRecordNo": "PT-2026-0001",
+      "patientName": "Juan Miguel Dela Cruz",
+      "title": "Digital Panoramic Radiograph (OPG)",
+      "type": "X-ray",
+      "date": "2026-10-18",
+      "displayDate": "Oct 18, 2026",
+      "toothNumbers": [
+        18,
+        28,
+        38,
+        47,
+        48
+      ],
+      "procedureCategory": "Oral Surgery",
+      "tags": [
+        "Panoramic",
+        "OPG",
+        "Third Molar Assessment",
+        "Full Mouth"
+      ],
+      "confidenceScore": 94,
+      "fieldConfidence": {
+        "documentType": 96,
+        "recordNo": 98,
+        "date": 95,
+        "toothNumbers": 92,
+        "procedureCategory": 94,
+        "tags": 91
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "IMAGING UNIT: Planmeca ProMax 2D | Exposure: 68kV / 8.0mA / 14.2s\nPATIENT: Dela Cruz, Juan Miguel [PT-2026-0001] | DOB: 12-Apr-1988\nRAD REPORT:\n- Panoramic examination demonstrates complete dentition except third molars 18, 28, 38.\n- Tooth 48 impacted (Pell & Gregory Class II Position B, mesioangular).\n- Tooth 47 shows radiolucency confined to occlusal enamel-dentin junction.\n- Alveolar bone crest levels within normal limits.\nSigned: Dr. Maria Elena Santos, Radiologist (PRC 0074512)",
+      "fileType": "JPG",
+      "fileSize": "4.2 MB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-18 11:00 AM",
+      "reviewedBy": "Dr. Jose Paolo Reyes",
+      "reviewedAt": "2026-10-18 11:30 AM",
+      "radiographDetails": {
+        "modality": "Panoramic",
+        "exposureTime": "14.2s",
+        "kvp": "68 kV",
+        "findings": "Mesioangular impacted tooth 48; occlusal dentinal shadow on 47."
+      },
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-003",
+      "patientId": "pat-001",
+      "patientRecordNo": "PT-2026-0001",
+      "patientName": "Juan Miguel Dela Cruz",
+      "title": "Restorative & Prophylaxis Phased Treatment Plan",
+      "type": "Treatment Plan",
+      "date": "2026-10-18",
+      "displayDate": "2026-10-18",
+      "toothNumbers": [
+        47,
+        48
+      ],
+      "procedureCategory": "Restorative",
+      "tags": [
+        "Treatment Plan",
+        "Cost Estimate",
+        "Composite",
+        "Surgical Extraction"
+      ],
+      "confidenceScore": 96,
+      "fieldConfidence": {
+        "documentType": 97,
+        "recordNo": 99,
+        "date": 96,
+        "toothNumbers": 94,
+        "procedureCategory": 97,
+        "tags": 95
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "SAN NICOLAS DENTAL CLINIC - COMPREHENSIVE TREATMENT ESTIMATE\nRecord: PT-2026-0001 | Patient: Juan Miguel Dela Cruz | Date: 18 Oct 2026\n\nPhase 1: Urgent Care & Restorative\n- Tooth 47: Light-cure Composite Resin Restoration (Class I) - ₱2,500.00\n- Full Mouth Ultrasonic Scaling & Polishing (Deep Prophy) - ₱1,800.00\n\nPhase 2: Preventive & Surgical\n- Tooth 48: Odontectomy / Surgical Extraction of Impacted Molar - ₱9,500.00\nEstimated Total: ₱13,800.00 (HMO Co-pay eligible: ₱3,500.00)\nPatient Signature: [Signed digitally 18/10/2026]\nAttending Dentist: Dr. Jose Paolo Reyes (PRC 0089123)",
+      "fileType": "PDF",
+      "fileSize": "820 KB",
+      "uploadedBy": "Mark Vincent Bautista",
+      "uploadedAt": "2026-10-18 11:40 AM",
+      "reviewedBy": "Dr. Jose Paolo Reyes",
+      "reviewedAt": "2026-10-18 11:45 AM",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-004",
+      "patientId": "pat-006",
+      "patientRecordNo": "PT-2026-0006",
+      "patientName": "Chloe Danielle Lim",
+      "title": "Orthodontic Diagnostic & Appliance Consent Agreement",
+      "type": "Consent Form",
+      "date": "2026-10-24",
+      "displayDate": "24 Oct 2026",
+      "toothNumbers": [
+        14,
+        24,
+        16,
+        26,
+        36,
+        46
+      ],
+      "procedureCategory": "Orthodontics",
+      "tags": [
+        "Consent Form",
+        "Minor Patient",
+        "Orthodontic Braces",
+        "Pending Signature"
+      ],
+      "confidenceScore": 82,
+      "fieldConfidence": {
+        "documentType": 92,
+        "recordNo": 95,
+        "date": 90,
+        "toothNumbers": 84,
+        "procedureCategory": 88,
+        "tags": 76
+      },
+      "completenessStatus": "incomplete",
+      "missingFields": [
+        "Legal Guardian Signature (Patient is 14 y/o minor)",
+        "Guardian Government-Issued ID Number",
+        "Date of Guardian Witness Signing"
+      ],
+      "extractedText": "INFORMED CONSENT FOR ORTHODONTIC APPLIANCE THERAPY\nSan Nicolas Dental Clinic | Patient Record No: PT-2026-0006\nPatient Name: Chloe Danielle Lim | Age: 14 | DOB: 19-Jul-2012\n\nPROCEDURE: Comprehensive fixed orthodontic bracket placement (Upper & Lower Arch)\nRisks explained: Decalcification, root resorption, gingival tenderness during adjustments.\nTaglish note: \"Sinabi sa nanay na kailangan ng guardian signature bago magkabit ng brackets.\"\n\nPATIENT SIGNATURE: Chloe Lim (Minor)\nPARENT / GUARDIAN SIGNATURE: [BLANK - MISSING SIGNATURE]\nGuardian Name stated: Mrs. Teresa Lim\nGuardian ID: [NOT PROVIDED]\nStaff Witness: Carla Mendoza, RDA",
+      "fileType": "PDF",
+      "fileSize": "1.1 MB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-24 02:15 PM",
+      "isNameMismatch": false,
+      "reviewNotes": "FLAGGED: Minor patient requires Mrs. Teresa Lim physical or digital signature before treatment begins.",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-005",
+      "patientId": "pat-001",
+      "patientRecordNo": "PT-2026-0001",
+      "patientName": "Juan Miguel Dela Cruz",
+      "title": "Official Receipt - Consultation & OPG Radiograph",
+      "type": "Billing/Receipt",
+      "date": "2026-10-18",
+      "displayDate": "Oct 18, 2026",
+      "toothNumbers": [],
+      "procedureCategory": "Billing & Administrative",
+      "tags": [
+        "Official Receipt",
+        "BIR Registered",
+        "HMO HealthShield",
+        "Paid in Full"
+      ],
+      "confidenceScore": 98,
+      "fieldConfidence": {
+        "documentType": 99,
+        "recordNo": 98,
+        "date": 97,
+        "toothNumbers": 99,
+        "procedureCategory": 99,
+        "tags": 96
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "SAN NICOLAS DENTAL CLINIC - OFFICIAL RECEIPT\nBIR Authority to Print No. 2024-00129-PH | TIN: 000-000-000-000 VAT Reg.\nOR No: 2026-8812 | Date: 18-Oct-2026\nReceived from: Juan Miguel Dela Cruz (PT-2026-0001)\n\nItems:\n1. Dental Comprehensive Examination & Charting ...... ₱800.00\n2. Digital Panoramic Radiograph (OPG) ............... ₱1,500.00\nSubtotal: ₱2,300.00\nHMO HealthShield Coverage Approved: ₱1,500.00\nCash Patient Co-payment: ₱800.00\nVAT (12% Included): ₱246.43\nCashier: Mark Vincent Bautista",
+      "fileType": "PDF",
+      "fileSize": "640 KB",
+      "uploadedBy": "Mark Vincent Bautista",
+      "uploadedAt": "2026-10-18 12:10 PM",
+      "amount": 2300,
+      "receiptNo": "OR-2026-8812",
+      "hmoProvider": "HealthShield Philippines",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-006",
+      "patientId": "pat-001",
+      "patientRecordNo": "PT-2026-0001",
+      "patientName": "Juan Miguel Dela Cruz",
+      "title": "Follow-up Restorative Appointment Slip",
+      "type": "Appointment Record",
+      "date": "2026-10-18",
+      "displayDate": "18 Oct 2026",
+      "toothNumbers": [
+        47
+      ],
+      "procedureCategory": "Restorative",
+      "tags": [
+        "Appointment Slip",
+        "Confirmed",
+        "Chair 2",
+        "Morning Slot"
+      ],
+      "confidenceScore": 95,
+      "fieldConfidence": {
+        "documentType": 97,
+        "recordNo": 98,
+        "date": 96,
+        "toothNumbers": 94,
+        "procedureCategory": 95,
+        "tags": 92
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "APPOINTMENT CONFIRMATION SLIP\nSan Nicolas Dental Clinic, Unit 3A Medical Plaza, Metro Manila\nPatient: Juan Miguel Dela Cruz | Record: PT-2026-0001 | Phone: +63 917 555 0114\nNext Visit: Wednesday, 04 November 2026 at 10:30 AM\nReserved Operatory: Chair 2 (Dr. Jose Paolo Reyes)\nProcedure: Tooth 47 Composite Restoration & Oral Prophylaxis\nNotes: \"Paki-advise pasyente mag-almusal bago pumunta.\"",
+      "fileType": "PDF",
+      "fileSize": "410 KB",
+      "uploadedBy": "Mark Vincent Bautista",
+      "uploadedAt": "2026-10-18 12:20 PM",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-007",
+      "patientId": "pat-001",
+      "patientRecordNo": "PT-2026-0001",
+      "patientName": "Juan Miguel Dela Cruz",
+      "title": "Dental Prescription Slip - Analgesic & Antibiotic",
+      "type": "Prescription",
+      "date": "2026-10-18",
+      "displayDate": "18 Oct 2026",
+      "toothNumbers": [
+        47,
+        48
+      ],
+      "procedureCategory": "Oral Surgery",
+      "tags": [
+        "Prescription",
+        "Mefenamic Acid",
+        "Missing PRC License",
+        "Needs Review"
+      ],
+      "confidenceScore": 78,
+      "fieldConfidence": {
+        "documentType": 94,
+        "recordNo": 96,
+        "date": 92,
+        "toothNumbers": 80,
+        "procedureCategory": 85,
+        "tags": 70
+      },
+      "completenessStatus": "incomplete",
+      "missingFields": [
+        "Dentist PRC License Number (Blank on template header)",
+        "Dentist PTR Number for current fiscal year",
+        "Prescriber S2 Narcotics License (if tramadol/narcotic compound is indicated)"
+      ],
+      "extractedText": "SAN NICOLAS DENTAL CLINIC - PRESCRIPTION Rx\nDoctor: Dr. Jose Paolo Reyes, DDM\nPRC No: [BLANK / UNREADABLE] | PTR No: [NOT STAMPED] | S2 No: [NONE]\nPatient: Juan Miguel Dela Cruz | Age: 38 | Date: 18/10/2026\n\nRx:\n1. Mefenamic Acid 500mg capsules #10\n   Sig: Take 1 capsule every 8 hours after meals as needed for moderate pain.\n2. Chlorhexidine Gluconate 0.12% oral rinse 250ml #1 bottle\n   Sig: Swish 15ml twice daily for 30 seconds for 7 days.\nTaglish note: \"Note: Inom after kumain para hindi humapdi sikmura.\"\n\nDentist Signature: [Digital Scribble present, but License credentials missing]",
+      "fileType": "PNG",
+      "fileSize": "950 KB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-18 12:35 PM",
+      "prescriptionDetails": {
+        "genericName": "Mefenamic Acid / Chlorhexidine",
+        "dosage": "500mg",
+        "frequency": "Every 8 hours PRN",
+        "duration": "3 days",
+        "refills": 0,
+        "prcNo": "",
+        "ptrNo": ""
+      },
+      "reviewNotes": "FLAGGED: Pharmacy will reject without validated PRC & PTR stamps.",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-008",
+      "patientId": "pat-002",
+      "patientRecordNo": "PT-2026-0002",
+      "patientName": "Maria Carmela Santos",
+      "title": "Esthetic Anterior Smile Assessment & Shade Mapping",
+      "type": "Patient Record",
+      "date": "2026-10-22",
+      "displayDate": "22 Oct 2026",
+      "toothNumbers": [
+        11,
+        21,
+        12,
+        22
+      ],
+      "procedureCategory": "Restorative",
+      "tags": [
+        "Esthetic Consultation",
+        "Shade A2 to B1",
+        "Veneers Evaluation"
+      ],
+      "confidenceScore": 95,
+      "fieldConfidence": {
+        "documentType": 96,
+        "recordNo": 97,
+        "date": 95,
+        "toothNumbers": 94,
+        "procedureCategory": 95,
+        "tags": 93
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "SAN NICOLAS DENTAL CLINIC - ESTHETIC RESTORATIVE WORKUP\nPatient: Maria Carmela Santos | Record: PT-2026-0002 | Date: 22-Oct-2026\nAttending Dentist: Dr. Jose Paolo Reyes (PRC 0089123)\n\nFINDINGS:\n- Incisal chipping on tooth 11 and 21 from minor trauma during sports.\n- Existing composite restorations on 12, 22 with marginal discoloration.\n- Baseline Vita Classical shade: A2 body, A1 incisal third.\n- Desired shade: B1 / Bleach shade BL3.\nRecommended: 4 Porcelain Laminate Veneers (Teeth 12, 11, 21, 22).",
+      "fileType": "PDF",
+      "fileSize": "2.1 MB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-22 09:30 AM",
+      "version": 2,
+      "versionStatus": "active",
+      "versionHistory": [
+        {
+          "versionNumber": 1,
+          "uploadedAt": "2026-10-22 08:45 AM",
+          "uploadedBy": "Carla Mendoza, RDA",
+          "fileType": "PDF",
+          "fileSize": "1.9 MB",
+          "title": "Esthetic Anterior Smile Assessment & Shade Mapping (Initial Scan)",
+          "extractedText": "SAN NICOLAS DENTAL CLINIC - ESTHETIC RESTORATIVE WORKUP\nPatient: Maria Carmela Santos (PT-2026-0002)\nBaseline Vita shade: A3 body. Chipping on incisal edges 11, 21.",
+          "toothNumbers": [
+            11,
+            21
+          ],
+          "procedureCategory": "Restorative",
+          "tags": [
+            "Esthetic Consultation",
+            "Shade A3"
+          ],
+          "completenessStatus": "needs_review",
+          "status": "superseded",
+          "changeSummary": "Refined shade mapping to Vita A2 body and B1 target bleach shade after cosmetic photography review.",
+          "supersededAt": "2026-10-22 09:30 AM",
+          "supersededBy": "Dr. Jose Paolo Reyes"
+        }
+      ]
+    },
+    {
+      "id": "doc-009",
+      "patientId": "pat-002",
+      "patientRecordNo": "PT-2026-0002",
+      "patientName": "Maria Carmela Santos",
+      "title": "Bilateral Premolar & Molar Bitewing Radiographs",
+      "type": "X-ray",
+      "date": "2026-10-22",
+      "displayDate": "Oct 22, 2026",
+      "toothNumbers": [
+        14,
+        15,
+        24,
+        25,
+        34,
+        35,
+        44,
+        45
+      ],
+      "procedureCategory": "Preventive",
+      "tags": [
+        "Bitewings",
+        "Interproximal Caries Check",
+        "Normal Bone Crest"
+      ],
+      "confidenceScore": 96,
+      "fieldConfidence": {
+        "documentType": 97,
+        "recordNo": 98,
+        "date": 96,
+        "toothNumbers": 95,
+        "procedureCategory": 96,
+        "tags": 94
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "INTRAORAL RADIOLOGY REPORT\nPatient: Maria Carmela Santos | Record: PT-2026-0002 | Date: 22-10-2026\nModality: 4-View Bitewing Series (Dexis Sensor, 65kV 7mA 0.16s)\nFindings:\n- No interproximal demineralization detected in premolar or molar contacts.\n- Intact lamina dura throughout posterior sextants.\n- Crown-to-root ratio favorable (1:2).",
+      "fileType": "PNG",
+      "fileSize": "3.1 MB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-22 10:15 AM",
+      "radiographDetails": {
+        "modality": "Bitewing",
+        "exposureTime": "0.16s",
+        "kvp": "65 kV",
+        "findings": "Clear interproximal contact zones. No subgingival calculus."
+      },
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-010",
+      "patientId": "pat-002",
+      "patientRecordNo": "PT-2026-0002",
+      "patientName": "Maria Carmela Santos",
+      "title": "Dental Laboratory Fabrication Work Order & Shade Verification",
+      "type": "Laboratory Report",
+      "date": "2026-10-23",
+      "displayDate": "23 Oct 2026",
+      "toothNumbers": [
+        11,
+        21
+      ],
+      "procedureCategory": "Prosthodontics",
+      "tags": [
+        "Dental Lab",
+        "IPS e.max CAD",
+        "Veneers",
+        "Shade B1"
+      ],
+      "confidenceScore": 93,
+      "fieldConfidence": {
+        "documentType": 95,
+        "recordNo": 96,
+        "date": 94,
+        "toothNumbers": 92,
+        "procedureCategory": 93,
+        "tags": 90
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "MANILA PRECISION DENTAL CERAMICS LAB\nWork Order No: LAB-2026-4412 | Client: San Nicolas Dental Clinic\nPatient: Maria Carmela Santos [PT-2026-0002]\nDentist: Dr. Jose Paolo Reyes\n\nSPECIFICATIONS:\n- 2 Units Lithium Disilicate (IPS e.max Press / CAD)\n- Teeth: 11, 21 | Preparation type: Feather-edge contact prep\n- Shade: B1 with subtle incisal translucency (Halo effect + mamelon anatomy)\n- Margin fit checked under 10x microscope: PASS (<30 microns)\nTechnician: Edgardo Villanueva, Certified Dental Technologist",
+      "fileType": "PDF",
+      "fileSize": "1.2 MB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-23 04:20 PM",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-011",
+      "patientId": "pat-002",
+      "patientRecordNo": "PT-2026-0002",
+      "patientName": "Maria Carmela Santos",
+      "title": "Informed Consent for Esthetic Porcelain Restoration",
+      "type": "Consent Form",
+      "date": "2026-10-22",
+      "displayDate": "22 Oct 2026",
+      "toothNumbers": [
+        11,
+        21
+      ],
+      "procedureCategory": "Restorative",
+      "tags": [
+        "Consent Form",
+        "Veneers",
+        "Bilingual Tagalog-English",
+        "Signed"
+      ],
+      "confidenceScore": 97,
+      "fieldConfidence": {
+        "documentType": 98,
+        "recordNo": 99,
+        "date": 97,
+        "toothNumbers": 96,
+        "procedureCategory": 97,
+        "tags": 95
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "INFORMED CONSENT FOR COSMETIC DENTAL RESTORATION\n(Pahintulot para sa Pagsasaayos at Pagpapaganda ng Ngipin)\nSan Nicolas Dental Clinic | Patient Record: PT-2026-0002\nPatient: Maria Carmela Santos | Gov ID: PhilID 4410-9982-1234\n\n1. Naipaliwanag ang mga hakbang sa enamel micro-reduction at bonding.\n2. I acknowledge that porcelain restorations require nightguard protection for bruxism.\nSigned: Maria Carmela Santos (Digital PhilID Signature Verified)\nDentist: Dr. Jose Paolo Reyes (PRC 0089123)",
+      "fileType": "PDF",
+      "fileSize": "890 KB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-22 10:45 AM",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-012",
+      "patientId": "pat-0010",
+      "patientRecordNo": "PT-2026-0010",
+      "patientName": "Ramon Castillo",
+      "title": "Full-Arch Removable Partial Denture Treatment Proposal",
+      "type": "Treatment Plan",
+      "date": "2026-10-05",
+      "displayDate": "[Missing Plan Date]",
+      "toothNumbers": [
+        16,
+        17,
+        26,
+        27,
+        36,
+        46
+      ],
+      "procedureCategory": "Prosthodontics",
+      "tags": [
+        "Treatment Plan",
+        "RPD Cast Metal",
+        "Missing Costs",
+        "Incomplete"
+      ],
+      "confidenceScore": 71,
+      "fieldConfidence": {
+        "documentType": 88,
+        "recordNo": 92,
+        "date": 45,
+        "toothNumbers": 85,
+        "procedureCategory": 86,
+        "tags": 68
+      },
+      "completenessStatus": "incomplete",
+      "missingFields": [
+        "Official Formulation Date (Header timestamp missing)",
+        "Line-Item Cost Breakdown (Missing laboratory & chairside fee quotes)",
+        "Patient Financial Agreement Signature"
+      ],
+      "extractedText": "SAN NICOLAS DENTAL CLINIC - PROSTHODONTIC TREATMENT PROPOSAL\nPatient: Ramon Castillo | Record: PT-2026-0010\nDate: [MISSING / UNDATED]\n\nTreatment Proposal:\n- Bilateral free-end saddle Kennedy Class I Maxillary and Mandibular arch.\n- Recommended appliance: Cast Cobalt-Chromium Frame Partial Denture.\n- Pre-prosthetic rest seat preparations needed on 15, 25, 35, 45.\n\nFinancial Summary:\nChairside Prep Fee: [BLANK]\nLab Fabrication Fee: [BLANK]\nTotal Estimated Investment: [NOT CALCULATED]\nNotes: \"Naiwan yung cost estimation sheet sa consultation room. Kausapin si Doc Paolo para sa final quote.\"",
+      "fileType": "PDF",
+      "fileSize": "980 KB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-05 03:15 PM",
+      "reviewNotes": "FLAGGED: Cannot present to patient until line-item fees are inserted and signed.",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-013",
+      "patientId": "pat-0010",
+      "patientRecordNo": "PT-2026-0010",
+      "patientName": "Ramon Castillo",
+      "title": "Medical Clearance & Cardiovascular Risk Assessment",
+      "type": "Patient Record",
+      "date": "2026-10-05",
+      "displayDate": "05 Oct 2026",
+      "toothNumbers": [],
+      "procedureCategory": "Oral Surgery",
+      "tags": [
+        "Medical Clearance",
+        "Cardiology",
+        "Aspirin Hold",
+        "Stent 2021"
+      ],
+      "confidenceScore": 98,
+      "fieldConfidence": {
+        "documentType": 98,
+        "recordNo": 99,
+        "date": 98,
+        "toothNumbers": 99,
+        "procedureCategory": 97,
+        "tags": 97
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "CARDIOLOGY CONSULTANTS OF METRO MANILA\nRe: Medical Clearance for Dental Procedures\nPatient: Ramon Castillo (58 M) | Record: PT-2026-0010 | Date: 05-10-2026\n\nTo Dr. Jose Paolo Reyes:\nMr. Castillo had drug-eluting stent placement in LAD in 2021.\nCurrently on Aspirin 81mg OD, Atorvastatin 20mg OD, Losartan 50mg OD.\nCardiovascular status is stable (METS > 4).\nRecommendations:\n- Proceed with routine dental procedures and local anesthesia with 1:100,000 epinephrine (limit to 2 carpules).\n- DO NOT withhold Aspirin for routine minor extractions or impressions. Local hemostatic agents sufficient.\nSigned: Dr. Roberto Alcantara, FPCC, Cardiologist (PRC 0061245)",
+      "fileType": "PDF",
+      "fileSize": "1.3 MB",
+      "uploadedBy": "Mark Vincent Bautista",
+      "uploadedAt": "2026-10-05 02:40 PM",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-014",
+      "patientId": "pat-003",
+      "patientRecordNo": "PT-2026-0003",
+      "patientName": "Rafael Emilio Tan",
+      "title": "Official Receipt - Endodontic Root Canal Therapy Obturation",
+      "type": "Billing/Receipt",
+      "date": "2026-10-14",
+      "displayDate": "14 Oct 2026",
+      "toothNumbers": [
+        36
+      ],
+      "procedureCategory": "Billing & Administrative",
+      "tags": [
+        "Official Receipt",
+        "Endodontics",
+        "Credit Card Payment",
+        "₱12,000"
+      ],
+      "confidenceScore": 99,
+      "fieldConfidence": {
+        "documentType": 99,
+        "recordNo": 99,
+        "date": 99,
+        "toothNumbers": 98,
+        "procedureCategory": 99,
+        "tags": 98
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "SAN NICOLAS DENTAL CLINIC - OFFICIAL RECEIPT\nTIN: 000-000-000-000 VAT Reg. | OR No: 2026-8790 | Date: 14/10/2026\nCustomer: Rafael Emilio Tan (PT-2026-0003)\n\nDescription:\n1. Molar Endodontic Treatment (Tooth 36, 3 canals completed) ... ₱12,000.00\nPayment Method: Maya Credit Card (Terminal Ref #992144)\nTotal Paid: ₱12,000.00\nCashier: Mark Vincent Bautista",
+      "fileType": "PDF",
+      "fileSize": "580 KB",
+      "uploadedBy": "Mark Vincent Bautista",
+      "uploadedAt": "2026-10-14 04:30 PM",
+      "amount": 12000,
+      "receiptNo": "OR-2026-8790",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-015",
+      "patientId": "pat-003",
+      "patientRecordNo": "PT-2026-0003",
+      "patientName": "Rafael Emilio Tan",
+      "title": "Periapical Post-Obturation Radiograph Tooth 36",
+      "type": "X-ray",
+      "date": "2026-10-14",
+      "displayDate": "Oct 14, 2026",
+      "toothNumbers": [
+        36
+      ],
+      "procedureCategory": "Endodontics",
+      "tags": [
+        "Periapical",
+        "Endo Obturation",
+        "Gutta Percha Fill",
+        "Tooth 36"
+      ],
+      "confidenceScore": 97,
+      "fieldConfidence": {
+        "documentType": 98,
+        "recordNo": 99,
+        "date": 97,
+        "toothNumbers": 98,
+        "procedureCategory": 98,
+        "tags": 95
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "DIGITAL INTRAORAL SENSOR - PERIAPICAL\nPatient: Tan, Rafael Emilio [PT-2026-0003] | Date: 14-Oct-2026\nTooth: 36 (Lower Left First Molar)\nFindings:\n- Gutta-percha obturation extends to radiographic apex in MB, ML, and Distal canals (within 0.5mm).\n- Dense homogeneous fill, no voids visible.\n- Resolving apical periodontitis radiolucency. Recommended core build-up and crown within 4 weeks.\nExamining Clinician: Dr. Jose Paolo Reyes (PRC 0089123)",
+      "fileType": "JPG",
+      "fileSize": "2.4 MB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-14 04:00 PM",
+      "radiographDetails": {
+        "modality": "Periapical",
+        "exposureTime": "0.20s",
+        "kvp": "70 kV",
+        "findings": "Dense gutta percha obturation to apex in all 3 canals of tooth 36."
+      },
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-016",
+      "patientId": "pat-003",
+      "patientRecordNo": "PT-2026-0003",
+      "patientName": "Rafael Emilio Tan",
+      "title": "Post-Endodontic Prescription Slip",
+      "type": "Prescription",
+      "date": "2026-10-14",
+      "displayDate": "14 Oct 2026",
+      "toothNumbers": [
+        36
+      ],
+      "procedureCategory": "Endodontics",
+      "tags": [
+        "Prescription",
+        "Ibuprofen",
+        "Antibiotics Not Indicated",
+        "Complete"
+      ],
+      "confidenceScore": 98,
+      "fieldConfidence": {
+        "documentType": 99,
+        "recordNo": 99,
+        "date": 98,
+        "toothNumbers": 98,
+        "procedureCategory": 98,
+        "tags": 97
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "SAN NICOLAS DENTAL CLINIC - RX\nDoctor: Dr. Jose Paolo Reyes, DDM | PRC: 0089123 | PTR: 2026-904123 | S2: N/A\nPatient: Rafael Emilio Tan | Record: PT-2026-0003 | Date: 14/10/2026\n\nRx:\n1. Ibuprofen 400mg tablets #6\n   Sig: Take 1 tablet every 6 to 8 hours with meals for mild discomfort.\n2. Paracetamol 500mg tablets #6\n   Sig: Alternate if needed.\nTaglish note: \"Paalala sa pasyente: huwag munang ngumuya ng matitigas sa kaliwa hanggang makabitan ng crown.\"\nSignature: Dr. Jose Paolo Reyes",
+      "fileType": "PDF",
+      "fileSize": "710 KB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-14 04:45 PM",
+      "prescriptionDetails": {
+        "genericName": "Ibuprofen",
+        "dosage": "400mg",
+        "frequency": "Every 8 hours PRN",
+        "duration": "2 days",
+        "refills": 0,
+        "prcNo": "PRC 0089123",
+        "ptrNo": "PTR 2026-904123"
+      },
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-017",
+      "patientId": "pat-004",
+      "patientRecordNo": "PT-2026-0004",
+      "patientName": "Bea Sophia Aquino",
+      "title": "In-Office Vital Tooth Whitening Consent Form",
+      "type": "Consent Form",
+      "date": "2026-10-20",
+      "displayDate": "20 Oct 2026",
+      "toothNumbers": [
+        13,
+        12,
+        11,
+        21,
+        22,
+        23
+      ],
+      "procedureCategory": "Preventive",
+      "tags": [
+        "Consent Form",
+        "Teeth Whitening",
+        "Hydrogen Peroxide 35%",
+        "Signed"
+      ],
+      "confidenceScore": 97,
+      "fieldConfidence": {
+        "documentType": 98,
+        "recordNo": 98,
+        "date": 97,
+        "toothNumbers": 96,
+        "procedureCategory": 97,
+        "tags": 95
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "IN-OFFICE POWER BLEACHING CONSENT FORM\nSan Nicolas Dental Clinic | Patient: Bea Sophia Aquino (PT-2026-0004)\nDate: 20-Oct-2026\n\nProcedures & Risks:\n- Application of 35% Hydrogen Peroxide with LED activation.\n- Transient dentinal sensitivity explained (usually subsides within 24-48 hours).\n- Avoidance of dark liquids (kape, tsaa, toyo, cola) for 48 hours confirmed.\nPatient Signature: Bea Sophia Aquino (Verified)\nDentist: Dr. Jose Paolo Reyes (PRC 0089123)",
+      "fileType": "PDF",
+      "fileSize": "920 KB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-20 01:30 PM",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-018",
+      "patientId": "pat-007",
+      "patientRecordNo": "PT-2026-0007",
+      "patientName": "Mateo Jose Reyes",
+      "title": "Periapical Emergency Radiograph Lower Anterior Quadrant",
+      "type": "X-ray",
+      "date": "2026-10-12",
+      "displayDate": "12 Oct 2026",
+      "toothNumbers": [],
+      "procedureCategory": "Oral Surgery",
+      "tags": [
+        "Periapical",
+        "Emergency Scan",
+        "Missing Tooth Notation",
+        "Needs Review"
+      ],
+      "confidenceScore": 68,
+      "fieldConfidence": {
+        "documentType": 92,
+        "recordNo": 94,
+        "date": 88,
+        "toothNumbers": 30,
+        "procedureCategory": 75,
+        "tags": 65
+      },
+      "completenessStatus": "incomplete",
+      "missingFields": [
+        "Target FDI Tooth Number Annotation (Teeth not indexed in radiology notes)",
+        "Interpreting Radiologist / Attending Dentist Verification Signature",
+        "Clinical Diagnostic Impression / Radiographic Findings Summary"
+      ],
+      "extractedText": "EMERGENCY RADIOGRAPHY SLIP - DIGITAL RAW EXPOSURE\nFacility: San Nicolas Dental Clinic | Exposure Log: EXP-2026-10-99\nPatient: Mateo Jose Reyes [PT-2026-0007] | Date: 12-Oct-2026\nTarget Teeth: [NOT SPECIFIED ON REQUISITION FORM - LOWER ANTERIOR REGION]\nkVp: 65 | mA: 7 | Exposure: 0.12 sec\n\nFindings:\n[NO CLINICAL RADIOLOGIST REPORT ATTACHED - RAW IMAGE ONLY]\nTaglish note: \"Kinuha agad kasi sumakit bigla pagkatapos mag-basketball. Hindi pa naisulat ni Doc kung 31 or 41 ang focus.\"\nRadiologist Signature: [MISSING]",
+      "fileType": "JPG",
+      "fileSize": "3.8 MB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-12 11:20 AM",
+      "isBlurryWarning": true,
+      "reviewNotes": "FLAGGED: Tooth numbers must be manually assigned by dentist (probable 31/41 periapical).",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-019",
+      "patientId": "pat-007",
+      "patientRecordNo": "PT-2026-0007",
+      "patientName": "Mateo Jose Reyes",
+      "title": "Trauma Evaluation & Vitality Testing Record",
+      "type": "Patient Record",
+      "date": "2026-10-12",
+      "displayDate": "12 Oct 2026",
+      "toothNumbers": [
+        31,
+        41
+      ],
+      "procedureCategory": "Endodontics",
+      "tags": [
+        "Dental Trauma",
+        "Cold Vitality Test",
+        "Tooth Mobility Grade 1"
+      ],
+      "confidenceScore": 94,
+      "fieldConfidence": {
+        "documentType": 96,
+        "recordNo": 98,
+        "date": 95,
+        "toothNumbers": 93,
+        "procedureCategory": 94,
+        "tags": 92
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "DENTAL TRAUMA LOG SHEET\nSan Nicolas Dental Clinic | Patient: Mateo Jose Reyes | Record: PT-2026-0007\nDate of Trauma: 12-Oct-2026 | Date of Exam: 12-Oct-2026\nChief Complaint: \"Napatid sa laro, tumama ang baba sa court. Masakit ang ngipin sa harap.\"\n\nEXAMINATION:\n- Teeth 31 and 41 with Grade 1 mobility, tender to percussion.\n- Endo-Ice cold test: Tooth 31 responds normally; Tooth 41 with delayed mild response.\n- No alveolar bone fracture palpable.\n- Flexible composite splint placed from 33 to 43 for 2 weeks.",
+      "fileType": "PDF",
+      "fileSize": "1.0 MB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-12 01:10 PM",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-020",
+      "patientId": "pat-007",
+      "patientRecordNo": "PT-2026-0007",
+      "patientName": "Mateo Jose Reyes",
+      "title": "Splint Removal & Re-evaluation Appointment Slip",
+      "type": "Appointment Record",
+      "date": "2026-10-12",
+      "displayDate": "12 Oct 2026",
+      "toothNumbers": [
+        31,
+        41
+      ],
+      "procedureCategory": "Endodontics",
+      "tags": [
+        "Appointment Slip",
+        "Splint Removal",
+        "Vitality Recheck"
+      ],
+      "confidenceScore": 96,
+      "fieldConfidence": {
+        "documentType": 98,
+        "recordNo": 98,
+        "date": 97,
+        "toothNumbers": 95,
+        "procedureCategory": 96,
+        "tags": 94
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "APPOINTMENT CARD - SAN NICOLAS DENTAL CLINIC\nPatient: Mateo Jose Reyes (PT-2026-0007)\nDate Scheduled: 26 October 2026 at 2:00 PM\nProcedure: Flexible wire-composite splint debonding and repeat pulp vitality testing on 31, 41.",
+      "fileType": "PDF",
+      "fileSize": "390 KB",
+      "uploadedBy": "Mark Vincent Bautista",
+      "uploadedAt": "2026-10-12 01:45 PM",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-021",
+      "patientId": "pat-005",
+      "patientRecordNo": "PT-2026-0005",
+      "patientName": "Gabriel Dizon",
+      "title": "Implant Screw-Retained Crown Quality Inspection Cert",
+      "type": "Laboratory Report",
+      "date": "2026-10-09",
+      "displayDate": "09 Oct 2026",
+      "toothNumbers": [
+        46
+      ],
+      "procedureCategory": "Prosthodontics",
+      "tags": [
+        "Dental Lab",
+        "Implant Crown",
+        "Titanium Base",
+        "Zirconia Monolithic"
+      ],
+      "confidenceScore": 97,
+      "fieldConfidence": {
+        "documentType": 98,
+        "recordNo": 99,
+        "date": 97,
+        "toothNumbers": 96,
+        "procedureCategory": 97,
+        "tags": 95
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "CERAMIC MASTERS DENTAL LABORATORY PHILIPPINES\nQuality Certification No: QC-2026-8910\nClinician: Dr. Jose Paolo Reyes | Clinic: San Nicolas Dental Clinic\nPatient: Gabriel Dizon [PT-2026-0005]\n\nCase Details:\n- Tooth: 46 (Mandibular Right First Molar)\n- Type: Screw-retained monolithic Multilayer Zirconia on Ti-base\n- Implant platform: Regular 4.5mm connection\n- Occlusion checked against stone cast and digital articulated model: PASS\n- Torque specification: 30 Ncm\nCertified by: Noel Bautista, RDT",
+      "fileType": "PDF",
+      "fileSize": "1.5 MB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-09 11:15 AM",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-022",
+      "patientId": "pat-005",
+      "patientRecordNo": "PT-2026-0005",
+      "patientName": "Gabriel Dizon",
+      "title": "Dental Implant Restoration & Periodontal Maintenance Plan",
+      "type": "Treatment Plan",
+      "date": "2026-10-09",
+      "displayDate": "09 Oct 2026",
+      "toothNumbers": [
+        46,
+        17,
+        27
+      ],
+      "procedureCategory": "Prosthodontics",
+      "tags": [
+        "Treatment Plan",
+        "Implant Loading",
+        "Periodontal Maintenance",
+        "Signed"
+      ],
+      "confidenceScore": 96,
+      "fieldConfidence": {
+        "documentType": 97,
+        "recordNo": 98,
+        "date": 96,
+        "toothNumbers": 94,
+        "procedureCategory": 96,
+        "tags": 95
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "SAN NICOLAS DENTAL CLINIC - TREATMENT ROADMAP\nPatient: Gabriel Dizon | Record: PT-2026-0005 | Date: 09/10/2026\nProcedures Scheduled:\n1. Delivery and torquing of implant crown 46 (30 Ncm) + PTFE and composite access closure.\n2. Quadrant 1 and Quadrant 2 subgingival debridement (Teeth 17, 27).\nEstimated investment: ₱25,000.00\nPatient Consent: Gabriel Dizon (Signed)\nDentist: Dr. Jose Paolo Reyes",
+      "fileType": "PDF",
+      "fileSize": "840 KB",
+      "uploadedBy": "Mark Vincent Bautista",
+      "uploadedAt": "2026-10-09 11:50 AM",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-023",
+      "patientId": "pat-005",
+      "patientRecordNo": "PT-2026-0005",
+      "patientName": "Gabriel Dizon",
+      "title": "Implant Delivery & Torque Wrench Verification Sheet",
+      "type": "Patient Record",
+      "date": "2026-10-09",
+      "displayDate": "09 Oct 2026",
+      "toothNumbers": [
+        46
+      ],
+      "procedureCategory": "Prosthodontics",
+      "tags": [
+        "Implant Delivery",
+        "30 Ncm Torque",
+        "Radiographic Check",
+        "Complete"
+      ],
+      "confidenceScore": 98,
+      "fieldConfidence": {
+        "documentType": 99,
+        "recordNo": 99,
+        "date": 98,
+        "toothNumbers": 98,
+        "procedureCategory": 98,
+        "tags": 96
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "IMPLANT PROSTHESIS DELIVERY LOG\nPatient: Gabriel Dizon [PT-2026-0005] | Date: 09-10-2026\nAttending Dentist: Dr. Jose Paolo Reyes (PRC 0089123)\n\nClinical Steps Performed:\n- Healing abutment removed from 46 implant site. Sulcus irrigated with chlorhexidine.\n- Monolithic zirconia crown seated; verified passive fit with dental floss.\n- Screw torqued to 30 Ncm using calibrated surgical torque wrench.\n- Post-seating periapical radiograph confirms full seating on implant shoulder.\n- Screw channel sealed with sterile Teflon tape and Filtek Universal composite.",
+      "fileType": "PDF",
+      "fileSize": "1.1 MB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-09 12:40 PM",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-024",
+      "patientId": "pat-005",
+      "patientRecordNo": "PT-2026-0005",
+      "patientName": "Gabriel Dizon",
+      "title": "Provisional Billing Statement - Implant Final Delivery",
+      "type": "Billing/Receipt",
+      "date": "2026-10-09",
+      "displayDate": "09 Oct 2026",
+      "toothNumbers": [
+        46
+      ],
+      "procedureCategory": "Billing & Administrative",
+      "tags": [
+        "Billing Statement",
+        "Provisional",
+        "Missing OR Number",
+        "Needs TIN Stamp"
+      ],
+      "confidenceScore": 73,
+      "fieldConfidence": {
+        "documentType": 89,
+        "recordNo": 95,
+        "date": 90,
+        "toothNumbers": 86,
+        "procedureCategory": 87,
+        "tags": 68
+      },
+      "completenessStatus": "incomplete",
+      "missingFields": [
+        "Official Receipt (OR) Number (Printed on provisional quotation paper only)",
+        "BIR Registered TIN Stamp / Cashier Validation",
+        "Proof of Final Payment Settlement"
+      ],
+      "extractedText": "SAN NICOLAS DENTAL CLINIC - STATEMENT OF ACCOUNT\n[PROVISIONAL / NOT AN OFFICIAL RECEIPT]\nOR Number: [MISSING - NOT ISSUED] | BIR TIN: [UNSTAMPED]\nCustomer: Gabriel Dizon (PT-2026-0005) | Date: 09-Oct-2026\n\nParticulars:\n- Dental Implant Final Prosthesis (Tooth 46) ... ₱25,000.00\nLess Previous Deposit (Surgery stage): ₱15,000.00\nBalance Due: ₱10,000.00\nPayment Status: PENDING / CHEQUE FLOATING\nFront Desk Note: \"Cheque handed by patient to be cleared on Monday. Do not issue official receipt until deposit confirms.\"",
+      "fileType": "PDF",
+      "fileSize": "510 KB",
+      "uploadedBy": "Mark Vincent Bautista",
+      "uploadedAt": "2026-10-09 01:15 PM",
+      "amount": 10000,
+      "reviewNotes": "FLAGGED: Cannot record as tax-official receipt until bank clearance and OR generation.",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-025",
+      "patientId": "pat-006",
+      "patientRecordNo": "PT-2026-0006",
+      "patientName": "Chloe Danielle Lim",
+      "title": "Pediatric Dental History & Mixed Dentition Analysis",
+      "type": "Patient Record",
+      "date": "2026-10-24",
+      "displayDate": "24 Oct 2026",
+      "toothNumbers": [
+        16,
+        26,
+        36,
+        46,
+        14,
+        24
+      ],
+      "procedureCategory": "Orthodontics",
+      "tags": [
+        "Pediatric Dental",
+        "Mixed Dentition",
+        "Class II Div 1",
+        "Guardian Present"
+      ],
+      "confidenceScore": 96,
+      "fieldConfidence": {
+        "documentType": 97,
+        "recordNo": 98,
+        "date": 96,
+        "toothNumbers": 94,
+        "procedureCategory": 96,
+        "tags": 95
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "SAN NICOLAS DENTAL CLINIC - ORTHODONTIC CEPHALOMETRIC LOG\nPatient: Chloe Danielle Lim | Age: 14 | Record: PT-2026-0006 | Date: 24/10/2026\nAccompanying Parent: Mrs. Teresa Lim (Mother)\n\nCLINICAL EXAM:\n- Angle Class II division 1 malocclusion with 6mm overjet, 4mm overbite.\n- Moderate lower anterior crowding (Bolton discrepancy: +3.2mm).\n- High caries risk due to snacking habits; pit and fissure sealants intact on 16, 26, 36, 46.\nPlan: Fixed metal brackets MBT prescription 0.022 slot.",
+      "fileType": "PDF",
+      "fileSize": "1.6 MB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-24 02:00 PM",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-026",
+      "patientId": "pat-006",
+      "patientRecordNo": "PT-2026-0006",
+      "patientName": "Chloe Danielle Lim",
+      "title": "Lateral Cephalometric Radiograph & Tracing",
+      "type": "X-ray",
+      "date": "2026-10-24",
+      "displayDate": "Oct 24, 2026",
+      "toothNumbers": [
+        11,
+        21,
+        31,
+        41
+      ],
+      "procedureCategory": "Orthodontics",
+      "tags": [
+        "Lateral Ceph",
+        "Steiner Analysis",
+        "SNA 82 SNB 77",
+        "ANB 5 Deg"
+      ],
+      "confidenceScore": 95,
+      "fieldConfidence": {
+        "documentType": 96,
+        "recordNo": 98,
+        "date": 95,
+        "toothNumbers": 93,
+        "procedureCategory": 96,
+        "tags": 94
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "DIGITAL CEPHALOMETRIC ANALYSIS\nPatient: Chloe Danielle Lim [PT-2026-0006] | Date: 24-Oct-2026\nSNA: 82.4° (Normal maxillary position)\nSNB: 77.1° (Mild mandibular retrognathia)\nANB: 5.3° (Skeletal Class II relationship)\nUpper Incisor to NA: 28° / 6mm (Proclined)\nDoctor: Dr. Maria Elena Santos, Radiologist (PRC 0074512)",
+      "fileType": "JPG",
+      "fileSize": "3.9 MB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-24 02:30 PM",
+      "radiographDetails": {
+        "modality": "Cephalometric",
+        "exposureTime": "10.5s",
+        "kvp": "73 kV",
+        "findings": "Skeletal Class II malocclusion with retrognathic mandible and proclined upper incisors."
+      },
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-027",
+      "patientId": "pat-008",
+      "patientRecordNo": "PT-2026-0008",
+      "patientName": "Alyssa Marie Flores",
+      "title": "Post-Periodontal Scaling Antibacterial Prescription Slip",
+      "type": "Prescription",
+      "date": "2026-10-15",
+      "displayDate": "15 Oct 2026",
+      "toothNumbers": [
+        34,
+        44
+      ],
+      "procedureCategory": "Periodontics",
+      "tags": [
+        "Prescription",
+        "G6PD Safe",
+        "Amoxicillin",
+        "PRC Validated"
+      ],
+      "confidenceScore": 98,
+      "fieldConfidence": {
+        "documentType": 99,
+        "recordNo": 99,
+        "date": 98,
+        "toothNumbers": 97,
+        "procedureCategory": 98,
+        "tags": 96
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "SAN NICOLAS DENTAL CLINIC - RX\nDoctor: Dr. Jose Paolo Reyes | PRC: 0089123 | PTR: 2026-904123\nPatient: Alyssa Marie Flores | Record: PT-2026-0008 | Date: 15/10/2026\nCRITICAL MEDICAL ALERT: G6PD Deficiency (Patient cannot take sulfonamides, aspirin, or primaquine)\n\nRx:\n1. Amoxicillin 500mg capsules #21\n   Sig: Take 1 capsule every 8 hours for 7 days. Complete full course.\n2. Paracetamol 500mg tablets #10 (G6PD Safe Analgesic)\n   Sig: Take 1 tablet every 6 hours as needed for soreness.\nSignature: Dr. Jose Paolo Reyes",
+      "fileType": "PDF",
+      "fileSize": "790 KB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-15 11:30 AM",
+      "prescriptionDetails": {
+        "genericName": "Amoxicillin / Paracetamol (G6PD-Safe)",
+        "dosage": "500mg",
+        "frequency": "Every 8 hours",
+        "duration": "7 days",
+        "refills": 0,
+        "prcNo": "PRC 0089123",
+        "ptrNo": "PTR 2026-904123"
+      },
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-028",
+      "patientId": "pat-009",
+      "patientRecordNo": "PT-2026-0009",
+      "patientName": "Joshua Bautista",
+      "title": "Crown Preparation & Impression Appointment Slip",
+      "type": "Appointment Record",
+      "date": "2026-10-11",
+      "displayDate": "11 Oct 2026",
+      "toothNumbers": [
+        47
+      ],
+      "procedureCategory": "Restorative",
+      "tags": [
+        "Appointment Slip",
+        "Latex Allergy Protocol",
+        "Confirmed"
+      ],
+      "confidenceScore": 96,
+      "fieldConfidence": {
+        "documentType": 98,
+        "recordNo": 98,
+        "date": 97,
+        "toothNumbers": 95,
+        "procedureCategory": 96,
+        "tags": 94
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "APPOINTMENT SLIP - SAN NICOLAS DENTAL CLINIC\nPatient: Joshua Bautista | Record: PT-2026-0009 | Date: 11-10-2026\nScheduled Date: Thursday, 05 November 2026 at 3:00 PM\nProcedure: Tooth 47 Full Zirconia Crown Tooth Preparation & Digital Intraoral Scan\nSPECIAL NOTICE: Non-latex nitrile gloves and non-latex rubber dam only.",
+      "fileType": "PDF",
+      "fileSize": "420 KB",
+      "uploadedBy": "Mark Vincent Bautista",
+      "uploadedAt": "2026-10-11 02:20 PM",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-029",
+      "patientId": "pat-0012",
+      "patientRecordNo": "PT-2026-0012",
+      "patientName": "Sofia Isabel Navarro",
+      "title": "Official Receipt - Routine Prophylaxis & Fluoride Treatment",
+      "type": "Billing/Receipt",
+      "date": "2026-10-23",
+      "displayDate": "23 Oct 2026",
+      "toothNumbers": [],
+      "procedureCategory": "Billing & Administrative",
+      "tags": [
+        "Official Receipt",
+        "PacificCare HMO",
+        "Oral Prophy",
+        "Zero Co-Pay"
+      ],
+      "confidenceScore": 98,
+      "fieldConfidence": {
+        "documentType": 99,
+        "recordNo": 98,
+        "date": 98,
+        "toothNumbers": 99,
+        "procedureCategory": 98,
+        "tags": 97
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "SAN NICOLAS DENTAL CLINIC - OFFICIAL RECEIPT\nTIN: 000-000-000-000 VAT Reg. | OR No: 2026-8845 | Date: 23-Oct-2026\nCustomer: Sofia Isabel Navarro (PT-2026-0012)\nHMO Provider: PacificCare HMO Philippines (Member ID: PC-881299-01)\n\nItems Covered:\n1. Ultrasonic Scaling & Polishing (Annual HMO Benefit) ... ₱1,500.00\n2. Topical Fluoride Gel Application ..................... ₱800.00\nTotal Claim Amount: ₱2,300.00\nApproved HMO Share: ₱2,300.00 (100% Covered)\nPatient Out-of-Pocket Balance: ₱0.00\nCashier: Mark Vincent Bautista",
+      "fileType": "PDF",
+      "fileSize": "590 KB",
+      "uploadedBy": "Mark Vincent Bautista",
+      "uploadedAt": "2026-10-23 03:30 PM",
+      "amount": 2300,
+      "receiptNo": "OR-2026-8845",
+      "hmoProvider": "PacificCare HMO",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    },
+    {
+      "id": "doc-030",
+      "patientId": "pat-0011",
+      "patientRecordNo": "PT-2026-0011",
+      "patientName": "Joaquin Lorenzo Perez",
+      "title": "Informed Consent for Surgical Removal of Impacted Wisdom Tooth",
+      "type": "Consent Form",
+      "date": "2026-10-17",
+      "displayDate": "17 Oct 2026",
+      "toothNumbers": [
+        38,
+        48
+      ],
+      "procedureCategory": "Oral Surgery",
+      "tags": [
+        "Consent Form",
+        "Odontectomy",
+        "Inferior Alveolar Nerve",
+        "Signed"
+      ],
+      "confidenceScore": 97,
+      "fieldConfidence": {
+        "documentType": 98,
+        "recordNo": 99,
+        "date": 97,
+        "toothNumbers": 96,
+        "procedureCategory": 97,
+        "tags": 95
+      },
+      "completenessStatus": "complete",
+      "missingFields": [],
+      "extractedText": "INFORMED CONSENT FOR SURGICAL ODONTECTOMY\nSan Nicolas Dental Clinic, Metro Manila | Patient: Joaquin Lorenzo Perez [PT-2026-0011]\nDate: 17/10/2026 | Age: 22\n\nPROCEDURE: Surgical removal of impacted lower third molars (Teeth 38, 48)\nRisks discussed: Post-operative swelling, trismus (limited mouth opening), temporary altered sensation of lower lip/chin (IAN paresthesia risk < 1%).\nPatient statement: \"Naintindihan ko po lahat ng risks at pumapayag ako sa surgery.\"\nSigned: Joaquin Lorenzo Perez (Patient)\nSurgeon: Dr. Jose Paolo Reyes (PRC 0089123)",
+      "fileType": "PDF",
+      "fileSize": "1.2 MB",
+      "uploadedBy": "Carla Mendoza, RDA",
+      "uploadedAt": "2026-10-17 01:10 PM",
+      "version": 1,
+      "versionStatus": "active",
+      "versionHistory": []
+    }
+  ],
+  "users": {
+    "admin": {
+      "id": "user-admin",
+      "name": "Dr. Maria Elena Santos",
+      "role": "admin",
+      "title": "Clinic Director / Administrator",
+      "license": "PRC 0074512",
+      "email": "m.santos@sannicolasdental.ph",
+      "avatarInitials": "MS"
+    },
+    "dentist": {
+      "id": "user-dentist",
+      "name": "Dr. Jose Paolo Reyes",
+      "role": "dentist",
+      "title": "Lead Dental Surgeon / Prosthodontist",
+      "license": "PRC 0089123",
+      "email": "p.reyes@sannicolasdental.ph",
+      "avatarInitials": "PR"
+    },
+    "assistant": {
+      "id": "user-assistant",
+      "name": "Carla Mendoza",
+      "role": "assistant",
+      "title": "Senior Registered Dental Assistant (RDA)",
+      "license": "RDA 001924",
+      "email": "c.mendoza@sannicolasdental.ph",
+      "avatarInitials": "CM"
+    },
+    "front_desk": {
+      "id": "user-front-desk",
+      "name": "Mark Vincent Bautista",
+      "role": "front_desk",
+      "title": "Front Desk & Patient Coordinator",
+      "email": "m.bautista@sannicolasdental.ph",
+      "avatarInitials": "MB"
+    }
+  },
+  "auditLogs": [
+    {
+      "id": "aud-001",
+      "timestamp": "2026-10-24 02:15 PM",
+      "userId": "user-assistant",
+      "userName": "Carla Mendoza, RDA",
+      "userRole": "assistant",
+      "action": "FLAG_INCOMPLETE",
+      "targetType": "DOCUMENT",
+      "targetId": "doc-004",
+      "targetTitle": "Orthodontic Diagnostic & Appliance Consent Agreement",
+      "details": "Flagged missing legal guardian signature for minor patient Chloe Danielle Lim (14 y/o)."
+    },
+    {
+      "id": "aud-002",
+      "timestamp": "2026-10-23 04:20 PM",
+      "userId": "user-assistant",
+      "userName": "Carla Mendoza, RDA",
+      "userRole": "assistant",
+      "action": "UPLOAD",
+      "targetType": "DOCUMENT",
+      "targetId": "doc-010",
+      "targetTitle": "Dental Laboratory Fabrication Work Order & Shade Verification",
+      "details": "Uploaded PDF from Manila Precision Ceramics Lab for patient Maria Carmela Santos."
+    },
+    {
+      "id": "aud-003",
+      "timestamp": "2026-10-22 11:30 AM",
+      "userId": "user-dentist",
+      "userName": "Dr. Jose Paolo Reyes",
+      "userRole": "dentist",
+      "action": "MARK_COMPLETE",
+      "targetType": "DOCUMENT",
+      "targetId": "doc-008",
+      "targetTitle": "Esthetic Anterior Smile Assessment & Shade Mapping",
+      "details": "Verified shade B1 selection and approved restorative treatment pathway."
+    },
+    {
+      "id": "aud-004",
+      "timestamp": "2026-10-18 12:35 PM",
+      "userId": "user-assistant",
+      "userName": "Carla Mendoza, RDA",
+      "userRole": "assistant",
+      "action": "FLAG_INCOMPLETE",
+      "targetType": "DOCUMENT",
+      "targetId": "doc-007",
+      "targetTitle": "Dental Prescription Slip - Analgesic & Antibiotic",
+      "details": "Flagged missing PRC license and PTR number stamps on prescription slip."
+    },
+    {
+      "id": "aud-005",
+      "timestamp": "2026-10-18 12:10 PM",
+      "userId": "user-front-desk",
+      "userName": "Mark Vincent Bautista",
+      "userRole": "front_desk",
+      "action": "UPLOAD",
+      "targetType": "DOCUMENT",
+      "targetId": "doc-005",
+      "targetTitle": "Official Receipt - Consultation & OPG Radiograph",
+      "details": "Issued official receipt OR-2026-8812 for Juan Miguel Dela Cruz; HealthShield HMO credited."
+    },
+    {
+      "id": "aud-006",
+      "timestamp": "2026-10-12 11:20 AM",
+      "userId": "user-assistant",
+      "userName": "Carla Mendoza, RDA",
+      "userRole": "assistant",
+      "action": "FLAG_INCOMPLETE",
+      "targetType": "DOCUMENT",
+      "targetId": "doc-018",
+      "targetTitle": "Periapical Emergency Radiograph Lower Anterior Quadrant",
+      "details": "Flagged missing tooth notation and radiologist signature on emergency radiograph for Mateo Reyes."
+    },
+    {
+      "id": "aud-007",
+      "timestamp": "2026-10-09 01:15 PM",
+      "userId": "user-front-desk",
+      "userName": "Mark Vincent Bautista",
+      "userRole": "front_desk",
+      "action": "FLAG_INCOMPLETE",
+      "targetType": "DOCUMENT",
+      "targetId": "doc-024",
+      "targetTitle": "Provisional Billing Statement - Implant Final Delivery",
+      "details": "Flagged missing official receipt number and pending cheque clearing for Gabriel Dizon."
+    },
+    {
+      "id": "aud-008",
+      "timestamp": "2026-10-05 03:15 PM",
+      "userId": "user-assistant",
+      "userName": "Carla Mendoza, RDA",
+      "userRole": "assistant",
+      "action": "FLAG_INCOMPLETE",
+      "targetType": "DOCUMENT",
+      "targetId": "doc-012",
+      "targetTitle": "Full-Arch Removable Partial Denture Treatment Proposal",
+      "details": "Flagged missing quotation fees and date on treatment plan for Ramon Castillo."
+    }
+  ]
+}

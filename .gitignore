@@ -7,3 +7,10 @@ coverage/
 .env*
 !.env.example
 .agents\skills
+__pycache__/
+.pytest_cache/
+.venv/
+*.db
+*.db-journal
+backend/files/
+work/
