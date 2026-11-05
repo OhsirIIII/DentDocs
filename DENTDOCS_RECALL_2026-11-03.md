@@ -1,8 +1,18 @@
 # DentDocs recall — November 3, 2026 (after parser isolation)
 
+Latest task 5: [HTTPS_STAGING_2026-11-06.md](HTTPS_STAGING_2026-11-06.md).
+Local HTTPS rehearsal passed on new `codex/https-staging-verification` branch.
+Fixed a redirect that downgraded HTTPS/lost its port. Trusted TLS, auth/cookies,
+document workflows, 19-table fictional checkpoint/rollback and 43 checks passed.
+Working name `dentdocs` tested with client-only loopback resolution; no DNS/hosts/
+firewall/OS-trust changes. Temporary services/CA/credentials removed; saved app
+stopped and original volumes/settings/keys preserved. The user can contact a
+groupmate; a second-computer/private-network/browser test still needs coordination.
+This new branch is unmerged; read SESSION_RECAP.md before historical notes below.
+
 Latest handoff: user-approved PR #1 merged into `main` as `3677354` on November 6,
-2026. The local checkout is now on `main`; task 4 is complete. Next available task
-is task 5 HTTPS staging. The saved app remains stopped on prior images; its last
+2026. Task 4 is complete; subsequent task 5 branch work is recorded above.
+The saved app remains stopped on prior images; its last
 verified runtime backup predates the merged fixes. Existing data/settings/keys and
 unrelated untracked files remain preserved. Merge is not real-patient release.
 Read SESSION_RECAP.md for the merge and remaining release conditions.

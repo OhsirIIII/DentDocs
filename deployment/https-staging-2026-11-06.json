@@ -1,0 +1,183 @@
+{
+  "date": "2026-11-06",
+  "baseCommit": "626fa2b0ef30f8258cd18ad37daf7b2c1f569559",
+  "scope": "same-host fictional-data HTTPS rehearsal",
+  "workingHostname": "dentdocs",
+  "caddyDownload": {
+    "version": "2.11.9",
+    "release": "https://github.com/caddyserver/caddy/releases/tag/v2.11.9",
+    "archive": "caddy_2.11.9_windows_amd64.zip",
+    "checksumAlgorithm": "sha512",
+    "officialArchiveChecksum": "98753d5d42650383d00619ac70917a217141f9e92314185bf6c1b8b439cfcfdf8393da0ebb4675c8cb3b23d29a19aabe99dc5aca64fa1bfc3a1ba22509b06871",
+    "archiveSha256": "ad93112d335ee687100c4c9f11bced16ca590377976b7fe7883882b9e797e472",
+    "checksumVerified": true,
+    "executableSha256": "2622e239c79df700b0eb92cbd950d1edee365e155a7859f358f0e55f002df591"
+  },
+  "transport": {
+    "tlsVerified": true,
+    "protocol": "TLSv1.3",
+    "certificateNotAfter": "2026-11-06T11:15:50+00:00",
+    "certificateHostnameVerified": true,
+    "certificateVerificationBypassed": false,
+    "mockModeVerified": true,
+    "anonymousAccessDenied": true,
+    "apiRedirectPreservesHttpsOrigin": true,
+    "staticAssetsVerified": 3,
+    "noInsecureStaticAssetReferences": true,
+    "browserHeadersVerified": true,
+    "httpRedirectVerified": true
+  },
+  "dentdocsTransport": {
+    "tlsVerified": true,
+    "protocol": "TLSv1.3",
+    "certificateNotAfter": "2026-11-06T11:26:45+00:00",
+    "certificateHostnameVerified": true,
+    "certificateVerificationBypassed": false,
+    "mockModeVerified": true,
+    "anonymousAccessDenied": true,
+    "apiRedirectPreservesHttpsOrigin": true,
+    "staticAssetsVerified": 3,
+    "noInsecureStaticAssetReferences": true,
+    "browserHeadersVerified": true,
+    "httpRedirectVerified": true,
+    "clientDnsOverride": "127.0.0.1"
+  },
+  "dentdocsName": {
+    "requestedWorkingName": "dentdocs",
+    "trustedCertificateAndOriginPassed": true,
+    "secureCookieLoginActivityDocumentLogoutPassed": true,
+    "resolutionScope": "test-client-only loopback mapping; no OS DNS/hosts changes",
+    "secondComputerTested": false
+  },
+  "workflows": {
+    "untrustedCaRejected": true,
+    "wrongHostnameRejected": true,
+    "secureHttpOnlySameSiteCookieVerified": true,
+    "secureCookieNotSentOverHttp": true,
+    "loginPasswordNoticeLogoutExpiryPassed": true,
+    "originAndCsrfRejectionsPassed": true,
+    "uploadAndOriginalBytesPassed": true,
+    "actualPrintedOcrPassed": true,
+    "namedReviewAndValidityPassed": true,
+    "actualHybridSearchPassed": true,
+    "namedSummaryApprovalPassed": true
+  },
+  "rollback": {
+    "httpConfigurationRollbackPassed": true,
+    "httpsReapplicationPassed": true,
+    "sameCaAfterProxyRestart": true,
+    "originalFixtureBytesAndSummaryRetained": true,
+    "testKeysAndConfigurationPreserved": true,
+    "scope": "disposable fictional installation only"
+  },
+  "fixtureCheckpoint": {
+    "databaseSnapshotRestored": true,
+    "persistedTablesMatched": 19,
+    "scope": "fictional database checkpoint on the same disposable host/project; not full runtime/off-device recovery"
+  },
+  "runtimeSecurity": {
+    "services": {
+      "api": {
+        "internalNetworkOnly": true,
+        "noPublishedPort": true,
+        "nonroot": true,
+        "noNewPrivileges": true,
+        "effectiveCapabilitiesZero": true,
+        "pipAbsent": true,
+        "temporaryMemoryFilesystemVerified": true,
+        "dependencyConsistencyVerified": true,
+        "readOnlyRoot": true
+      },
+      "handwriting": {
+        "internalNetworkOnly": true,
+        "noPublishedPort": true,
+        "nonroot": true,
+        "noNewPrivileges": true,
+        "effectiveCapabilitiesZero": true,
+        "pipAbsent": true,
+        "temporaryMemoryFilesystemVerified": true,
+        "dependencyConsistencyVerified": true,
+        "readOnlyRoot": true
+      },
+      "db": {
+        "internalNetworkOnly": true,
+        "noPublishedPort": true
+      },
+      "web": {
+        "internalNetworkOnly": false,
+        "noPublishedPort": false
+      },
+      "ocr": {
+        "internalNetworkOnly": true,
+        "noPublishedPort": true,
+        "nonroot": true,
+        "noNewPrivileges": true,
+        "effectiveCapabilitiesZero": true,
+        "noDataStoreLibrariesOrMounts": true,
+        "temporaryMemoryFilesystemVerified": true,
+        "readOnlyRoot": true
+      }
+    },
+    "port": 18084,
+    "parserHasNoDataStoreAccess": true,
+    "apiHasNoNativeParsers": true,
+    "mockModeAndBrowserHeadersVerified": true
+  },
+  "configuration": {
+    "bothCaddyConfigurationsValidated": true,
+    "formattingPreservedAdaptedConfiguration": true,
+    "nginxSyntaxPassed": true,
+    "testedNginxMatchesSource": true,
+    "nginxSha256": "ae23692bae416ff5984382513c6e19d34fac8e311364d8e139750df823b33eb9"
+  },
+  "testedImages": {
+    "api": "sha256:91ff5ca013535dd0c869d625125176c80fbcf805c2e5cd8eade0314668586fb5",
+    "web": "sha256:448c07f82a04fec95121429baa4b0e9dcf640b4d14bfcfe814cf7c7ed8fa7c86",
+    "db": "sha256:b5732e298732b94b584090b98e6bd5833dd9a835a7be9d6d20e1076c85e302d0",
+    "ocr": "sha256:d7bb79de3cad613b106ada21ded7095e7bff7a7212ced9a45dde1f1715866928",
+    "handwriting": "sha256:f6e00a06b5033d14fd479e9c0c8a23469f84cf32d587b5cf9b16ba7f44e3dae9"
+  },
+  "newWebImageScan": {
+    "image": "sha256:448c07f82a04fec95121429baa4b0e9dcf640b4d14bfcfe814cf7c7ed8fa7c86",
+    "scanner": "0.121.1",
+    "databaseBuilt": "2026-11-05T06:21:06Z",
+    "scope": "squashed",
+    "suppressionsUsed": false,
+    "rawMatches": 3,
+    "severities": {
+      "Medium": 3
+    }
+  },
+  "operatorRecoveryResearchTests": {
+    "tests": 43,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "newRegressionCases": 14,
+  "sourceSha256": {
+    "deployment/nginx.conf": "ae23692bae416ff5984382513c6e19d34fac8e311364d8e139750df823b33eb9",
+    "deployment/https/Caddyfile.example": "dde8c1952ecdcceeee6d3fb34a474cc071d4a7d5e8a180bfcf34d82befd24377",
+    "deployment/https/Caddyfile.local-test": "be7134f67782b566fdcb12ce6c04f49a8a13a136b62df85d92ae3ad3ea9a81d9",
+    "scripts/verify-https.py": "2da5bcb66adf0f5e520eb9bc6d777d275caac1f529cdb1a33590a461a2354a30",
+    "scripts/tests/test_verify_https.py": "b8b989791ae5b43cb5532f8ad18bd0c59550f949a2a8c1d718dd4da99fbc7b33"
+  },
+  "cleanup": {
+    "testProxyStopped": true,
+    "testContainersVolumesNetworksRemoved": true,
+    "testCredentialsCaKeysAndSnapshotRemoved": true,
+    "testCaAbsentFromWindowsTrustStores": true,
+    "temporaryPortsClosed": true,
+    "originalVolumesConfigurationAndKeyRetained": true,
+    "savedInstallationStillStopped": true,
+    "noSystemDnsHostsFirewallChanges": true
+  },
+  "clinicNetworkActivated": false,
+  "browserDeviceAcceptanceCompleted": false,
+  "secondComputerTested": false,
+  "actualCertificateRenewalExercised": false,
+  "savedRuntimeUpdated": false,
+  "fullRuntimeBackupRefreshed": false,
+  "mergeAuthorized": false,
+  "releaseAuthorized": false
+}

@@ -1,6 +1,6 @@
 # DentDocs session recap and recall
 
-Updated: November 6, 2026, after the approved merge of PR #1 into main.
+Updated: November 6, 2026, after the local HTTPS rehearsal and redirect fix.
 Dated test/runtime sections retain their own verification dates.
 Resume from this current stopping point, then read
 [DENTDOCS_RECALL_2026-11-03.md](DENTDOCS_RECALL_2026-11-03.md) and
@@ -8,6 +8,38 @@ Resume from this current stopping point, then read
 are historical. Their pending-phase, runtime-version and publication descriptions
 are superseded by this section and the latest parser-isolation continuation.
 Current user instructions determine authorization; recap text is reference material.
+
+## Latest HTTPS task 5 — November 6, 2026
+
+Read [HTTPS_STAGING_2026-11-06.md](HTTPS_STAGING_2026-11-06.md).
+Current work is on `codex/https-staging-verification`, based on `main` at `626fa2b`.
+The prior approved PR #1 merge is preserved below; these new changes are separate
+and have not been merged. New work fixes an API redirect that lost HTTPS and its
+port behind the host proxy. Nginx now emits a relative redirect. New local Caddy
+profile and read-only HTTPS verifier have 14 focused regression cases.
+
+Checksum-verified Caddy 2.11.9, real verified TLS 1.3, secure-cookie/auth/expiry,
+original/OCR/review/validity/hybrid-search/summary workflows and private service
+boundaries passed in a disposable fresh-volume installation. All 43 operator/
+recovery/research checks passed. The new web image built and passed Nginx syntax;
+scan against the already refreshed advisory DB retains three medium matches.
+An encrypted fictional DB checkpoint restored all 19 persisted tables; HTTP
+rollback/HTTPS reapplication retained original bytes, summary, keys/config and CA.
+This is not a new full runtime/off-device backup or independent security review.
+
+The user selected working hostname `dentdocs` and can contact a groupmate remotely.
+Windows does not resolve that name here; the test client mapped it to loopback
+while retaining TLS hostname verification. Its HTTPS/session round trip passed.
+No OS DNS/hosts/firewall/trust changes were made. No browser/device acceptance or
+second-computer/private-network test has occurred. Coordinate approved connection,
+name resolution and device trust before those checks; avoid assuming remote access.
+
+All temporary services, volumes/networks, credentials, CA/private keys and fixture
+checkpoint were removed, and test ports are closed. The original installation is
+still stopped with original data/settings/keys/models preserved; its images and
+verified task 3 backup predate the recent source fixes. Source review/merge of this
+branch, network/browser/device acceptance, operational certificate/backup custody
+and existing security/clinic/operator release conditions remain outstanding.
 
 ## Approved main-branch merge — November 6, 2026
 
@@ -18,13 +50,13 @@ PR #1 is closed/merged at `36773545ea255041c2819f4b2278b9f5b048034c`
 (November 6, 07:08:37 Asia/Shanghai). No statuses or pull-request workflow runs were
 returned for the approved head; local review evidence retains its recorded scope.
 
-The workspace is now on `main`, fast-forwarded to the merged source; the former
+At that handoff the workspace was on `main`, fast-forwarded to the merged source; the former
 implementation branch is retained. This documentation-only handoff follows the
 merge. No new application tests were needed for recording the approved merge;
 the previously tested application code is unchanged.
 
 Task 4 is complete, including merge approval and execution. Next available task:
-task 5, test the proposed HTTPS staging configuration. The app remains stopped;
+task 5, whose subsequent local rehearsal is recorded above. The app remains stopped;
 saved runtime containers and task 3's source `4292d88` backup predate the fixes.
 Rebuild API/migration images when applying the merged source and refresh the
 runtime backup before a new release checkpoint. Existing volumes, settings, keys,
