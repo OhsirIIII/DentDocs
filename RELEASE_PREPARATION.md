@@ -1,22 +1,24 @@
 # Release preparation — November 5, 2026
 
-The branch is prepared for engineering review. It is not approved for real-patient
-or LAN release. The existing Compose application remains fictional-data, loopback
+The reviewed source was merged into `main` with explicit user approval on
+November 6, 2026 (`3677354`). Real-patient/LAN release remains unapproved.
+The existing Compose application remains fictional-data, loopback
 HTTP. The sample HTTPS configuration below has not been activated or certified.
 
 Draft PR [#1](https://github.com/OhsirIIII/DentDocs/pull/1) was created on
 November 6, 2026 (Asia/Shanghai), after the user corrected the GitHub installation
 under `OhsirIIII`. Repository discovery and PR creation succeeded; the earlier
 403 blocker is resolved. Review material is retained in
-[PULL_REQUEST_DRAFT.md](PULL_REQUEST_DRAFT.md). The PR remains a draft, not a merge
-or release approval.
+[PULL_REQUEST_DRAFT.md](PULL_REQUEST_DRAFT.md). The user subsequently approved
+the exact reviewed head `8bad501`; PR #1 was marked ready and merged as `3677354`.
+This source merge does not complete the release conditions below.
 
 ## Review scope
 
 Local task 4 review/fixes are complete:
 [PR_REVIEW_2026-11-06.md](PR_REVIEW_2026-11-06.md). Three reproduced history/access
 findings were resolved and tested against fresh PostgreSQL/runtime resources.
-Explicit merge approval remains pending; the PR is still draft. The saved app is
+The approved PR is merged. The saved app is
 stopped on preceding images, and task 3's backup predates the reviewed fixes.
 Applying the patch requires rebuilt API/migration images and a matching recovery
 checkpoint before release. This does not satisfy independent security review.
@@ -36,7 +38,7 @@ images. Independent native/OS review remains pending; older scan notes retain da
 The branch `codex/phase4-review-validity` contains persistent document/original
 handling, real staff accounts, source-bound review and validity, isolated printed
 OCR, experimental selected-line handwriting, local retrieval, named administrative
-summaries, encrypted recovery and system documentation. Main has not been merged.
+summaries, encrypted recovery and system documentation. These changes are now on `main`.
 
 November 5 continuation adds bounded handwriting transport and regression coverage,
 a reproducible offline validation benchmark, current security dispositions and this

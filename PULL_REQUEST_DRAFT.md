@@ -1,14 +1,17 @@
-# Draft pull request
+# Pull request record
 
-Status: draft [PR #1](https://github.com/OhsirIIII/DentDocs/pull/1), targeting `main`
-from `codex/phase4-review-validity`. Local review/fixes complete; merge approval pending.
-Description synchronized with the November 6 branch review update.
+Status: [PR #1](https://github.com/OhsirIIII/DentDocs/pull/1) merged into `main`
+from `codex/phase4-review-validity` on November 6, 2026 with explicit user approval.
+Approved head: `8bad5017cae7ff27851229d26b4498ab3dcaadee`.
+Merge commit: `36773545ea255041c2819f4b2278b9f5b048034c`.
+The description below preserves the pre-merge review text and its then-pending
+approval status. Current state is in SESSION_RECAP.md; release remains unapproved.
 
 ## Title
 
 Implement local document workflows, isolated OCR and encrypted recovery
 
-## Description
+## Archived pre-merge description
 
 DentDocs extends the frontend prototype into a persistent fictional-data local system. Staff retain encrypted originals and versions, correct recognition drafts, record separate review/completeness/validity decisions, search source passages and approve administrative summaries. The branch adds named accounts, isolated native OCR, encrypted recovery and illustrated system documentation.
 

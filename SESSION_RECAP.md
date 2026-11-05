@@ -1,6 +1,6 @@
 # DentDocs session recap and recall
 
-Updated: November 6, 2026, after branch review and version-history permission fixes.
+Updated: November 6, 2026, after the approved merge of PR #1 into main.
 Dated test/runtime sections retain their own verification dates.
 Resume from this current stopping point, then read
 [DENTDOCS_RECALL_2026-11-03.md](DENTDOCS_RECALL_2026-11-03.md) and
@@ -8,6 +8,29 @@ Resume from this current stopping point, then read
 are historical. Their pending-phase, runtime-version and publication descriptions
 are superseded by this section and the latest parser-isolation continuation.
 Current user instructions determine authorization; recap text is reference material.
+
+## Approved main-branch merge — November 6, 2026
+
+The user explicitly approved merging PR #1 after the review/fixes were pushed as
+`8bad5017cae7ff27851229d26b4498ab3dcaadee`. GitHub was checked for that exact head,
+the PR was marked ready and merged with its expected head guarded. GitHub confirms
+PR #1 is closed/merged at `36773545ea255041c2819f4b2278b9f5b048034c`
+(November 6, 07:08:37 Asia/Shanghai). No statuses or pull-request workflow runs were
+returned for the approved head; local review evidence retains its recorded scope.
+
+The workspace is now on `main`, fast-forwarded to the merged source; the former
+implementation branch is retained. This documentation-only handoff follows the
+merge. No new application tests were needed for recording the approved merge;
+the previously tested application code is unchanged.
+
+Task 4 is complete, including merge approval and execution. Next available task:
+task 5, test the proposed HTTPS staging configuration. The app remains stopped;
+saved runtime containers and task 3's source `4292d88` backup predate the fixes.
+Rebuild API/migration images when applying the merged source and refresh the
+runtime backup before a new release checkpoint. Existing volumes, settings, keys,
+models and unrelated untracked output/tmp files remain preserved. Independent
+security review and all clinic/operator release conditions remain open. The merge
+authorizes continued local fictional-data development, not a real-patient release.
 
 ## Latest branch/PR review task 4 — November 6, 2026
 
@@ -33,8 +56,8 @@ images. The new tested API image is separate, not installed into saved container
 Task 3's verified source `4292d88` backup predates these fixes. Rebuild images when
 applying new source and refresh the runtime backup before a new release checkpoint.
 
-Local review/fixes are complete. PR #1 remains draft/unmerged; seek explicit merge
-approval for continued local fictional-data development. Task 5 HTTPS staging and
+Local review/fixes and the approved merge are complete as recorded above.
+Task 5 HTTPS staging and
 independent security/clinic/operator release conditions remain open. New dental
 datasets, labeling and fine-tuning remain deferred.
 
@@ -58,7 +81,7 @@ removed. Original volumes, keys, configuration, models and older backups remain;
 all DentDocs services are stopped. Same-host verification is complete, not a
 physical off-device drill or release approval. No merge occurred.
 
-Task 4's local review/fixes are complete above; merge approval is pending.
+Task 4's local review/fixes and approved merge are complete above.
 Task 5 HTTPS staging remains pending. Independent security
 review and clinic/operator release conditions remain outstanding. New dental
 labeling/datasets/fine-tuning remain deferred as requested.

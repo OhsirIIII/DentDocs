@@ -10,8 +10,10 @@ security assessment, off-device recovery, clinic policies and release sign-off.
 This project does not certify legal compliance or clinical transcription accuracy.
 
 Resume from [SESSION_RECAP.md](SESSION_RECAP.md) and the
-[dated recall](DENTDOCS_RECALL_2026-11-03.md). The implementation branch is
-`codex/phase4-review-validity`; `main` has not received these changes through a merge.
+[dated recall](DENTDOCS_RECALL_2026-11-03.md). Approved
+[PR #1](https://github.com/OhsirIIII/DentDocs/pull/1) merged
+`codex/phase4-review-validity` into `main` on November 6, 2026 at `3677354`.
+Use `main` for the merged source. Deployment and release conditions remain open.
 
 ## System documentation
 
@@ -25,7 +27,7 @@ marked for completion.
 
 [November 6 branch review](PR_REVIEW_2026-11-06.md) fixes nested history growth and
 two front-desk access gaps involving older clinical versions/review notes. Local
-regression and isolated PostgreSQL checks passed; merge approval remains pending.
+regression and isolated PostgreSQL checks passed; the user-approved PR is merged.
 
 [November 6 recovery checkpoint](RECOVERY_CHECKPOINT_2026-11-06.md) records a fresh
 encrypted backup and isolated restore matching 19 tables and 40 originals, with
@@ -138,7 +140,7 @@ provide their own Node environment. The examples below use Windows PowerShell.
 These steps are for a **new** checkout with no existing `.env` or clinic data.
 
 ```powershell
-git clone --branch codex/phase4-review-validity https://github.com/OhsirIIII/DentDocs.git
+git clone --branch main https://github.com/OhsirIIII/DentDocs.git
 cd DentDocs
 python -m venv .venv
 .venv/Scripts/python.exe -m pip install -r backend/requirements.lock
@@ -262,4 +264,4 @@ parser-isolation documentation take precedence over historical pending-feature n
 5. Obtain verified dental labels and independent writer-disjoint evaluation before
    claiming handwriting reliability. Supplied clinic transcriptions remain drafts.
 
-No PR merge or real-patient release is implied by a source push or this README.
+The recorded PR merge covers source changes. Real-patient release remains pending.
