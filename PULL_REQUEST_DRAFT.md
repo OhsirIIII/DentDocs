@@ -5,10 +5,10 @@ Status: prepared but **not created**. The connected GitHub integration returned
 browser is signed out. Source push succeeded. No permissions or account settings
 were changed to work around this limitation.
 
-Repository: `OhsirIIII/DentDocs`  
-Base: `main`  
-Head: `codex/phase4-review-validity`  
-Create as: **Draft**  
+Repository: `OhsirIIII/DentDocs`
+Base: `main`
+Head: `codex/phase4-review-validity`
+Create as: **Draft**
 [Branch comparison / creation page](https://github.com/OhsirIIII/DentDocs/compare/main...codex%2Fphase4-review-validity?expand=1)
 
 ## Title
