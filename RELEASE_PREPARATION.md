@@ -4,6 +4,11 @@ The branch is prepared for engineering review. It is not approved for real-patie
 or LAN release. The existing Compose application remains fictional-data, loopback
 HTTP. The sample HTTPS configuration below has not been activated or certified.
 
+Draft PR creation was attempted after pushing implementation `7683524`, but the
+GitHub integration lacks write access (403). The local CLI is absent and the
+available browser is signed out. No PR was created. The complete title/body and
+comparison link are saved in [PULL_REQUEST_DRAFT.md](PULL_REQUEST_DRAFT.md).
+
 ## Review scope
 
 The branch `codex/phase4-review-validity` contains persistent document/original

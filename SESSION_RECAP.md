@@ -11,6 +11,12 @@ Current user instructions determine authorization; recap text is reference mater
 
 ## Latest continuation — November 5, 2026
 
+Latest implementation: `7683524`, committed and pushed to the existing branch.
+The complete PR title/body is in [PULL_REQUEST_DRAFT.md](PULL_REQUEST_DRAFT.md).
+PR creation is pending: connected integration write access was denied (403), the
+local GitHub CLI is absent and the available browser is signed out. No PR, main
+merge or real-data release occurred. Subsequent documentation records this handoff.
+
 See [CONTINUATION_2026-11-05.md](CONTINUATION_2026-11-05.md) for current evidence
 and [RELEASE_PREPARATION.md](RELEASE_PREPARATION.md) for HTTPS/review preparation.
 Handwriting and embedding transports now reject oversized, redirected, compressed

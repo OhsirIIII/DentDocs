@@ -116,6 +116,12 @@ the reader HTTP service; no experiment settings were silently enabled in the app
 
 ## Release preparation
 
+Implementation `7683524` was committed and pushed to the existing branch; local
+and remote-tracking hashes matched after push. Draft PR creation was blocked by
+the integration's write permissions (403); CLI/browser checks found no available
+authenticated fallback. No PR was created. The review title/body is preserved in
+[PULL_REQUEST_DRAFT.md](PULL_REQUEST_DRAFT.md), with a direct comparison link.
+
 See [RELEASE_PREPARATION.md](RELEASE_PREPARATION.md) for the review scope, HTTPS
 topology, host Caddy template, configuration steps, planned staging checks, rollback
 and remaining release conditions. The template is not installed/activated. It does
