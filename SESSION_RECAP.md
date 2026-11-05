@@ -1,6 +1,6 @@
 # DentDocs session recap and recall
 
-Updated: November 6, 2026, after refreshed security scans, vendor updates and isolated verification.
+Updated: November 6, 2026, after the existing handwriting candidate evaluation.
 Dated test/runtime sections retain their own verification dates.
 Resume from this current stopping point, then read
 [DENTDOCS_RECALL_2026-11-03.md](DENTDOCS_RECALL_2026-11-03.md) and
@@ -8,6 +8,33 @@ Resume from this current stopping point, then read
 are historical. Their pending-phase, runtime-version and publication descriptions
 are superseded by this section and the latest parser-isolation continuation.
 Current user instructions determine authorization; recap text is reference material.
+
+## Latest handwriting task 2 — November 6, 2026
+
+The user clarified task 2 means further evaluation of the existing contrast/beam
+candidate. New datasets, dental-label preparation and fine-tuning were deferred.
+The interrupted label-inspection turn made no training, crop, review-flag or model
+changes. Do not resume that work from older proposed plans without new direction.
+
+Read [HANDWRITING_EVALUATION_2026-11-06.md](HANDWRITING_EVALUATION_2026-11-06.md).
+The paired run used the same 15 research validation lines from one writer, with
+original/low-contrast/blurred copies on GPU and two original-image repetitions in
+the security-refreshed offline CPU image. Total: 225 inference measurements, not
+225 independent examples. No old test or private dental labels were evaluated.
+CPU/GPU original predictions matched; both CPU repetitions were identical.
+
+Contrast/beam retained 19.93% CER versus 24.13% baseline, with 2/15 exact lines and
+1/6 numeric lines correct. On original images it improved seven lines, worsened
+three and left five unchanged. CPU median increased from 1.27 to 3.59 seconds.
+Default remains raw/greedy; no app/model/API changes or promotion. Four research
+metric checks passed. Evidence/aggregate JSON and limitations are linked in the
+report. This evaluation pass is complete; new labeling/training remains deferred.
+The isolated benchmark container exited; the application remains stopped.
+
+Next available task from the user's five-item list: task 3, create a fresh full
+encrypted backup of the updated source/images and verify isolated restoration.
+Task 4 PR review and task 5 HTTPS staging also remain. Security updates/scans are
+done for this pass, but independent review of open findings is still outstanding.
 
 ## Latest security pass — November 6, 2026
 

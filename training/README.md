@@ -186,6 +186,12 @@ never attach a recovery key to its encrypted bundle.
 
 ## November 5 reader ablation (no deployment promotion)
 
+Follow-up: [November 6 candidate evaluation](../HANDWRITING_EVALUATION_2026-11-06.md)
+compares paired line regressions, synthetic low-contrast/blur conditions, numeric
+insertions and repeated deployment-version CPU timings. It uses the same research
+validation labels, not new dental ground truth. New datasets, dental-label
+preparation and fine-tuning were deferred; the application default is unchanged.
+
 [Current continuation](../CONTINUATION_2026-11-05.md) records validation-only
 raw/contrast/beam/deskew comparisons using `benchmark_reader.py`. On 15 existing
 validation lines, contrast plus four beams reduced CER from 24.13% to 19.93%;

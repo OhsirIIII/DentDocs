@@ -23,6 +23,10 @@ marked for completion.
 
 ## Current engineering continuation
 
+[Handwriting candidate evaluation](HANDWRITING_EVALUATION_2026-11-06.md) extends
+the existing contrast/beam experiment with robustness, numeric and timing checks.
+It does not change the application reader or claim independently validated dental accuracy.
+
 [November 6 security refresh](SECURITY_REFRESH_2026-11-06.md) records successful
 advisory refresh, supported OS updates, minimum-version build checks, fresh scans
 and isolated verification. Open native/OS findings still require independent review.
