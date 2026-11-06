@@ -1,6 +1,6 @@
 # DentDocs session recap and recall
 
-Updated: November 6, 2026, after the local HTTPS rehearsal and redirect fix.
+Updated: November 6, 2026, after private remote setup; recipient DNS troubleshooting remains open.
 Dated test/runtime sections retain their own verification dates.
 Resume from this current stopping point, then read
 [DENTDOCS_RECALL_2026-11-03.md](DENTDOCS_RECALL_2026-11-03.md) and
@@ -8,6 +8,47 @@ Resume from this current stopping point, then read
 are historical. Their pending-phase, runtime-version and publication descriptions
 are superseded by this section and the latest parser-isolation continuation.
 Current user instructions determine authorization; recap text is reference material.
+
+## Latest private remote-test continuation — November 6, 2026
+
+Read [REMOTE_TESTING_2026-11-06.md](REMOTE_TESTING_2026-11-06.md).
+The user explicitly requested private internet testing and confirmed the groupmate
+will use their own Tailscale account. Tailscale 1.104.5 is installed/signed in as
+device `dentdocs`; private Serve HTTPS 443 points only to the new loopback web at
+127.0.0.1:18085. Funnel is off. DNS support is enabled, accepted subnet routes and
+exit-node routing are off. The tailnet policy now grants only this device's TCP
+443 on IPv4/IPv6; policy assertions and effective packet filters were checked.
+Prior/applied policies remain in ignored private files. No messages were sent.
+
+Separate fictional installation is running in `work/remote-testing-2026-11-06/`.
+Its private files hold fresh configuration, actual HTTPS URL, initial owner login,
+limited assistant test login and device invitation. Do not print/commit them or
+reuse the saved installation's credentials. Exact project/command is in
+`runtime-command.json`. The original installation remains stopped, with original
+volumes/configuration/keys/models intact. The earlier Caddy drill was removed;
+this newly requested remote test is deliberately left running.
+
+Trusted HTTPS and browser sign-in page, anonymous denial, owner/assistant login,
+secure cookies, first-use password/notice gates and logout passed. No passwords
+were changed and no human notice acknowledgement was bypassed. No extra admin
+account was created: the attempted automated-admin fixture was rejected by approval
+review and replaced with limited-account/first-use-gate verification. 45 operator/
+recovery/research checks passed; the verifier now supports normal system trust
+when --ca is omitted. Backend/frontend/model code and weights are unchanged.
+
+The one-use device share was accepted; a remote peer is online and permitted by
+the HTTPS filter. The user supplied a remote Brave screenshot showing a DNS lookup
+failure (DNS_PROBE_POSSIBLE). Host HTTPS remains healthy. The user was asked to
+have the friend check Use Tailscale DNS settings and compare Edge. Their subsequent
+screenshot confirms the DNS option is already checked. Leave it enabled; next try
+Edge, then compare Tailscale DNS query versus Windows Resolve-DnsName if needed.
+Recipient-side DNS/browser outcome and second-device application access
+are NOT yet confirmed. Follow up on that check; do not mark remote acceptance done.
+
+Continue on `codex/https-staging-verification` / draft PR #2. New merge approval,
+independent security, clinic/operator policies/acceptance, licensing and release
+remain outstanding. A fresh full runtime recovery checkpoint is still required
+before a new release checkpoint; remote test setup does not replace it.
 
 ## Latest HTTPS task 5 — November 6, 2026
 

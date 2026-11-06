@@ -69,7 +69,7 @@ def resolve_host(hostname, address=None):
         socket.getaddrinfo = original
 
 
-def verify(url, ca, http_url=None, connect_ip=None):
+def verify(url, ca=None, http_url=None, connect_ip=None):
     url = origin(url)
     with resolve_host(urlsplit(url).hostname, connect_ip):
         report = verify_connection(url, ca, http_url)
@@ -80,7 +80,7 @@ def verify(url, ca, http_url=None, connect_ip=None):
 
 def verify_connection(url, ca, http_url=None):
     url = origin(url)
-    context = ssl.create_default_context(cafile=str(ca))
+    context = ssl.create_default_context(cafile=str(ca) if ca is not None else None)
     parts = urlsplit(url)
     with socket.create_connection((parts.hostname, parts.port or 443), timeout=10) as sock:
         with context.wrap_socket(sock, server_hostname=parts.hostname) as connection:
@@ -131,12 +131,12 @@ def verify_connection(url, ca, http_url=None):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--url', required=True)
-    parser.add_argument('--ca', required=True)
+    parser.add_argument('--ca', help='Optional private CA file; omit to use the normal system trust store')
     parser.add_argument('--http-url')
     parser.add_argument('--connect-ip', help='Map only the URL hostname to this IP in this test process; TLS hostname verification stays enabled')
     parser.add_argument('--output', required=True)
     args = parser.parse_args()
-    report = verify(args.url, Path(args.ca), args.http_url, args.connect_ip)
+    report = verify(args.url, Path(args.ca) if args.ca else None, args.http_url, args.connect_ip)
     Path(args.output).write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
     print('PASS: verified TLS/hostname, HTTPS-preserving redirects, assets, headers and anonymous-access boundary')
 

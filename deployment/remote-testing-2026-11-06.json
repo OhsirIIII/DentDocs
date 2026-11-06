@@ -1,0 +1,134 @@
+{
+  "date": "2026-11-06",
+  "sourceBase": "638dc4849d7c52c899573dc402dd5720c5d92a75",
+  "scope": "private fictional remote-test host setup; recipient DNS unresolved",
+  "tailscaleVersion": "1.104.5",
+  "vendorInstallerHashVerified": true,
+  "authenticodeSignatureVerified": true,
+  "privateNetwork": {
+    "tailscaleRunning": true,
+    "servePrivateHttpsOnly": true,
+    "publicFunnelDisabled": true,
+    "upstreamIsDedicatedLoopback": true,
+    "tcp443OnlyForBothAddressFamilies": true,
+    "dnsEnabled": true,
+    "acceptedSubnetRoutes": false,
+    "exitNodeConfigured": false,
+    "peerCountObserved": 1,
+    "secondDeviceTestCompleted": false
+  },
+  "hostHttps": {
+    "tlsVerified": true,
+    "protocol": "TLSv1.3",
+    "certificateNotAfter": "2027-02-03T22:50:37+00:00",
+    "certificateHostnameVerified": true,
+    "certificateVerificationBypassed": false,
+    "mockModeVerified": true,
+    "anonymousAccessDenied": true,
+    "apiRedirectPreservesHttpsOrigin": true,
+    "staticAssetsVerified": 3,
+    "noInsecureStaticAssetReferences": true,
+    "browserHeadersVerified": true
+  },
+  "accountChecks": {
+    "accounts": [
+      {
+        "role": "assistant",
+        "loginSucceeded": true,
+        "secureCookieVerified": true,
+        "firstUsePasswordAndNoticeRequired": true,
+        "recordsBlockedBeforeFirstUse": true,
+        "logoutAndRevocationPassed": true
+      },
+      {
+        "role": "admin",
+        "loginSucceeded": true,
+        "secureCookieVerified": true,
+        "firstUsePasswordAndNoticeRequired": true,
+        "recordsBlockedBeforeFirstUse": true,
+        "logoutAndRevocationPassed": true
+      }
+    ],
+    "passwordsNotChangedByAutomation": true,
+    "humanNoticeAcknowledgementsNotBypassed": true,
+    "noAdditionalAdministratorCreated": true
+  },
+  "runtimeSecurity": {
+    "services": {
+      "api": {
+        "internalNetworkOnly": true,
+        "noPublishedPort": true,
+        "nonroot": true,
+        "noNewPrivileges": true,
+        "effectiveCapabilitiesZero": true,
+        "pipAbsent": true,
+        "temporaryMemoryFilesystemVerified": true,
+        "dependencyConsistencyVerified": true,
+        "readOnlyRoot": true
+      },
+      "handwriting": {
+        "internalNetworkOnly": true,
+        "noPublishedPort": true,
+        "nonroot": true,
+        "noNewPrivileges": true,
+        "effectiveCapabilitiesZero": true,
+        "pipAbsent": true,
+        "temporaryMemoryFilesystemVerified": true,
+        "dependencyConsistencyVerified": true,
+        "readOnlyRoot": true
+      },
+      "db": {
+        "internalNetworkOnly": true,
+        "noPublishedPort": true
+      },
+      "web": {
+        "internalNetworkOnly": false,
+        "noPublishedPort": false
+      },
+      "ocr": {
+        "internalNetworkOnly": true,
+        "noPublishedPort": true,
+        "nonroot": true,
+        "noNewPrivileges": true,
+        "effectiveCapabilitiesZero": true,
+        "noDataStoreLibrariesOrMounts": true,
+        "temporaryMemoryFilesystemVerified": true,
+        "readOnlyRoot": true
+      }
+    },
+    "port": 18085,
+    "parserHasNoDataStoreAccess": true,
+    "apiHasNoNativeParsers": true,
+    "mockModeAndBrowserHeadersVerified": true
+  },
+  "friendDiagnostics": {
+    "hostHealthyOverHttps": true,
+    "acceptedPeerObserved": true,
+    "connectedPeerObserved": true,
+    "peerAddressesAllowedByHttpsPolicy": true,
+    "remoteBrowserReportedDnsError": true,
+    "secondDeviceApplicationAccessConfirmed": false,
+    "recipientDnsSettingShownEnabled": true,
+    "nextRecipientStep": "Compare Edge; if still failing, compare Tailscale DNS with the Windows resolver"
+  },
+  "tests": {
+    "tests": 45,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "sourceSha256": {
+    "scripts/verify-https.py": "a85c5d3ed86961671778b2ca4f9dcc65be9156d448c669040000d48a9ca5173a",
+    "scripts/tests/test_verify_https.py": "bb8b5a1ff722c2ffd1c1723ac8d1caf7a6be8ccef7574efb159ef3f0035e7deb"
+  },
+  "testStackLeftRunningByRequest": true,
+  "originalInstallationStopped": true,
+  "originalDataKeysAndConfigurationPreserved": true,
+  "invitationAccepted": true,
+  "invitationAndCredentialsKeptPrivate": true,
+  "secondDeviceApplicationAccessConfirmed": false,
+  "humanFirstUsePasswordChangesPending": true,
+  "extraAdministratorCreated": false,
+  "mergeAuthorized": false,
+  "releaseAuthorized": false
+}

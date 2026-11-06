@@ -8,6 +8,12 @@ has not been activated or certified.
 
 ## November 6 local HTTPS rehearsal
 
+Subsequent [private remote-test setup](REMOTE_TESTING_2026-11-06.md) is active in
+a separate fictional installation through Tailscale Serve. Its accepted peer is
+online, but the recipient reported a DNS error; second-device application access
+and browser acceptance remain unconfirmed. This is not clinic-network/public
+deployment or real-patient release. The original saved installation stays stopped.
+
 Read [HTTPS_STAGING_2026-11-06.md](HTTPS_STAGING_2026-11-06.md) and its sanitized
 evidence. Trusted TLS/auth/cookie/document workflows and configuration rollback
 passed in a separate fictional installation; all temporary services, CA/keys and

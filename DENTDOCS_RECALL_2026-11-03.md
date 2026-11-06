@@ -1,5 +1,15 @@
 # DentDocs recall — November 3, 2026 (after parser isolation)
 
+Latest continuation: [REMOTE_TESTING_2026-11-06.md](REMOTE_TESTING_2026-11-06.md).
+User-authorized private Tailscale remote test is now RUNNING in a separate
+fictional installation, while the original app remains stopped. Private HTTPS
+443 only, Funnel off, limited assistant test account and first-use gates retained.
+45 checks passed. Device invitation accepted and peer online, but the friend's
+Brave browser reported DNS lookup failure. Recipient DNS checkbox is already on;
+compare Edge, then Tailscale/Windows DNS queries if needed. Acceptance remains unconfirmed. All secrets and
+actual connection details stay under ignored work/remote-testing-2026-11-06/private.
+Current branch/draft PR #2 remains unmerged. Read SESSION_RECAP.md first.
+
 Latest task 5: [HTTPS_STAGING_2026-11-06.md](HTTPS_STAGING_2026-11-06.md).
 Local HTTPS rehearsal passed on new `codex/https-staging-verification` branch.
 Fixed a redirect that downgraded HTTPS/lost its port. Trusted TLS, auth/cookies,

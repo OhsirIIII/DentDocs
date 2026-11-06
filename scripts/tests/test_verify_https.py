@@ -48,3 +48,17 @@ def test_dns_override_rejects_a_hostname_instead_of_an_ip():
     with pytest.raises(ValueError):
         with verify_https.resolve_host('dentdocs', 'other.invalid'):
             pytest.fail('Invalid override was accepted')
+
+
+@pytest.mark.parametrize('ca,expected', [(None, None), (Path('private-root.crt'), 'private-root.crt')])
+def test_default_or_explicit_ca_always_uses_verified_context(monkeypatch, ca, expected):
+    class StopBeforeConnecting(Exception):
+        pass
+    observed = []
+    def context(**options):
+        observed.append(options)
+        raise StopBeforeConnecting()
+    monkeypatch.setattr(verify_https.ssl, 'create_default_context', context)
+    with pytest.raises(StopBeforeConnecting):
+        verify_https.verify_connection('https://dentdocs.example', ca)
+    assert observed == [{'cafile': expected}]
