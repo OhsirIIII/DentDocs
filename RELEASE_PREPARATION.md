@@ -3,7 +3,26 @@
 The reviewed source was merged into `main` with explicit user approval on
 November 6, 2026 (`3677354`). Real-patient/LAN release remains unapproved.
 The existing Compose application remains fictional-data, loopback
-HTTP. The sample HTTPS configuration below has not been activated or certified.
+HTTP. A separate local HTTPS rehearsal is recorded below; clinic-network HTTPS
+has not been activated or certified.
+
+## November 6 local HTTPS rehearsal
+
+Subsequent [private remote-test setup](REMOTE_TESTING_2026-11-06.md) is active in
+a separate fictional installation through Tailscale Serve. Its accepted peer is
+online, and the user confirms the remote link works after a reported DNS error.
+Remote first-use/workflow and full browser acceptance remain pending. This is not clinic-network/public
+deployment or real-patient release. The original saved installation stays stopped.
+
+Read [HTTPS_STAGING_2026-11-06.md](HTTPS_STAGING_2026-11-06.md) and its sanitized
+evidence. Trusted TLS/auth/cookie/document workflows and configuration rollback
+passed in a separate fictional installation; all temporary services, CA/keys and
+credentials were removed. A redirect downgrade/port-loss bug was fixed. The new
+branch `codex/https-staging-verification` remains separate from merged PR #1.
+The user's working hostname is `dentdocs`, tested with client-only local resolution.
+A groupmate may help with later remote/device checks; private networking, name
+resolution, actual browser/device trust and operational certificate ownership still
+need coordination. The remaining acceptance checklist is not fully complete.
 
 Draft PR [#1](https://github.com/OhsirIIII/DentDocs/pull/1) was created on
 November 6, 2026 (Asia/Shanghai), after the user corrected the GitHub installation
@@ -57,7 +76,7 @@ existing `127.0.0.1:8080:80` binding. A proxy running on the Docker host can rea
 this loopback upstream; a separate proxy container's loopback would refer to itself.
 
 `deployment/https/Caddyfile.example` is an example for a host-installed Caddy using
-an internal certificate authority and a reserved placeholder hostname. It requires
+an internal certificate authority and the working hostname `dentdocs`. It requires
 clinic-approved DNS, reviewed Caddy installation/version, persistent protected CA
 state, and explicit trust provisioning on each authorized device. Alternatively use
 an approved organizational certificate/issuer. Never bypass certificate errors or
@@ -73,7 +92,7 @@ After choosing the actual hostname, preserve the existing configuration/keys and
 edit only these non-secret settings in that staging installation:
 
 ```dotenv
-APP_ORIGIN=https://dentdocs.clinic.example
+APP_ORIGIN=https://dentdocs
 COOKIE_SECURE=true
 ```
 
@@ -104,7 +123,8 @@ must follow the clinic retention/privacy policy; do not log bodies or credential
 - Snapshot/drill and configuration rollback have been rehearsed; key custody,
   monitoring and certificate renewal responsibilities are assigned.
 
-These are planned staging checks, not completed November 5 test results. The
+The report above identifies locally completed checks and their limits; browser,
+second-device/private-network and operational acceptance remain pending. The
 existing `scripts/verify-security.py` targets the loopback mock deployment and does
 not by itself validate this proposed host proxy or a second workstation.
 

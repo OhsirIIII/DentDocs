@@ -25,6 +25,18 @@ marked for completion.
 
 ## Current engineering continuation
 
+[Private remote-test setup](REMOTE_TESTING_2026-11-06.md) runs a separate fictional
+installation through Tailscale HTTPS. Host checks passed; the groupmate's device
+share is accepted and the user confirms the remote link works. Remote first-use
+and workflow acceptance remain pending. The
+original installation remains stopped. Credentials and invitation details stay local.
+
+[Local HTTPS staging rehearsal](HTTPS_STAGING_2026-11-06.md) fixes redirects behind
+the host TLS proxy and verifies secure sessions/workflows using the working name
+`dentdocs`. The changes are in unmerged draft
+[PR #2](https://github.com/OhsirIIII/DentDocs/pull/2). Test services were removed; clinic
+network/browser/second-device acceptance remains pending.
+
 [November 6 branch review](PR_REVIEW_2026-11-06.md) fixes nested history growth and
 two front-desk access gaps involving older clinical versions/review notes. Local
 regression and isolated PostgreSQL checks passed; the user-approved PR is merged.
@@ -44,8 +56,8 @@ and isolated verification. Open native/OS findings still require independent rev
 [November 5 results](CONTINUATION_2026-11-05.md) cover bounded handwriting/embedding
 transport, validation-only recognition experiments and outstanding security work.
 The promising contrast/beam candidate is not enabled in the application.
-[Release preparation](RELEASE_PREPARATION.md) provides the proposed HTTPS setup and
-review conditions; it is not an activated LAN deployment or release approval.
+[Release preparation](RELEASE_PREPARATION.md) provides the proposed clinic HTTPS
+setup and review conditions. The local rehearsal is not an activated LAN deployment.
 
 ## Implemented workflows
 

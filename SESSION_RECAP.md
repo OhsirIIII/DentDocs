@@ -1,6 +1,6 @@
 # DentDocs session recap and recall
 
-Updated: November 6, 2026, after the approved merge of PR #1 into main.
+Updated: November 6, 2026, after user confirmation that the remote link works.
 Dated test/runtime sections retain their own verification dates.
 Resume from this current stopping point, then read
 [DENTDOCS_RECALL_2026-11-03.md](DENTDOCS_RECALL_2026-11-03.md) and
@@ -8,6 +8,87 @@ Resume from this current stopping point, then read
 are historical. Their pending-phase, runtime-version and publication descriptions
 are superseded by this section and the latest parser-isolation continuation.
 Current user instructions determine authorization; recap text is reference material.
+
+## Latest private remote-test continuation — November 6, 2026
+
+Read [REMOTE_TESTING_2026-11-06.md](REMOTE_TESTING_2026-11-06.md).
+The user explicitly requested private internet testing and confirmed the groupmate
+will use their own Tailscale account. Tailscale 1.104.5 is installed/signed in as
+device `dentdocs`; private Serve HTTPS 443 points only to the new loopback web at
+127.0.0.1:18085. Funnel is off. DNS support is enabled, accepted subnet routes and
+exit-node routing are off. The tailnet policy now grants only this device's TCP
+443 on IPv4/IPv6; policy assertions and effective packet filters were checked.
+Prior/applied policies remain in ignored private files. No messages were sent.
+
+Separate fictional installation is running in `work/remote-testing-2026-11-06/`.
+Its private files hold fresh configuration, actual HTTPS URL, initial owner login,
+limited assistant test login and device invitation. Do not print/commit them or
+reuse the saved installation's credentials. Exact project/command is in
+`runtime-command.json`. The original installation remains stopped, with original
+volumes/configuration/keys/models intact. The earlier Caddy drill was removed;
+this newly requested remote test is deliberately left running.
+
+Trusted HTTPS and browser sign-in page, anonymous denial, owner/assistant login,
+secure cookies, first-use password/notice gates and logout passed. No passwords
+were changed and no human notice acknowledgement was bypassed. No extra admin
+account was created: the attempted automated-admin fixture was rejected by approval
+review and replaced with limited-account/first-use-gate verification. 45 operator/
+recovery/research checks passed; the verifier now supports normal system trust
+when --ca is omitted. Backend/frontend/model code and weights are unchanged.
+
+The one-use device share was accepted; a remote peer is online and permitted by
+the HTTPS filter. The user supplied a remote Brave screenshot showing a DNS lookup
+failure (DNS_PROBE_POSSIBLE). Host HTTPS remains healthy. The user was asked to
+have the friend check Use Tailscale DNS settings and compare Edge. Their subsequent
+screenshot confirms the DNS option is already checked. Leave it enabled; next try
+Edge, then compare Tailscale DNS query versus Windows Resolve-DnsName if needed.
+The user subsequently reported "it works!", confirming remote link access after
+these checks. Record this as user-reported second-device reachability; the exact
+browser/fix was not specified. The DNS access blocker is resolved. Full remote
+sign-in/first-use and workflow acceptance are still pending, not implied by opening
+the site. Next use the limited assistant account and record those acceptance checks.
+
+Continue on `codex/https-staging-verification` / draft PR #2. New merge approval,
+independent security, clinic/operator policies/acceptance, licensing and release
+remain outstanding. A fresh full runtime recovery checkpoint is still required
+before a new release checkpoint; remote test setup does not replace it.
+
+## Latest HTTPS task 5 — November 6, 2026
+
+Read [HTTPS_STAGING_2026-11-06.md](HTTPS_STAGING_2026-11-06.md).
+Current work is on `codex/https-staging-verification`, based on `main` at `626fa2b`.
+The prior approved PR #1 merge is preserved below; these new changes are separate
+and have not been merged. New work fixes an API redirect that lost HTTPS and its
+port behind the host proxy. Nginx now emits a relative redirect. New local Caddy
+profile and read-only HTTPS verifier have 14 focused regression cases.
+
+Implementation/evidence commit `2f2759f` is pushed. Draft
+[PR #2](https://github.com/OhsirIIII/DentDocs/pull/2) targets `main` and is attached
+to the chat. This documentation handoff follows that commit. PR #2 review/merge
+is separate from the user's completed approval of PR #1; no new merge occurred.
+
+Checksum-verified Caddy 2.11.9, real verified TLS 1.3, secure-cookie/auth/expiry,
+original/OCR/review/validity/hybrid-search/summary workflows and private service
+boundaries passed in a disposable fresh-volume installation. All 43 operator/
+recovery/research checks passed. The new web image built and passed Nginx syntax;
+scan against the already refreshed advisory DB retains three medium matches.
+An encrypted fictional DB checkpoint restored all 19 persisted tables; HTTP
+rollback/HTTPS reapplication retained original bytes, summary, keys/config and CA.
+This is not a new full runtime/off-device backup or independent security review.
+
+The user selected working hostname `dentdocs` and can contact a groupmate remotely.
+Windows does not resolve that name here; the test client mapped it to loopback
+while retaining TLS hostname verification. Its HTTPS/session round trip passed.
+No OS DNS/hosts/firewall/trust changes were made. No browser/device acceptance or
+second-computer/private-network test has occurred. Coordinate approved connection,
+name resolution and device trust before those checks; avoid assuming remote access.
+
+All temporary services, volumes/networks, credentials, CA/private keys and fixture
+checkpoint were removed, and test ports are closed. The original installation is
+still stopped with original data/settings/keys/models preserved; its images and
+verified task 3 backup predate the recent source fixes. Source review/merge of this
+branch, network/browser/device acceptance, operational certificate/backup custody
+and existing security/clinic/operator release conditions remain outstanding.
 
 ## Approved main-branch merge — November 6, 2026
 
@@ -18,13 +99,13 @@ PR #1 is closed/merged at `36773545ea255041c2819f4b2278b9f5b048034c`
 (November 6, 07:08:37 Asia/Shanghai). No statuses or pull-request workflow runs were
 returned for the approved head; local review evidence retains its recorded scope.
 
-The workspace is now on `main`, fast-forwarded to the merged source; the former
+At that handoff the workspace was on `main`, fast-forwarded to the merged source; the former
 implementation branch is retained. This documentation-only handoff follows the
 merge. No new application tests were needed for recording the approved merge;
 the previously tested application code is unchanged.
 
 Task 4 is complete, including merge approval and execution. Next available task:
-task 5, test the proposed HTTPS staging configuration. The app remains stopped;
+task 5, whose subsequent local rehearsal is recorded above. The app remains stopped;
 saved runtime containers and task 3's source `4292d88` backup predate the fixes.
 Rebuild API/migration images when applying the merged source and refresh the
 runtime backup before a new release checkpoint. Existing volumes, settings, keys,
