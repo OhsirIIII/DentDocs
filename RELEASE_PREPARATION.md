@@ -10,8 +10,8 @@ has not been activated or certified.
 
 Subsequent [private remote-test setup](REMOTE_TESTING_2026-11-06.md) is active in
 a separate fictional installation through Tailscale Serve. Its accepted peer is
-online, but the recipient reported a DNS error; second-device application access
-and browser acceptance remain unconfirmed. This is not clinic-network/public
+online, and the user confirms the remote link works after a reported DNS error.
+Remote first-use/workflow and full browser acceptance remain pending. This is not clinic-network/public
 deployment or real-patient release. The original saved installation stays stopped.
 
 Read [HTTPS_STAGING_2026-11-06.md](HTTPS_STAGING_2026-11-06.md) and its sanitized

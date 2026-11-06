@@ -27,7 +27,8 @@ marked for completion.
 
 [Private remote-test setup](REMOTE_TESTING_2026-11-06.md) runs a separate fictional
 installation through Tailscale HTTPS. Host checks passed; the groupmate's device
-share is accepted but recipient DNS/browser troubleshooting remains open. The
+share is accepted and the user confirms the remote link works. Remote first-use
+and workflow acceptance remain pending. The
 original installation remains stopped. Credentials and invitation details stay local.
 
 [Local HTTPS staging rehearsal](HTTPS_STAGING_2026-11-06.md) fixes redirects behind

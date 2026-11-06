@@ -1,6 +1,6 @@
 # DentDocs session recap and recall
 
-Updated: November 6, 2026, after private remote setup; recipient DNS troubleshooting remains open.
+Updated: November 6, 2026, after user confirmation that the remote link works.
 Dated test/runtime sections retain their own verification dates.
 Resume from this current stopping point, then read
 [DENTDOCS_RECALL_2026-11-03.md](DENTDOCS_RECALL_2026-11-03.md) and
@@ -42,8 +42,11 @@ failure (DNS_PROBE_POSSIBLE). Host HTTPS remains healthy. The user was asked to
 have the friend check Use Tailscale DNS settings and compare Edge. Their subsequent
 screenshot confirms the DNS option is already checked. Leave it enabled; next try
 Edge, then compare Tailscale DNS query versus Windows Resolve-DnsName if needed.
-Recipient-side DNS/browser outcome and second-device application access
-are NOT yet confirmed. Follow up on that check; do not mark remote acceptance done.
+The user subsequently reported "it works!", confirming remote link access after
+these checks. Record this as user-reported second-device reachability; the exact
+browser/fix was not specified. The DNS access blocker is resolved. Full remote
+sign-in/first-use and workflow acceptance are still pending, not implied by opening
+the site. Next use the limited assistant account and record those acceptance checks.
 
 Continue on `codex/https-staging-verification` / draft PR #2. New merge approval,
 independent security, clinic/operator policies/acceptance, licensing and release

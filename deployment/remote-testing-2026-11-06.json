@@ -1,7 +1,7 @@
 {
   "date": "2026-11-06",
   "sourceBase": "638dc4849d7c52c899573dc402dd5720c5d92a75",
-  "scope": "private fictional remote-test host setup; recipient DNS unresolved",
+  "scope": "private fictional remote-test host setup and user-reported second-device reachability",
   "tailscaleVersion": "1.104.5",
   "vendorInstallerHashVerified": true,
   "authenticodeSignatureVerified": true,
@@ -15,7 +15,8 @@
     "acceptedSubnetRoutes": false,
     "exitNodeConfigured": false,
     "peerCountObserved": 1,
-    "secondDeviceTestCompleted": false
+    "secondDeviceTestCompleted": false,
+    "secondDeviceReachabilityConfirmed": true
   },
   "hostHttps": {
     "tlsVerified": true,
@@ -107,9 +108,13 @@
     "connectedPeerObserved": true,
     "peerAddressesAllowedByHttpsPolicy": true,
     "remoteBrowserReportedDnsError": true,
-    "secondDeviceApplicationAccessConfirmed": false,
+    "secondDeviceApplicationAccessConfirmed": true,
     "recipientDnsSettingShownEnabled": true,
-    "nextRecipientStep": "Compare Edge; if still failing, compare Tailscale DNS with the Windows resolver"
+    "nextRecipientStep": "Complete assistant sign-in, first-use password/notice and fictional workflow checks",
+    "confirmationSource": "User reported remote link works",
+    "reportedDnsFailureResolved": true,
+    "exactBrowserOrFixSpecified": false,
+    "secondDeviceWorkflowAcceptanceCompleted": false
   },
   "tests": {
     "tests": 45,
@@ -126,9 +131,11 @@
   "originalDataKeysAndConfigurationPreserved": true,
   "invitationAccepted": true,
   "invitationAndCredentialsKeptPrivate": true,
-  "secondDeviceApplicationAccessConfirmed": false,
+  "secondDeviceApplicationAccessConfirmed": true,
   "humanFirstUsePasswordChangesPending": true,
   "extraAdministratorCreated": false,
   "mergeAuthorized": false,
-  "releaseAuthorized": false
+  "releaseAuthorized": false,
+  "secondDeviceWorkflowAcceptanceCompleted": false,
+  "confirmationSource": "User report"
 }

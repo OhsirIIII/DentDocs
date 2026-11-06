@@ -5,8 +5,9 @@ User-authorized private Tailscale remote test is now RUNNING in a separate
 fictional installation, while the original app remains stopped. Private HTTPS
 443 only, Funnel off, limited assistant test account and first-use gates retained.
 45 checks passed. Device invitation accepted and peer online, but the friend's
-Brave browser reported DNS lookup failure. Recipient DNS checkbox is already on;
-compare Edge, then Tailscale/Windows DNS queries if needed. Acceptance remains unconfirmed. All secrets and
+Brave initially reported DNS lookup failure; user now confirms the remote link
+works. Exact browser/fix is unspecified. Remote first-use/workflow acceptance is
+still pending. All secrets and
 actual connection details stay under ignored work/remote-testing-2026-11-06/private.
 Current branch/draft PR #2 remains unmerged. Read SESSION_RECAP.md first.
 

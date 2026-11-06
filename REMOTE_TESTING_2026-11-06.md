@@ -6,8 +6,9 @@ installation is running through private Tailscale HTTPS. The saved installation,
 original volumes/configuration/keys and model artifacts remain preserved.
 
 Host setup is verified. The groupmate accepted the device share and their device
-is online, but reported a browser DNS lookup failure. Successful second-computer
-application access and acceptance are **not yet confirmed**.
+is online. After DNS/browser troubleshooting, the user reported **"it works!"**,
+confirming second-computer link access. This is user-reported reachability; full
+remote sign-in/first-use and workflow acceptance remain pending.
 
 ## What is configured
 
@@ -84,7 +85,9 @@ Windows `Resolve-DnsName` for the full private hostname on the recipient's compu
 This distinguishes the Tailscale resolver from Windows/browser resolution. A
 custom browser DNS provider may bypass private name resolution; that remains a
 hypothesis until the comparison. No certificate warning should be bypassed to
-troubleshoot DNS. The outcome of these recipient-side checks is still pending.
+troubleshoot DNS. The user subsequently confirmed the link works. The exact
+browser or corrective action was not specified, so no particular root cause or
+fix is claimed. The next checks are sign-in, first-use steps and app workflows.
 
 Keep this hosting computer awake, online, and running Docker Desktop/Tailscale
 during testing. Record the actual browser/device and whether sign-in, first-use
